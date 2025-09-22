@@ -1,0 +1,66 @@
+# changed made from the plan
+
+1. removed get stand from csv completely. -> will use a vector of stand instead when playing outside of the iLand
+
+2. Add satisfaction by ES on top of general weighted ES sat. 
+
+ static calculateSatisfaction(preferences, beliefs) {
+        if (preferences.length !== beliefs.length) {
+            throw new Error('Preferences and beliefs arrays must have the same length.');
+        }
+
+        // 1. Create an array to store individual scores
+        let satisfactionByES = []; 
+
+        let totalSatisfaction = 0;
+        let weightSum = 0;
+
+        for (let i = 0; i < preferences.length; i++) {
+            const weight = preferences[i];
+            const belief = beliefs[i];
+            const beliefMean = belief.alpha / (belief.alpha + belief.beta);
+            
+            const satisfaction = 1 - Math.abs(weight - beliefMean);
+            
+            // 2. Store the satisfaction for the current ES
+            satisfactionByES.push(satisfaction); 
+            
+            totalSatisfaction += weight * satisfaction;
+            weightSum += weight;
+        }
+
+        // 3. Return an object with both the overall score and the individual scores
+        return {
+            overallSatisfaction: totalSatisfaction / weightSum,
+            satisfactionByES: satisfactionByES
+        };
+    }
+    
+3. * @param {number} [inertia=0.5] - The agent's reluctance to change (I). I am skeptic but for now will go with it. -> need to add a distribution of inertia in the owner class and a param in the agents
+4. Move test file to SOCO/src/utils/test_utils.js
+5. GEneral files structure now: 
+.
+├── config
+│   └── toy-config.js
+├── documentation
+│   ├── ABE_source_code_reference.txt
+│   ├── API_docs.txt
+│   ├── SOCOABE.pdf
+│   ├── Wiki.txt
+│   ├── example-use.js
+│   ├── iLand_doc_deepwiki.md
+│   ├── socoabe_roadmap.md
+│   └── stand_treatment_plans.js
+├── package.json
+├── src
+│   ├── Institution.js
+│   ├── Owner.js
+│   ├── SoCoABeAgent.js
+│   ├── integration
+│   ├── utils
+│   │   ├── changed.txt
+│   │   ├── distributions.js
+│   │   ├── helpers.js
+│   │   └── test_utils.js
+│   └── utils.js
+└── test-world.js
