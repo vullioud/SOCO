@@ -16,7 +16,8 @@ var OWNER_TYPE_CONFIGS = {
             production: { alpha: 3, beta: 3 },
             biodiversity: { alpha: 5, beta: 2 },
             carbon: { alpha: 4, beta: 3 }
-        }
+        }, 
+        managementIntensity: { meanStandsPerAgent: 3, stddev: 1}
     },
     'big_company': {
         esPreferences: [8, 1, 2],
@@ -29,8 +30,9 @@ var OWNER_TYPE_CONFIGS = {
         beliefPriors: {
             production: { alpha: 5, beta: 2 },
             biodiversity: { alpha: 2, beta: 5 },
-            carbon: { alpha: 3, beta: 3 }
-        }
+            carbon: { alpha: 3, beta: 3 }, 
+        }, 
+        managementIntensity: { meanStandsPerAgent: 5, stddev: 1}
     },
     'small_private': {
         esPreferences: [4, 4, 2],
@@ -43,8 +45,9 @@ var OWNER_TYPE_CONFIGS = {
         beliefPriors: {
             production: { alpha: 4, beta: 3 },
             biodiversity: { alpha: 4, beta: 3 },
-            carbon: { alpha: 3, beta: 4 }
-        }
+            carbon: { alpha: 3, beta: 4}
+        }, 
+        managementIntensity: { meanStandsPerAgent: 1, stddev: 1},
     }
 };
 

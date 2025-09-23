@@ -38,27 +38,33 @@ class Owner {
     }
 
 createAgents() {
-        // ** THE DEFINITIVE FIX **
-        // Get the target agent count from the central config file (SoCoABE_CONFIG),
-        // using the owner's type (e.g., 'state', 'big_company') as the key.
-        const numAgents = SoCoABE_CONFIG.INSTITUTION.agentCounts[this.type];
-        
-        if (numAgents === undefined) {
-            console.error(`targetAgentCount not defined for owner type '${this.type}' in SoCoABE_CONFIG.`);
-            return; // Stop if the configuration is missing for this owner type.
-        }
+    const numStands = this.assignedStands.length;
+    if (numStands === 0) return; // No stands, no agents.
 
-        const standIds = this.assignedStands.map(s => s.id);
-        const standsPerAgent = this.Helpers.assignStandsToAgents(standIds, numAgents, 'equal');
-
-        for (let i = 0; i < numAgents; i++) {
-            const agent = new this.SoCoABeAgent(this, `${this.type}_agent_${i}`);
-            agent.assignStands(standsPerAgent[i]);
-            agent.sampleFromOwner();
-            this.agents.push(agent);
-        }
-        console.log(`Owner '${this.type}' created ${this.agents.length} agents.`);
+    const intensity = this.config.managementIntensity;
+    if (!intensity) {
+        throw new Error(`'managementIntensity' is not defined for owner type '${this.type}'.`);
     }
+    
+    // Calculate the number of stands a single agent of this type typically manages
+    const standsPerAgentSample = this.Distributions.sampleNormal(intensity.meanStandsPerAgent, intensity.stddev);
+    
+    // Derive the number of agents needed to manage the assigned stands
+    // Ensure at least one agent if there are any stands.
+    const numAgents = Math.max(1, Math.round(numStands / standsPerAgentSample));
+    // ============================================================================
+
+    const standIds = this.assignedStands.map(s => s.id);
+    const standsPerAgentAssignment = this.Helpers.assignStandsToAgents(standIds, numAgents, 'equal');
+
+    for (let i = 0; i < numAgents; i++) {
+        const agent = new this.SoCoABeAgent(this, `${this.type}_agent_${i}`);
+        agent.assignStands(standsPerAgentAssignment[i]);
+        agent.sampleFromOwner();
+        this.agents.push(agent);
+    }
+    console.log(`Owner '${this.type}' with ${numStands} stands created ${this.agents.length} agents.`);
+}
 
    /**
      * Creates a new agent to replace a retiring one.
@@ -68,7 +74,6 @@ createAgents() {
      * @returns {SoCoABeAgent} The new replacement agent.
      */
      replaceAgent(retiringAgent, currentYear) {
-        // ** THE DEFINITIVE FIX FOR GENERATION TRACKING **
 
         // 1. Get the generation from the retiring agent and increment it.
         const newGeneration = retiringAgent.generation + 1;

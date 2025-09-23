@@ -21,6 +21,7 @@ class SoCoABeAgent {
         this.monitoringCycle = 5;
         this.decisionCycle = 10;
         this.satisfactionHistory = [];
+        this.satisfaction = -1; 
         this.actionHistory = [];
         this.switchCount = 0;
         this.tenureTotal = 0;
@@ -71,6 +72,10 @@ class SoCoABeAgent {
                 carbon: totalObservations.carbon / validStands
             };
             this.updateBeliefs(avgObservations);
+
+            const { overallSatisfaction } = Helpers.calculateSatisfaction(this.preferences, Object.values(this.beliefs));
+            this.satisfaction = overallSatisfaction;
+            this.satisfactionHistory.push(this.satisfaction);
         }
     }
 
@@ -86,11 +91,18 @@ class SoCoABeAgent {
     }
 
     makeDecision() {
-        const { overallSatisfaction } = Helpers.calculateSatisfaction(this.preferences, Object.values(this.beliefs));
+        // Satisfaction is now read directly from the agent's state
+        const overallSatisfaction = this.satisfaction; 
+        
+        // If satisfaction has not been calculated yet, abort decision
+        if (overallSatisfaction === -1) {
+            console.log(`  > ${this.agentId} has no satisfaction data yet, deferring decision.`);
+            return;
+        }
+
         const precision = this.calculateBeliefPrecision();
         const switchProbability = Helpers.calculateSwitchProbability(overallSatisfaction, precision, this.inertia);
         
-        this.satisfactionHistory.push(overallSatisfaction);
         console.log(`  > ${this.agentId} Satisfaction: ${overallSatisfaction.toFixed(3)}, Belief Precision: ${precision.toFixed(2)}, Switch Prob: ${switchProbability.toFixed(3)}`);
 
         if (Math.random() < switchProbability) {
@@ -99,7 +111,7 @@ class SoCoABeAgent {
             console.log(`  > ${this.agentId} decided to CONTINUE with STP: ${this.currentProtoSTP}`);
         }
     }
-
+    
     calculateBeliefPrecision() {
         const precisions = Object.values(this.beliefs).map(b => b.alpha + b.beta);
         return precisions.reduce((a, b) => a + b, 0) / precisions.length;
