@@ -1,39 +1,79 @@
+// In src/core/SoCoABeAgent.js
+
 /**
  * Represents an individual decision-making agent in the SoCoABE model.
- * This version ONLY makes decisions and queues them for later execution.
+ * This class acts as a "conductor," holding the agent's state and delegating
+ * the core tasks of observing, deciding, and acting to specialized modules.
  */
 class SoCoABeAgent {
     constructor(owner, agentId) {
+        // --- Identity & Affiliation ---
         this.owner = owner;
         this.agentId = agentId;
-        this.preferences = null;
-        this.resources = null;
-        this.riskTolerance = null;
-        this.freedom = null;
+
+        // --- Core Traits (Sampled from Owner) ---
+        this.preferences = null;     // [production, biodiversity, carbon]
+        this.resources = null;       // Determines monitoring/decision frequency
+        this.riskTolerance = null;   // Single value [0,1]
+        this.freedom = null;         // Latitude to deviate from proto-STP [0,1]
         this.age = 0;
-        this.inertia = 0.5;
-        this.beliefs = { production: { alpha: 1, beta: 1 }, biodiversity: { alpha: 1, beta: 1 }, carbon: { alpha: 1, beta: 1 } };
-        this.managedStands = [];
-        this.currentProtoSTP = null;
-        this.standStrategies = {};
-        this.lastObservation = 0;
-        this.lastDecision = 0;
-        this.monitoringCycle = 5;
-        this.decisionCycle = 10;
-        this.satisfactionHistory = [];
-        this.satisfaction = -1; 
-        this.actionHistory = [];
-        this.switchCount = 0;
         this.tenureTotal = 0;
         this.tenureLeft = 0;
-        this.generation = 1; 
+        this.generation = 1;
+        this.inertia = 0.5;          // Cognitive resistance to change
+
+        // --- Beliefs & State ---
+        this.beliefs = { production: { alpha: 1, beta: 1 }, biodiversity: { alpha: 1, beta: 1 }, carbon: { alpha: 1, beta: 1 } };
+        this.managedStands = [];     // Array of stand IDs
+        this.currentProtoSTP = null; // The agent's currently preferred/default STP
+        this.standStrategies = {};   // {standId: currentSTPname} - tracks individual stand management
+
+        // --- Performance Metrics ---
+        this.satisfactionHistory = [];   // History of agent's average satisfaction
+        this.averageSatisfaction = -1;   // The agent's current overall satisfaction
+        this.standSatisfactions = {};    // {standId: satisfactionScore}
+        
+        // --- Action Tracking ---
+        this.actionHistory = [];
+        this.switchCount = 0;
+        this.standsChangedThisYear = 0;
+
+        // --- Composition: The Agent's Functional Modules ---
+        this.observationModule = new ObservationModule(this);
+        this.cognitionModule = new CognitionModule(this);
+        this.actionModule = new ActionModule(this);
     }
 
+    /**
+     * The main observation cycle, delegated to the ObservationModule.
+     */
+    observe() {
+        this.observationModule.performObservation();
+    }
+
+    /**
+     * The main decision cycle, delegated to the Cognition and Action Modules.
+     */
+    makeDecision() {
+        const decision = this.cognitionModule.makeDecision();
+        this.actionModule.executeDecision(decision);
+    }
+    
+    /**
+     * Assigns a list of stand IDs for this agent to manage.
+     * @param {number[]} standIds - Array of stand IDs.
+     */
     assignStands(standIds) {
         this.managedStands = standIds;
-        standIds.forEach(id => { this.standStrategies[id] = null; });
+        standIds.forEach(id => {
+            this.standStrategies[id] = null;
+            this.standSatisfactions[id] = -1;
+        });
     }
 
+    /**
+     * Samples all personal characteristics from its owner's distributions.
+     */
     sampleFromOwner() {
         this.preferences = this.owner.sampleAgentPreferences();
         this.resources = this.owner.sampleAgentResources();
@@ -42,45 +82,21 @@ class SoCoABeAgent {
         this.age = Math.floor(this.owner.sampleAgentAge());
         this.tenureTotal = this.owner.sampleAgentTenureYears();
         this.tenureLeft = this.tenureTotal;
-        // Monitoring and decision cycles scale with resources (more resources = more frequent actions)
         this.monitoringCycle = Math.max(1, Math.floor(10 - (this.resources / 10)));
         this.decisionCycle = Math.max(5, Math.floor(20 - (this.resources / 5)));
         if (this.owner.config.beliefPriors) {
             this.beliefs = JSON.parse(JSON.stringify(this.owner.config.beliefPriors));
         }
         this.currentProtoSTP = this.owner.selectProtoSTP(this.preferences);
+        this.managedStands.forEach(id => { this.standStrategies[id] = this.currentProtoSTP; });
     }
 
-    observe() {
-        const esMapper = new ESMapper();
-        let totalObservations = { production: 0, biodiversity: 0, carbon: 0 };
-        let validStands = 0;
-        this.managedStands.forEach(standId => {
-            fmengine.standId = standId;
-            if (stand && stand.id > 0) {
-                const esScores = esMapper.mapForestMetricsToES(stand);
-                const resourceLevel = this.resources / 100;
-                const noisyScores = esMapper.addObservationNoise(esScores, resourceLevel);
-                Object.keys(totalObservations).forEach(key => totalObservations[key] += noisyScores[key]);
-                validStands++;
-            }
-        });
-        if (validStands > 0) {
-            const avgObservations = {
-                production: totalObservations.production / validStands,
-                biodiversity: totalObservations.biodiversity / validStands,
-                carbon: totalObservations.carbon / validStands
-            };
-            this.updateBeliefs(avgObservations);
-
-            const { overallSatisfaction } = Helpers.calculateSatisfaction(this.preferences, Object.values(this.beliefs));
-            this.satisfaction = overallSatisfaction;
-            this.satisfactionHistory.push(this.satisfaction);
-        }
-    }
-
+    /**
+     * Updates the agent's internal belief distributions based on new observations.
+     * @param {object} observations - The averaged ES scores from observation.
+     */
     updateBeliefs(observations) {
-        const forgettingFactor =  SoCoABE_CONFIG.AGENT.forgettingFactor;
+        const forgettingFactor = SoCoABE_CONFIG.AGENT.forgettingFactor;
         Object.keys(observations).forEach(es => {
             if (this.beliefs[es]) {
                 const { alpha, beta } = Distributions.updateBeta(this.beliefs[es].alpha, this.beliefs[es].beta, observations[es], forgettingFactor);
@@ -90,69 +106,13 @@ class SoCoABeAgent {
         });
     }
 
-    makeDecision() {
-        // Satisfaction is now read directly from the agent's state
-        const overallSatisfaction = this.satisfaction; 
-        
-        // If satisfaction has not been calculated yet, abort decision
-        if (overallSatisfaction === -1) {
-            console.log(`  > ${this.agentId} has no satisfaction data yet, deferring decision.`);
-            return;
-        }
-
-        const precision = this.calculateBeliefPrecision();
-        const switchProbability = Helpers.calculateSwitchProbability(overallSatisfaction, precision, this.inertia);
-        
-        console.log(`  > ${this.agentId} Satisfaction: ${overallSatisfaction.toFixed(3)}, Belief Precision: ${precision.toFixed(2)}, Switch Prob: ${switchProbability.toFixed(3)}`);
-
-        if (Math.random() < switchProbability) {
-            this.switchProtoSTP();
-        } else {
-            console.log(`  > ${this.agentId} decided to CONTINUE with STP: ${this.currentProtoSTP}`);
-        }
-    }
-    
+    /**
+     * Calculates the agent's overall confidence in its beliefs.
+     * @returns {number} The average precision (alpha + beta) across all beliefs.
+     */
     calculateBeliefPrecision() {
         const precisions = Object.values(this.beliefs).map(b => b.alpha + b.beta);
         return precisions.reduce((a, b) => a + b, 0) / precisions.length;
-    }
-
-    switchProtoSTP() {
-        const newSTP = this.owner.selectProtoSTP(this.preferences);
-        if (newSTP !== this.currentProtoSTP) {
-            console.log(`  > !!! ${this.agentId} WANTS TO SWITCH from ${this.currentProtoSTP} to ${newSTP} !!!`);
-            this.currentProtoSTP = newSTP;
-            this.switchCount++;
-            this.queueStandUpdates();
-        } else {
-             console.log(`  > ${this.agentId} considered switching but selected the same STP again: ${newSTP}`);
-        }
-    }
-    
-    queueStandUpdates() {
-        const newStpTemplate = PROTO_STPS[this.currentProtoSTP];
-        if (!newStpTemplate || !newStpTemplate.U) {
-            console.error(`Cannot find a valid U for new STP: ${this.currentProtoSTP}`);
-            return;
-        }
-
-        this.managedStands.forEach(standId => {
-            fmengine.standId = standId;
-            if (stand && stand.id > 0) {
-                const isCommittedToCurrentPlan = stand.U > 0 && stand.U < 120 && stand.absoluteAge > (stand.U * 0.8);
-                
-                if (isCommittedToCurrentPlan) {
-                    console.log(`  > Agent ${this.agentId} deferred switching STP on committed stand ${standId} (Age: ${stand.absoluteAge.toFixed(0)} of ${stand.U}).`);
-                } else {
-                    console.log(`  > ${this.agentId} QUEUEING action for stand ${standId}: set STP to ${this.currentProtoSTP}`);
-                    socoabeActionQueue.push({
-                        agentId: this.agentId,
-                        standId: standId,
-                        newStpName: this.currentProtoSTP
-                    });
-                }
-            }
-        });
     }
 }
 
