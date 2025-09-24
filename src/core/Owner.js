@@ -37,34 +37,51 @@ class Owner {
         this.config.protoSTPs.forEach(stpName => { this.recruitmentProbabilities[stpName] = equalProb; });
     }
 
-createAgents() {
-    const numStands = this.assignedStands.length;
-    if (numStands === 0) return; // No stands, no agents.
+    createAgents() {
+        const totalStandsForOwner = this.assignedStands.length;
+        if (totalStandsForOwner === 0) {
+            console.log(`Owner '${this.type}' has no stands assigned, creating 0 agents.`);
+            return; // No stands, no agents.
+        }
 
-    const intensity = this.config.managementIntensity;
-    if (!intensity) {
-        throw new Error(`'managementIntensity' is not defined for owner type '${this.type}'.`);
+        // ============================================================================
+        // ===== NEW ITERATIVE LOGIC FOR AGENT CREATION AND STAND ASSIGNMENT ==========
+        // ============================================================================
+
+        // Start with a list of all available stand IDs for this owner.
+        let remainingStandIds = this.assignedStands.map(s => s.id);
+        let agentCounter = 0;
+
+        while (remainingStandIds.length > 0) {
+            // 1. Determine the management capacity for this new agent.
+            const intensity = this.config.managementIntensity;
+            if (!intensity) {
+                throw new Error(`'managementIntensity' is not defined for owner type '${this.type}'.`);
+            }
+            
+            // Sample how many stands this specific agent will manage. Ensure it's at least 1.
+            const standsToAssignCount = Math.max(1, 
+                Math.round(this.Distributions.sampleNormal(intensity.meanStandsPerAgent, intensity.stddev))
+            );
+            
+            // 2. Take the stands from the remaining list.
+            // The number of stands is the smaller of the agent's capacity or what's left.
+            const actualCount = Math.min(standsToAssignCount, remainingStandIds.length);
+            const assignedIds = remainingStandIds.splice(0, actualCount);
+
+            // 3. Create and configure the new agent.
+            const agent = new this.SoCoABeAgent(this, `${this.type}_agent_${agentCounter}`);
+            agent.assignStands(assignedIds);
+            agent.sampleFromOwner();
+            
+            // 4. Add the fully configured agent to the list.
+            this.agents.push(agent);
+            agentCounter++;
+        }
+        // ============================================================================
+
+        console.log(`Owner '${this.type}' with ${totalStandsForOwner} stands created ${this.agents.length} agents through iterative assignment.`);
     }
-    
-    // Calculate the number of stands a single agent of this type typically manages
-    const standsPerAgentSample = this.Distributions.sampleNormal(intensity.meanStandsPerAgent, intensity.stddev);
-    
-    // Derive the number of agents needed to manage the assigned stands
-    // Ensure at least one agent if there are any stands.
-    const numAgents = Math.max(1, Math.round(numStands / standsPerAgentSample));
-    // ============================================================================
-
-    const standIds = this.assignedStands.map(s => s.id);
-    const standsPerAgentAssignment = this.Helpers.assignStandsToAgents(standIds, numAgents, 'equal');
-
-    for (let i = 0; i < numAgents; i++) {
-        const agent = new this.SoCoABeAgent(this, `${this.type}_agent_${i}`);
-        agent.assignStands(standsPerAgentAssignment[i]);
-        agent.sampleFromOwner();
-        this.agents.push(agent);
-    }
-    console.log(`Owner '${this.type}' with ${numStands} stands created ${this.agents.length} agents.`);
-}
 
    /**
      * Creates a new agent to replace a retiring one.
