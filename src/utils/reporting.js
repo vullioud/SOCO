@@ -5,9 +5,6 @@
  * including population validation, periodic logging, and final file saving.
  */
 class Reporting {
-    // NOTE: The static properties are now defined OUTSIDE and AFTER the class block.
-    // The static METHODS remain inside the class.
-
     /**
      * Runs a full validation and reporting sequence on the initial agent population.
      * @param {Owner[]} owners - The array of Owner objects.
@@ -29,9 +26,6 @@ class Reporting {
 
     /**
      * Generates a structured object of all agent characteristics for external analysis.
-     * @param {Owner[]} owners - The array of Owner objects.
-     * @param {SoCoABeAgent[]} agents - The array of SoCoABeAgent objects.
-     * @returns {object} The population report object.
      */
     static generatePopulationReport(owners, agents) {
         const report = {};
@@ -60,7 +54,6 @@ class Reporting {
 
     /**
      * Prints a summary of the initial agent population to the iLand console.
-     * @param {object} report - The report from generatePopulationReport.
      */
     static printPopulationSummary(report) {
         for (const ownerType in report) {
@@ -75,7 +68,6 @@ class Reporting {
 
     /**
      * Saves the detailed population report to a JSON file.
-     * @param {object} report - The report from generatePopulationReport.
      */
     static savePopulationReportToFile(report) {
         try {
@@ -90,17 +82,32 @@ class Reporting {
 
     /**
      * Collects and formats data from all agents for the yearly CSV log.
-     * @param {number} year - The current simulation year.
-     * @param {SoCoABeAgent[]} agents - The array of SoCoABeAgent objects.
      */
-    static collectAgentLog(year, agents) {
+    static collectAgentLog(year, agents, institution) {
         if (!agents || agents.length === 0) return;
         
-        if (!this.isAgentLogInitialized) {
-            this.agentLogData.push('year,agentId,ownerType,standId,age,tenureLeft,pref_prod,pref_bio,pref_carb,stand_satisfaction,currentSTP,agent_avg_satisfaction,stands_changed_stp,stp_coherence');
-            this.isAgentLogInitialized = true;
+        // ============================================================================
+        // ===== THE FIX IS HERE: Use Reporting.isAgentLogInitialized instead of 'this' =====
+        // ============================================================================
+        if (!Reporting.isAgentLogInitialized) {
+            const newHeader = [
+                'year', 'agentId', 'ownerType', 'standId', 'tenureLeft',
+                'pref_prod', 'pref_bio', 'pref_carb',
+                'stand_satisfaction', 'currentSTP', 'agent_avg_satisfaction',
+                'stands_changed_stp', 'stp_coherence',
+                'bm_mai_min', 'bm_mai_max', 'bm_vol_min', 'bm_vol_max',
+                'bm_spec_min', 'bm_spec_max', 'bm_h_min', 'bm_h_max'
+            ].join(',');
+            Reporting.agentLogData.push(newHeader); // Use Reporting.agentLogData
+            Reporting.isAgentLogInitialized = true;   // Use Reporting.isAgentLogInitialized
         }
     
+        const benchmark = institution.dynamicBenchmark || {};
+        const bm_mai = benchmark.mai || { min: -1, max: -1 };
+        const bm_vol = benchmark.volume || { min: -1, max: -1 };
+        const bm_spec = benchmark.speciesCount || { min: -1, max: -1 };
+        const bm_h = benchmark.topHeight || { min: -1, max: -1 };
+
         agents.forEach(agent => {
             const agentAvgSatisfaction = agent.averageSatisfaction;
             const standsChangedStp = agent.standsChangedThisYear;
@@ -112,26 +119,36 @@ class Reporting {
                 const currentSTP = agent.standStrategies[standId] || agent.currentProtoSTP;
     
                 const row = [
-                    year, agent.agentId, agent.owner.type, standId, agent.age, agent.tenureLeft,
+                    year, agent.agentId, agent.owner.type, standId, agent.tenureLeft,
                     agent.preferences[0].toFixed(3), agent.preferences[1].toFixed(3), agent.preferences[2].toFixed(3),
                     standSatisfaction.toFixed(3), currentSTP, agentAvgSatisfaction.toFixed(3),
-                    standsChangedStp, stpCoherence.toFixed(2)
+                    standsChangedStp, stpCoherence.toFixed(2),
+                    bm_mai.min.toFixed(2), bm_mai.max.toFixed(2),
+                    bm_vol.min.toFixed(2), bm_vol.max.toFixed(2),
+                    bm_spec.min.toFixed(0), bm_spec.max.toFixed(0),
+                    bm_h.min.toFixed(2), bm_h.max.toFixed(2)
                 ].join(',');
                 
-                this.agentLogData.push(row);
+                // ============================================================================
+                // ===== THE FIX IS HERE: Use Reporting.agentLogData instead of 'this' ======
+                // ============================================================================
+                Reporting.agentLogData.push(row);
             });
         });
     }
-
+ 
     /**
      * Saves the collected agent log data to a CSV file.
      */
     static saveLogToFile() {
         console.log("--- Preparing to save SoCoABE agent log. ---");
-        if (this.agentLogData.length > 1) {
+        // ============================================================================
+        // ===== THE FIX IS HERE: Use Reporting.agentLogData instead of 'this' ======
+        // ============================================================================
+        if (Reporting.agentLogData.length > 1) {
             const filePath = Globals.path("output/socoabe_agent_log.csv");
-            const fileContent = this.agentLogData.join('\n');
-            console.log(`Attempting to save ${this.agentLogData.length} rows to: ${filePath}`);
+            const fileContent = Reporting.agentLogData.join('\n');
+            console.log(`Attempting to save ${Reporting.agentLogData.length} rows to: ${filePath}`);
             try {
                 Globals.saveTextFile(filePath, fileContent);
                 console.log("--- Agent log successfully saved! ---");
@@ -144,15 +161,10 @@ class Reporting {
     }
 }
 
-// ============================================================================
-// ===== THE FIX IS HERE: Define static properties on the class constructor =====
-// ============================================================================
 Reporting.agentLogData = [];
 Reporting.isAgentLogInitialized = false;
-// ============================================================================
 
-
-// Universal Module Definition for compatibility
+// Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Reporting;
 } else {

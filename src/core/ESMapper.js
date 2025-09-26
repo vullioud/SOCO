@@ -77,11 +77,11 @@ class ESMapper {
      * Calculates the Carbon Storage ES score based on total biomass carbon.
      */
     calculateCarbonES(metrics, benchmark) {
-        const carbonStock = metrics.volume * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
-        
-        const minCarbon = benchmark.min * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
-        const maxCarbon = benchmark.max * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
-        
+        const carbonStock = metrics.volume;
+
+        const minCarbon = benchmark.min;
+        const maxCarbon = benchmark.max;
+
         return this.normalize(carbonStock, minCarbon, maxCarbon);
     }
 
