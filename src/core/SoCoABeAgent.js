@@ -16,7 +16,6 @@ class SoCoABeAgent {
         this.resources = null;       // Determines monitoring/decision frequency
         this.riskTolerance = null;   // Single value [0,1]
         this.freedom = null;         // Latitude to deviate from proto-STP [0,1]
-        this.age = 0;
         this.tenureTotal = 0;
         this.tenureLeft = 0;
         this.generation = 1;
@@ -79,7 +78,6 @@ class SoCoABeAgent {
         this.resources = this.owner.sampleAgentResources();
         this.riskTolerance = this.owner.sampleAgentRisk();
         this.freedom = this.owner.sampleAgentFreedom();
-        this.age = Math.floor(this.owner.sampleAgentAge());
         this.tenureTotal = this.owner.sampleAgentTenureYears();
         this.tenureLeft = this.tenureTotal;
         this.monitoringCycle = Math.max(1, Math.floor(10 - (this.resources / 10)));

@@ -1,11 +1,5 @@
 // In src/integration/socoabe_main.js
 
-/**
- * SoCoABE Main Simulation Controller.
- * This class orchestrates the simulation by initializing the model components
- * and managing the annual update cycle. It delegates all reporting and logging
- * tasks to the 'Reporting' utility class.
- */
 var socoabeActionQueue = [];
 
 class SoCoABeMain {
@@ -32,7 +26,6 @@ class SoCoABeMain {
         this.initialized = true;
         console.log("--- SoCoABE Initialization Complete ---");
 
-        // Use the Reporting utility to validate the initial population
         Reporting.runPopulationValidation(this.owners, this.agents);
     }
 
@@ -42,6 +35,16 @@ class SoCoABeMain {
         
         console.log(`\n--- SoCoABE Update Cycle: Year ${year} ---`);
         
+        // ============================================================================
+        // ===== THE FIX IS HERE: Update the benchmark before agents observe ==========
+        // ============================================================================
+        // We only need to do this on years when agents will actually be observing.
+        if (this.agents.length > 0 && year % this.agents[0].monitoringCycle === 0) {
+            console.log("--- Updating Landscape Benchmark ---");
+            this.institution.updateDynamicBenchmark();
+        }
+        // ============================================================================
+
         this.agents.forEach(agent => { agent.standsChangedThisYear = 0; });
 
         this.agents.forEach(agent => {
@@ -55,6 +58,7 @@ class SoCoABeMain {
     }
 
     handleAgentTurnover(year) {
+        // ... (this method is unchanged)
         const replaced = [];
         for (let i = 0; i < this.agents.length; i++) {
             const agent = this.agents[i];
@@ -72,13 +76,13 @@ class SoCoABeMain {
             }
         }
         this.institution.agents = this.agents;
-
         if (replaced.length > 0) {
             console.log(`--- Tenure turnover @ Year ${year}: replaced ${replaced.length} agents ---`);
         }
     }
 }
 
+// ... (The rest of the file: `var socoabe = ...`, `run(year)`, `onBeforeDestroy()` remains unchanged)
 var socoabe = new SoCoABeMain();
 
 function run(year) {
@@ -108,7 +112,6 @@ function run(year) {
             });
         }
         
-        // Use the Reporting utility to collect this year's log data
         if (year % 5 === 0 || year === 1) { 
             Reporting.collectAgentLog(year, socoabe.agents);
         }
@@ -121,7 +124,6 @@ function run(year) {
 function onBeforeDestroy() {
     console.log("--- Simulation finished. Calling onBeforeDestroy() to save logs. ---");
     if (socoabe && socoabe.initialized) {
-        // Use the Reporting utility to save the final log file
         Reporting.saveLogToFile();
     } else {
         console.log("SoCoABE object not ready, cannot save log file.");
