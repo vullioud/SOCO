@@ -1,20 +1,30 @@
+// In src/core/ESMapper.js
+
 /**
- * Maps raw iLand forest metrics to normalized Ecosystem Service (ES) scores.
- * This class acts as the bridge between the simulation's state and the agent's perception.
+ * Maps raw iLand forest metrics to normalized Ecosystem Service (ES) scores using a dynamic,
+ * landscape-wide benchmark. This class is a stateless utility.
  */
 class ESMapper {
 
     /**
+     * A safe normalization helper function.
+     * @param {number} value The value to normalize.
+     * @param {number} min The minimum of the range.
+     * @param {number} max The maximum of the range.
+     * @returns {number} A score between 0 and 1.
+     */
+    normalize(value, min, max) {
+        if (max - min === 0) return 0.5; // Avoid division by zero; return a neutral value.
+        const score = (value - min) / (max - min);
+        return Math.max(0, Math.min(1, score)); // Clamp the score between 0 and 1.
+    }
+
+    /**
      * Extracts relevant metrics from an iLand FMStand object.
-     * This is the primary integration point with the iLand ABE's C++ backend.
-     * @param {object} stand - The iLand stand object (from fmengine.stand(id)).
-     * @returns {object} An object containing key forest metrics.
      */
     extractiLandMetrics(stand) {
-        // These methods and properties are defined in the iLand ABE C++ source
-        // (fmstand.h, fomescript.h) and are available on the 'stand' object in JS.
         return {
-        volume: stand.volume,
+            volume: stand.volume,
             basalArea: stand.basalArea,
             age: stand.age,
             speciesCount: stand.nspecies,
@@ -26,80 +36,70 @@ class ESMapper {
     /**
      * Maps extracted forest metrics to a set of normalized ES scores.
      * @param {object} stand - The iLand stand object.
+     * @param {object} benchmark - The dynamic benchmark object from the Institution.
      * @returns {object} An object with ES scores {production, biodiversity, carbon}.
      */
-    mapForestMetricsToES(stand) {
-        if (!stand) {
-            throw new Error('A valid iLand stand object is required for ES mapping.');
+    mapForestMetricsToES(stand, benchmark) {
+        if (!stand || !benchmark || Object.keys(benchmark).length === 0) {
+            // Return neutral scores if data is missing to prevent errors
+            return { production: 0.5, biodiversity: 0.5, carbon: 0.5 };
         }
 
         const metrics = this.extractiLandMetrics(stand);
 
-        // These mapping functions can be made more complex later. For now, they
-        // provide a simple, functional baseline.
         return {
-            production: this.calculateProductionES(metrics),
-            biodiversity: this.calculateBiodiversityES(metrics),
-            carbon: this.calculateCarbonES(metrics)
+            production: this.calculateProductionES(metrics, benchmark.mai),
+            biodiversity: this.calculateBiodiversityES(metrics, benchmark),
+            carbon: this.calculateCarbonES(metrics, benchmark.volume)
         };
     }
 
     /**
-     * Calculates the Production ES score [0, 1].
-     * @param {object} metrics - The extracted forest metrics.
-     * @returns {number}
+     * Calculates the Production ES score based on Mean Annual Increment.
      */
-    calculateProductionES(metrics) {
-        // A simple proxy for productivity is Mean Annual Increment (Volume / Age).
-        const productivity = metrics.age > 0 ? metrics.volume / metrics.age : 0;
-        const maxProductivity = 15; // A calibrated threshold representing max expected m3/ha/yr.
-        return Math.min(1.0, productivity / maxProductivity);
+    calculateProductionES(metrics, benchmark) {
+        const mai = metrics.age > 0 ? metrics.volume / metrics.age : 0;
+        return this.normalize(mai, benchmark.min, benchmark.max);
     }
 
     /**
-     * Calculates the Biodiversity ES score [0, 1].
-     * @param {object} metrics - The extracted forest metrics.
-     * @returns {number}
+     * Calculates the Biodiversity ES score as a composite index.
      */
-    calculateBiodiversityES(metrics) {
-        // A composite score from species richness and structural diversity.
-        const speciesDiversity = Math.min(1.0, metrics.speciesCount / 8); // Assume 8 species = high diversity.
-        const structuralDiversity = Math.min(1.0, metrics.topHeight / 40); // Assume 40m top height = mature structure.
-        return (speciesDiversity + structuralDiversity) / 2;
+    calculateBiodiversityES(metrics, benchmark) {
+        const speciesScore = this.normalize(metrics.speciesCount, benchmark.speciesCount.min, benchmark.speciesCount.max);
+        const structureScore = this.normalize(metrics.topHeight, benchmark.topHeight.min, benchmark.topHeight.max);
+        
+        // A simple weighted average. This can be made more complex later.
+        return (speciesScore * 0.5) + (structureScore * 0.5);
     }
 
     /**
-     * Calculates the Carbon Storage ES score [0, 1].
-     * @param {object} metrics - The extracted forest metrics.
-     * @returns {number}
+     * Calculates the Carbon Storage ES score based on total biomass carbon.
      */
-    calculateCarbonES(metrics) {
-        // Carbon is roughly proportional to standing volume.
-        const maxCarbonVolume = 600; // A calibrated threshold for max volume in m3/ha. These metrics need to be empirically derived.
-        return Math.min(1.0, metrics.volume / maxCarbonVolume);
+    calculateCarbonES(metrics, benchmark) {
+        const carbonStock = metrics.volume * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
+        
+        const minCarbon = benchmark.min * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
+        const maxCarbon = benchmark.max * ES_CONFIG.BIOMASS_EXPANSION_FACTOR * ES_CONFIG.CARBON_FRACTION;
+        
+        return this.normalize(carbonStock, minCarbon, maxCarbon);
     }
 
     /**
      * Adds random noise to observations based on an agent's resource level.
-     * @param {object} esScores - The calculated ES scores.
-     * @param {number} resourceLevel - The agent's resource level (higher is better).
-     * @returns {object} The ES scores with added noise.
      */
     addObservationNoise(esScores, resourceLevel) {
-        // Higher resources = less noise. Max noise is 20% for lowest resources.
-        const noiseLevel = Math.max(0, (1 - resourceLevel) * 0.2);
+        const noiseLevel = Math.max(0, (1 - resourceLevel) * 0.1);
         const noisyScores = {};
-
         Object.keys(esScores).forEach(es => {
-            const noise = (Math.random() - 0.5) * 2 * noiseLevel; // Symmetrical noise
-            noisyScores[es] = Math.max(0, Math.min(1, esScores[es] + noise)); // clamping
+            const noise = (Math.random() - 0.5) * 2 * noiseLevel;
+            noisyScores[es] = Math.max(0, Math.min(1, esScores[es] + noise));
         });
-
         return noisyScores;
     }
 }
 
-// Universal Module Definition for compatibility
+// Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ESMapper;
 } else {
