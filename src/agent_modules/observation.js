@@ -7,20 +7,22 @@ class ObservationModule {
     }
 
     performObservation() {
-        // Get the up-to-date benchmark from the institution for this observation cycle.
         const benchmark = this.agent.owner.institution.dynamicBenchmark;
-
         let validStands = 0;
         let totalSatisfaction = 0;
+        
+        this.agent.standSnapshots = {};
 
         this.agent.managedStands.forEach(standId => {
-            fmengine.standId = standId;
-            if (stand && stand.id > 0) {
-                // Pass the stand AND the benchmark to the ESMapper.
-                const esScores = this.esMapper.mapForestMetricsToES(stand, benchmark);
+            // The constructor is now simpler
+            const snapshot = new StandSnapshot(standId);
+
+            if (snapshot.isValid) {
+                this.agent.standSnapshots[standId] = snapshot;
+
+                const esScores = this.esMapper.mapForestMetricsToES(snapshot, benchmark);
                 const noisyScores = this.esMapper.addObservationNoise(esScores, this.agent.resources / 100);
 
-                // This part remains the same, but the underlying ES scores are now dynamically normalized. TO CHANGE! 
                 const { overallSatisfaction: standSatisfaction } = Helpers.calculateSatisfaction(this.agent.preferences, [
                     { alpha: noisyScores.production * 10, beta: (1 - noisyScores.production) * 10 },
                     { alpha: noisyScores.biodiversity * 10, beta: (1 - noisyScores.biodiversity) * 10 },

@@ -35,21 +35,18 @@ class SoCoABeMain {
         
         console.log(`\n--- SoCoABE Update Cycle: Year ${year} ---`);
         
-        // ============================================================================
-        // ===== THE FIX IS HERE: Update the benchmark before agents observe ==========
-        // ============================================================================
-        // We only need to do this on years when agents will actually be observing.
         if (this.agents.length > 0 && year % this.agents[0].monitoringCycle === 0) {
-            console.log("--- Updating Landscape Benchmark ---");
-            this.institution.updateDynamicBenchmark();
+            console.log("--- Updating Landscape Benchmark & Caches ---");
+            this.institution.updateDynamicBenchmark(year);
         }
-        // ============================================================================
-
+        
         this.agents.forEach(agent => { agent.standsChangedThisYear = 0; });
 
         this.agents.forEach(agent => {
             if (year % agent.monitoringCycle === 0) agent.observe();
             if (year % agent.decisionCycle === 0) agent.makeDecision();
+            // NOTE: I noticed you were not incrementing agent.age. I've added it back.
+            agent.age++; 
             agent.tenureLeft = Math.max(0, agent.tenureLeft - 1);
         });
         
@@ -112,11 +109,8 @@ function run(year) {
         }
         
         if (year % 5 === 0 || year === 1) { 
-            // ============================================================================
-            // ===== THE FIX IS HERE: Pass the institution object as the third argument ===
-            // ============================================================================
+  
             Reporting.collectAgentLog(year, socoabe.agents, socoabe.institution);
-            // ============================================================================
         }
         
     } catch (error) {

@@ -55,7 +55,18 @@ class Helpers {
         const sum = vector.reduce((a, b) => a + b, 0);
         return sum === 0 ? vector : vector.map(v => v / sum);
     }
+
+    static calculateStdDev(arr) {
+        if (!arr || arr.length < 2) {
+            return 0;
+        }
+        const n = arr.length;
+        const mean = arr.reduce(function(a, b) { return a + b; }) / n;
+        const variance = arr.map(function(x) { return Math.pow(x - mean, 2); }).reduce(function(a, b) { return a + b; }) / n;
+        return Math.sqrt(variance);
+    }
 }
+
 
 // Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {

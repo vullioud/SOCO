@@ -1,97 +1,54 @@
 // In src/core/ESMapper.js
 
 /**
- * Maps raw iLand forest metrics to normalized Ecosystem Service (ES) scores using a dynamic,
- * landscape-wide benchmark. This class is a stateless utility.
+ * Maps a rich StandSnapshot object to normalized Ecosystem Service (ES) scores
+ * using a dynamic, landscape-wide benchmark. This class is a stateless utility.
  */
 class ESMapper {
-
-    /**
-     * A safe normalization helper function.
-     * @param {number} value The value to normalize.
-     * @param {number} min The minimum of the range.
-     * @param {number} max The maximum of the range.
-     * @returns {number} A score between 0 and 1.
-     */
     normalize(value, min, max) {
-        if (max - min === 0) return 0.5; // Avoid division by zero; return a neutral value.
+        if (max - min === 0) return 0.5;
         const score = (value - min) / (max - min);
-        return Math.max(0, Math.min(1, score)); // Clamp the score between 0 and 1.
+        return Math.max(0, Math.min(1, score));
     }
 
-    /**
-     * Extracts relevant metrics from an iLand FMStand object.
-     */
-    extractiLandMetrics(stand) {
-        return {
-            volume: stand.volume,
-            basalArea: stand.basalArea,
-            age: stand.age,
-            speciesCount: stand.nspecies,
-            topHeight: stand.topHeight,
-            area: stand.area
-        };
-    }
-
-    /**
-     * Maps extracted forest metrics to a set of normalized ES scores.
-     * @param {object} stand - The iLand stand object.
-     * @param {object} benchmark - The dynamic benchmark object from the Institution.
-     * @returns {object} An object with ES scores {production, biodiversity, carbon}.
-     */
-    mapForestMetricsToES(stand, benchmark) {
-        if (!stand || !benchmark || Object.keys(benchmark).length === 0) {
-            // Return neutral scores if data is missing to prevent errors
+    mapForestMetricsToES(snapshot, benchmark) {
+        if (!snapshot || !benchmark || Object.keys(benchmark).length === 0) {
             return { production: 0.5, biodiversity: 0.5, carbon: 0.5 };
         }
-
-        const metrics = this.extractiLandMetrics(stand);
-
         return {
-            production: this.calculateProductionES(metrics, benchmark.mai),
-            biodiversity: this.calculateBiodiversityES(metrics, benchmark),
-            carbon: this.calculateCarbonES(metrics, benchmark.volume)
+            production: this.calculateProductionES(snapshot, benchmark.mai),
+            biodiversity: this.calculateBiodiversityES(snapshot, benchmark),
+            carbon: this.calculateCarbonES(snapshot, benchmark.volume)
         };
     }
 
-    /**
-     * Calculates the Production ES score based on Mean Annual Increment.
-     */
-    calculateProductionES(metrics, benchmark) {
-        const mai = metrics.age > 0 ? metrics.volume / metrics.age : 0;
-        return this.normalize(mai, benchmark.min, benchmark.max);
+    calculateProductionES(snapshot, maiBenchmark) {
+        if (!maiBenchmark) return 0.5;
+        const mai = snapshot.age > 0 ? snapshot.volume / snapshot.age : 0;
+        return this.normalize(mai, maiBenchmark.min, maiBenchmark.max);
     }
 
-    /**
-     * Calculates the Biodiversity ES score as a composite index.
-     */
-    calculateBiodiversityES(metrics, benchmark) {
-        const speciesScore = this.normalize(metrics.speciesCount, benchmark.speciesCount.min, benchmark.speciesCount.max);
-        const structureScore = this.normalize(metrics.topHeight, benchmark.topHeight.min, benchmark.topHeight.max);
-        
-        // A simple weighted average. This can be made more complex later.
+    
+    calculateBiodiversityES(snapshot, fullBenchmark) {
+        const speciesBench = fullBenchmark.speciesCount || { min: 0, max: 10 };
+        const structureBench = fullBenchmark.topHeight || { min: 0, max: 15 };
+
+        const speciesScore = this.normalize(snapshot.composition.speciesCount, speciesBench.min, speciesBench.max);
+        const structureScore = this.normalize(snapshot.topHeight, structureBench.min, structureBench.max);
+
+        // Reverted to a simple 50/50 weighted average for stability.
         return (speciesScore * 0.5) + (structureScore * 0.5);
     }
 
-    /**
-     * Calculates the Carbon Storage ES score based on total biomass carbon.
-     */
-    calculateCarbonES(metrics, benchmark) {
-        const carbonStock = metrics.volume;
-
-        const minCarbon = benchmark.min;
-        const maxCarbon = benchmark.max;
-
-        return this.normalize(carbonStock, minCarbon, maxCarbon);
+    calculateCarbonES(snapshot, volumeBenchmark) {
+        if (!volumeBenchmark) return 0.5;
+        return this.normalize(snapshot.volume, volumeBenchmark.min, volumeBenchmark.max);
     }
-
-    /**
-     * Adds random noise to observations based on an agent's resource level.
-     */
+    
     addObservationNoise(esScores, resourceLevel) {
-        const noiseLevel = Math.max(0, (1 - resourceLevel) * 0.1);
+        const noiseLevel = Math.max(0, (1 - resourceLevel) * 0.2);
         const noisyScores = {};
-        Object.keys(esScores).forEach(es => {
+        Object.keys(esScores).forEach(function(es) {
             const noise = (Math.random() - 0.5) * 2 * noiseLevel;
             noisyScores[es] = Math.max(0, Math.min(1, esScores[es] + noise));
         });

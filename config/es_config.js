@@ -5,6 +5,7 @@
  */
 var ES_CONFIG = {
     benchmarkMemoryWindow: 20,
+    biodiversityWeights: { species: 0.5, structure: 0.4, deadwood: 0.1}
 };
 
 // For NodeJS testing compatibility
