@@ -1,43 +1,59 @@
-// In src/agent_modules/observation.js
-
 class ObservationModule {
     constructor(agent) {
         this.agent = agent;
-        this.esMapper = new ESMapper();
+        // --- THE FIX IS HERE ---
+        // --- REMOVE ---
+        // this.esMapper = new ESMapper();
+        
+        // +++ ADD +++
+        // Use the correctly named ForestMetricsMapper class
+        this.metricsMapper = new ForestMetricsMapper();
     }
 
     performObservation() {
         const benchmark = this.agent.owner.institution.dynamicBenchmark;
-        let validStands = 0;
-        let totalSatisfaction = 0;
-        
+        if (!benchmark || !benchmark.dbhStdDev) return; // Guard against missing benchmark
+
         this.agent.standSnapshots = {};
 
         this.agent.managedStands.forEach(standId => {
-            // The constructor is now simpler
             const snapshot = new StandSnapshot(standId);
 
             if (snapshot.isValid) {
                 this.agent.standSnapshots[standId] = snapshot;
 
-                const esScores = this.esMapper.mapForestMetricsToES(snapshot, benchmark);
-                const noisyScores = this.esMapper.addObservationNoise(esScores, this.agent.resources / 100);
+                // Normalize the observed structure score
+                const trueStructureScore = this.metricsMapper.normalize(snapshot.structure.dbhStdDev, benchmark.dbhStdDev.min, benchmark.dbhStdDev.max);
 
-                const { overallSatisfaction: standSatisfaction } = Helpers.calculateSatisfaction(this.agent.preferences, [
-                    { alpha: noisyScores.production * 10, beta: (1 - noisyScores.production) * 10 },
-                    { alpha: noisyScores.biodiversity * 10, beta: (1 - noisyScores.biodiversity) * 10 },
-                    { alpha: noisyScores.carbon * 10, beta: (1 - noisyScores.carbon) * 10 }
-                ]);
+                // Add noise to the observation based on agent resources
+                const noiseLevel = Math.max(0, (1 - (this.agent.resources / 100)) * 0.3);
+                const noise = (Math.random() - 0.5) * 2 * noiseLevel;
+                const noisyStructureScore = Math.max(0, Math.min(1, trueStructureScore + noise));
 
-                this.agent.standSatisfactions[standId] = standSatisfaction;
-                totalSatisfaction += standSatisfaction;
-                validStands++;
+                // Update the agent's belief about the structure
+                this.agent.updateBeliefs(noisyStructureScore);
             }
         });
+    }
 
-        if (validStands > 0) {
-            this.agent.averageSatisfaction = totalSatisfaction / validStands;
-            this.agent.satisfactionHistory.push(this.agent.averageSatisfaction);
+        performObservationForStand(standId) {
+        const benchmark = this.agent.owner.institution.dynamicBenchmark;
+        const snapshot = new StandSnapshot(standId);
+
+        if (snapshot.isValid) {
+            this.agent.standSnapshots[standId] = snapshot;
+
+            // This module's only job is to classify the stand state.
+            // The logic for classification should be implemented here.
+            // For now, we'll use placeholders.
+            const structure = (snapshot.volume > 300) ? 'high_structure' : 'low_structure';
+            const dominance = (snapshot.composition.dominantSpecies === 'piab') ? 'conifer_dominated' : 'broadleaf_dominated';
+
+            // Store the assessment directly on the agent for the cognition module to use.
+            if (!this.agent.standAssessments) {
+                this.agent.standAssessments = {};
+            }
+            this.agent.standAssessments[standId] = { structure, dominance };
         }
     }
 }

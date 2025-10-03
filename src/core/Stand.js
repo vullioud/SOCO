@@ -1,9 +1,3 @@
-// In src/core/StandSnapshot.js
-
-/**
- * A data-rich class that represents the state of a single iLand stand at a specific point in time.
- * This simplified version avoids complex tree and deadwood iterations for stability.
- */
 class StandSnapshot {
     constructor(standId) {
         fmengine.standId = standId;
@@ -31,16 +25,26 @@ class StandSnapshot {
             this.composition.distribution[stand.speciesId(i)] = stand.relSpeciesBasalArea(i);
         }
 
-        // --- Structure (Simplified) ---
+        // --- Structure ---
         this.structure = {
-            dbhMean: stand.dbh
+            dbhMean: stand.dbh,
+            dbhStdDev: 0 
         };
+
+        stand.trees.loadAll();
+        const dbhValues = [];
+        for (let i = 0; i < stand.trees.count; i++) {
+            dbhValues.push(stand.trees.tree(i).dbh);
+        }
+        this.structure.dbhStdDev = Helpers.calculateStdDev(dbhValues);
 
         // --- History ---
         this.history = {
             lastActivity: stand.lastActivity,
             yearsSinceLastActivity: stand.elapsed
         };
+
+        this.nextAssessmentYear = Number(stand.flag('nextAssessmentYear')) || 0;
     }
 }
 

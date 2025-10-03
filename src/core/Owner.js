@@ -1,20 +1,11 @@
-/**
- * Represents an Owner, a meta-agent that manages a portfolio of stands
- * and a population of SoCoABeAgents.
- */
+
 class Owner {
-    /**
-     * @param {Institution} institution - A reference to the parent Institution object.
-     * @param {string} type
-     * @param {object} config
-     * @param {object[]} assignedStands
-     * @param {object} dependencies - An object containing required utility classes.
-     */
     constructor(institution, type, config, assignedStands, dependencies) {
-        this.institution = institution; // Store reference to the parent institution
+        this.institution = institution;
         this.type = type;
         this.config = config;
         this.assignedStands = assignedStands;
+        this.dependencies = dependencies; // Store dependencies for agent creation
         
         if (!dependencies || !dependencies.SoCoABeAgent || !dependencies.Helpers || !dependencies.Distributions) {
             throw new Error("Owner constructor requires dependencies (SoCoABeAgent, Helpers, Distributions).");
@@ -24,24 +15,11 @@ class Owner {
         this.Distributions = dependencies.Distributions;
 
         this.agents = [];
-        this.stpPerformance = {};
-        this.recruitmentProbabilities = {};
-        
-        this.initializePerformanceTracking();
-    }
-
-    initializePerformanceTracking() {
-        this.config.protoSTPs.forEach(stpName => {
-            this.stpPerformance[stpName] = { satisfactions: [], usageCount: 0, avgSatisfaction: 0.5 };
-        });
-        const equalProb = 1.0 / this.config.protoSTPs.length;
-        this.config.protoSTPs.forEach(stpName => { this.recruitmentProbabilities[stpName] = equalProb; });
     }
 
     createAgents() {
         const totalStandsForOwner = this.assignedStands.length;
         if (totalStandsForOwner === 0) {
-            console.log(`Owner '${this.type}' has no stands assigned, creating 0 agents.`);
             return;
         }
 
@@ -68,18 +46,10 @@ class Owner {
             this.agents.push(agent);
             agentCounter++;
         }
-
-        console.log(`Owner '${this.type}' with ${totalStandsForOwner} stands created ${this.agents.length} agents through iterative assignment.`);
+        console.log(`Owner '${this.type}' with ${totalStandsForOwner} stands created ${this.agents.length} agents.`);
     }
 
-   /**
-     * Creates a new agent to replace a retiring one.
-     * This is a key part of generational turnover.
-     * @param {SoCoABeAgent} retiringAgent - The agent who is retiring.
-     * @param {number} currentYear - The current simulation year.
-     * @returns {SoCoABeAgent} The new replacement agent.
-     */
-     replaceAgent(retiringAgent, currentYear) {
+    replaceAgent(retiringAgent, currentYear) {
         const newGeneration = retiringAgent.generation + 1;
         const newAgentName = `${this.type}_agent_gen${newGeneration}_${currentYear}`;
         const newAgent = new this.SoCoABeAgent(this, newAgentName);
@@ -88,17 +58,19 @@ class Owner {
         newAgent.assignStands(retiringAgent.managedStands);
         newAgent.sampleFromOwner(); 
         
+        newAgent.managedStands.forEach(standId => {
+            fmengine.standId = standId;
+            if (stand && stand.id > 0) {
+                stand.setFlag('nextAssessmentYear', 0); 
+            }
+        });
+        
         return newAgent;
     }
-
     
-    /**
-     * Samples the tenure (time in service) for a new agent.
-     * @returns {number} The number of years the agent will be active.
-     */
     sampleAgentTenureYears() {
         const tenureConfig = this.config.tenure;
-        if (!tenureConfig) return 30; // Default tenure
+        if (!tenureConfig) return 30;
         
         const sample = this.Distributions.sampleBeta(tenureConfig.alpha, tenureConfig.beta);
         return Math.floor(tenureConfig.min + (tenureConfig.max - tenureConfig.min) * sample);
@@ -109,15 +81,8 @@ class Owner {
     sampleAgentResources() { return this.Distributions.sampleGamma(this.config.resources.alpha, this.config.resources.scale); }
     sampleAgentRisk() { return this.Distributions.sampleBeta(this.config.riskTolerance.alpha, this.config.riskTolerance.beta); }
     sampleAgentFreedom() { return this.Distributions.sampleBeta(this.config.freedomDistribution.alpha, this.config.freedomDistribution.beta); }
-    
-    selectProtoSTP(agentPreferences) {
-        const availableSTPs = this.config.protoSTPs;
-        const randomIndex = Math.floor(Math.random() * availableSTPs.length);
-        return availableSTPs[randomIndex];
-    }
 }
 
-// Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Owner;
 } else {

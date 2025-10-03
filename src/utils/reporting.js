@@ -86,83 +86,152 @@ class Reporting {
     static collectAgentLog(year, agents, institution) {
         if (!agents || agents.length === 0) return;
         
-        // ============================================================================
-        // ===== THE FIX IS HERE: Use Reporting.isAgentLogInitialized instead of 'this' =====
-        // ============================================================================
         if (!Reporting.isAgentLogInitialized) {
             const newHeader = [
-                'year', 'agentId', 'ownerType', 'standId', 'tenureLeft',
+                'year', 'agentId', 'ownerType', 'standId', 'currentSTP', 'tenureLeft',
                 'pref_prod', 'pref_bio', 'pref_carb',
-                'stand_satisfaction', 'currentSTP', 'agent_avg_satisfaction',
-                'stands_changed_stp', 'stp_coherence',
-                'bm_mai_min', 'bm_mai_max', 'bm_vol_min', 'bm_vol_max',
-                'bm_spec_min', 'bm_spec_max', 'bm_h_min', 'bm_h_max'
+                'agent_managed_stands', 'agent_unique_stps', 'agent_stp_coherence',
+                'bm_vol_min', 'bm_vol_max', 'bm_spec_min', 'bm_spec_max'
             ].join(',');
-            Reporting.agentLogData.push(newHeader); // Use Reporting.agentLogData
-            Reporting.isAgentLogInitialized = true;   // Use Reporting.isAgentLogInitialized
+            Reporting.agentLogData.push(newHeader);
+            Reporting.isAgentLogInitialized = true;
         }
     
         const benchmark = institution.dynamicBenchmark || {};
-        const bm_mai = benchmark.mai || { min: -1, max: -1 };
         const bm_vol = benchmark.volume || { min: -1, max: -1 };
         const bm_spec = benchmark.speciesCount || { min: -1, max: -1 };
-        const bm_h = benchmark.topHeight || { min: -1, max: -1 };
 
         agents.forEach(agent => {
-            const agentAvgSatisfaction = agent.averageSatisfaction;
-            const standsChangedStp = agent.standsChangedThisYear;
+            const managedStandsCount = agent.managedStands.length;
             const uniqueStps = new Set(Object.values(agent.standStrategies));
-            const stpCoherence = agent.managedStands.length / (uniqueStps.size > 0 ? uniqueStps.size : 1);
+            const uniqueStpsCount = uniqueStps.size > 0 ? uniqueStps.size : 1;
+            const stpCoherence = managedStandsCount / uniqueStpsCount;
 
             agent.managedStands.forEach(standId => {
-                const standSatisfaction = agent.standSatisfactions[standId] !== undefined ? agent.standSatisfactions[standId] : -1;
-                const currentSTP = agent.standStrategies[standId] || agent.currentProtoSTP;
+                const currentSTP = agent.standStrategies[standId] || 'None';
     
                 const row = [
-                    year, agent.agentId, agent.owner.type, standId, agent.tenureLeft,
+                    year, agent.agentId, agent.owner.type, standId, currentSTP, agent.tenureLeft,
                     agent.preferences[0].toFixed(3), agent.preferences[1].toFixed(3), agent.preferences[2].toFixed(3),
-                    standSatisfaction.toFixed(3), currentSTP, agentAvgSatisfaction.toFixed(3),
-                    standsChangedStp, stpCoherence.toFixed(2),
-                    bm_mai.min.toFixed(2), bm_mai.max.toFixed(2),
+                    managedStandsCount, uniqueStpsCount, stpCoherence.toFixed(2),
                     bm_vol.min.toFixed(2), bm_vol.max.toFixed(2),
-                    bm_spec.min.toFixed(0), bm_spec.max.toFixed(0),
-                    bm_h.min.toFixed(2), bm_h.max.toFixed(2)
+                    bm_spec.min.toFixed(0), bm_spec.max.toFixed(0)
                 ].join(',');
                 
-                // ============================================================================
-                // ===== THE FIX IS HERE: Use Reporting.agentLogData instead of 'this' ======
-                // ============================================================================
                 Reporting.agentLogData.push(row);
+            });
+            
+            agent.standsChangedThisYear = 0;
+        });
+    }
+
+    /**
+     * NEW FUNCTION: Collects detailed data for each stand.
+     */
+    static collectStandLog(year, agents, institution) {
+        if (!agents || agents.length === 0) return;
+
+        if (!Reporting.isStandLogInitialized) {
+            const newHeader = [
+                'year', 'standId', 'agentId', 'ownerType', 'currentSTP', 'age', 'volume', 'basalArea',
+                'structure_dbh_stddev', 'structure_score_normalized', 'structure_class',
+                'species_class', 'dominant_species', 'species_count', 'species_distribution'
+            ].join(',');
+            Reporting.standLogData.push(newHeader);
+            Reporting.isStandLogInitialized = true;
+        }
+
+        const benchmark = institution.dynamicBenchmark;
+        if (!benchmark || !benchmark.dbhStdDev) return; // Wait for benchmark to be ready
+
+        const metricsMapper = new ForestMetricsMapper();
+
+        agents.forEach(agent => {
+            agent.managedStands.forEach(standId => {
+                const snapshot = agent.standSnapshots[standId];
+                if (!snapshot || !snapshot.isValid) return;
+
+                const currentSTP = agent.standStrategies[standId] || 'None';
+                
+                // Calculate structure metrics
+                const rawStructureValue = snapshot.structure.dbhStdDev;
+                const normalizedScore = metricsMapper.normalize(rawStructureValue, benchmark.dbhStdDev.min, benchmark.dbhStdDev.max);
+                const structureClass = metricsMapper.classifyStructure(normalizedScore);
+                
+                // Get species metrics
+                const speciesClass = metricsMapper.classifySpecies(snapshot.composition);
+                
+                // Format species distribution object into a string: "piab:0.75|fasy:0.25"
+                const speciesDistString = Object.entries(snapshot.composition.distribution)
+                    .map(([species, share]) => `${species}:${share.toFixed(2)}`)
+                    .join('|');
+
+                const row = [
+                    year, snapshot.id, agent.agentId, agent.owner.type, currentSTP, snapshot.age.toFixed(1),
+                    snapshot.volume.toFixed(2), snapshot.basalArea.toFixed(2),
+                    rawStructureValue.toFixed(2), normalizedScore.toFixed(3), structureClass,
+                    speciesClass, snapshot.composition.dominantSpecies, snapshot.composition.speciesCount,
+                    speciesDistString
+                ].join(',');
+
+                Reporting.standLogData.push(row);
             });
         });
     }
  
     /**
-     * Saves the collected agent log data to a CSV file.
+     * MODIFIED FUNCTION: Saves all collected log data to their respective CSV files.
      */
-    static saveLogToFile() {
-        console.log("--- Preparing to save SoCoABE agent log. ---");
-        // ============================================================================
-        // ===== THE FIX IS HERE: Use Reporting.agentLogData instead of 'this' ======
-        // ============================================================================
+    static saveLogsToFile() {
+        console.log("--- Preparing to save SoCoABE logs. ---");
+        this._saveAgentLog();
+        this._saveStandLog();
+    }
+
+    /**
+     * Private helper to save the agent log.
+     */
+    static _saveAgentLog() {
         if (Reporting.agentLogData.length > 1) {
             const filePath = Globals.path("output/socoabe_agent_log.csv");
             const fileContent = Reporting.agentLogData.join('\n');
-            console.log(`Attempting to save ${Reporting.agentLogData.length} rows to: ${filePath}`);
+            console.log(`Attempting to save ${Reporting.agentLogData.length} agent log rows to: ${filePath}`);
             try {
                 Globals.saveTextFile(filePath, fileContent);
                 console.log("--- Agent log successfully saved! ---");
             } catch (e) {
-                console.error("ERROR during Globals.saveTextFile call:", e.message);
+                console.error("ERROR during agent log save:", e.message);
             }
         } else {
             console.log("No agent log data collected, skipping file write.");
         }
     }
+
+    /**
+     * NEW Private helper to save the stand log.
+     */
+    static _saveStandLog() {
+        if (Reporting.standLogData.length > 1) {
+            const filePath = Globals.path("output/socoabe_stand_log.csv");
+            const fileContent = Reporting.standLogData.join('\n');
+            console.log(`Attempting to save ${Reporting.standLogData.length} stand log rows to: ${filePath}`);
+            try {
+                Globals.saveTextFile(filePath, fileContent);
+                console.log("--- Stand log successfully saved! ---");
+            } catch (e) {
+                console.error("ERROR during stand log save:", e.message);
+            }
+        } else {
+            console.log("No stand log data collected, skipping file write.");
+        }
+    }
 }
 
+// Initialize static properties for both logs
 Reporting.agentLogData = [];
 Reporting.isAgentLogInitialized = false;
+Reporting.standLogData = [];
+Reporting.isStandLogInitialized = false;
 
 // Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {

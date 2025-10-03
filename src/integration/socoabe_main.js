@@ -1,4 +1,4 @@
-// In src/integration/socoabe_main.js
+// ----- Start of File: src/integration/socoabe_main.js (Corrected)-----
 
 var socoabeActionQueue = [];
 
@@ -11,11 +11,24 @@ class SoCoABeMain {
         this.currentYear = 0;
     }
 
+    // --- MODIFIED ---
+    // The initializeBaseSTPs method has been REMOVED from this file.
+    // The call to it has also been REMOVED from the initialize() method below.
     initialize() {
         if (this.initialized) return;
         console.log("--- Initializing SoCoABE Simulation World ---");
         const standData = fmengine.standIds.map(id => ({ id: id }));
-        const dependencies = { Distributions, Helpers, ESMapper, Owner, SoCoABeAgent, OWNER_TYPE_CONFIGS, PROTO_STPS, lib };
+        
+        const dependencies = {
+            Distributions,
+            Helpers,
+            ForestMetricsMapper,
+            Owner, 
+            SoCoABeAgent,
+            OWNER_TYPE_CONFIGS,
+            BASE_STP_DEFINITIONS, 
+            STP_DECISION_MATRIX   
+        };
         
         this.institution = new Institution();
         this.institution.initialize(standData, dependencies);
@@ -35,18 +48,14 @@ class SoCoABeMain {
         
         console.log(`\n--- SoCoABE Update Cycle: Year ${year} ---`);
         
-        if (this.agents.length > 0 && year % this.agents[0].monitoringCycle === 0) {
-            console.log("--- Updating Landscape Benchmark & Caches ---");
+        if (this.agents.length > 0) {
+            console.log("--- Updating Landscape Benchmark ---");
             this.institution.updateDynamicBenchmark(year);
         }
         
-        this.agents.forEach(agent => { agent.standsChangedThisYear = 0; });
-
         this.agents.forEach(agent => {
-            if (year % agent.monitoringCycle === 0) agent.observe();
-            if (year % agent.decisionCycle === 0) agent.makeDecision();
-            // NOTE: I noticed you were not incrementing agent.age. I've added it back.
-            agent.age++; 
+            agent.observe();
+            agent.makeDecision(year);
             agent.tenureLeft = Math.max(0, agent.tenureLeft - 1);
         });
         
@@ -54,7 +63,6 @@ class SoCoABeMain {
     }
 
     handleAgentTurnover(year) {
-        // ... (this method is unchanged)
         const replaced = [];
         for (let i = 0; i < this.agents.length; i++) {
             const agent = this.agents[i];
@@ -78,11 +86,18 @@ class SoCoABeMain {
     }
 }
 
-// ... (The rest of the file: `var socoabe = ...`, `run(year)`, `onBeforeDestroy()` remains unchanged)
 var socoabe = new SoCoABeMain();
 
 function run(year) {
     try {
+        const warmup_period = 10; 
+        if (year < warmup_period) {
+            if (year === 1) {
+                console.log(`--- SoCoABE model is in warm-up period until year ${warmup_period}. Forest is developing naturally. ---`);
+            }
+            return;
+        }
+
         if (!socoabe.initialized) {
             socoabe.initialize();
         }
@@ -94,13 +109,21 @@ function run(year) {
             const actions = [...socoabeActionQueue];
             socoabeActionQueue = [];
             console.log(`--- SoCoABE Action Phase: Executing ${actions.length} queued actions ---`);
+            
             actions.forEach(action => {
                 try {
                     fmengine.standId = action.standId;
+                    
                     if (stand && stand.id > 0) {
-                        stand.setSTP(action.newStpName);
-                        lib.initStandObj();
+                        
+                        const currentAge = stand.absoluteAge;
                         stand.setAbsoluteAge(0); 
+                        stand.setSTP(action.newStpName);
+                        stand.setAbsoluteAge(currentAge);
+                        lib.initStandObj();
+
+                    } else {
+                        console.error(`Action Queue: Could not find or set context for stand ${action.standId}. Action skipped.`);
                     }
                 } catch (e) {
                     console.error(`Error executing action for stand ${action.standId}: ${e.message}`);
@@ -108,9 +131,9 @@ function run(year) {
             });
         }
         
-        if (year % 5 === 0 || year === 1) { 
-  
+        if (year % 5 === 0 || year === warmup_period) { 
             Reporting.collectAgentLog(year, socoabe.agents, socoabe.institution);
+            Reporting.collectStandLog(year, socoabe.agents, socoabe.institution);
         }
         
     } catch (error) {
@@ -121,9 +144,11 @@ function run(year) {
 function onBeforeDestroy() {
     console.log("--- Simulation finished. Calling onBeforeDestroy() to save logs. ---");
     if (socoabe && socoabe.initialized) {
-        Reporting.saveLogToFile();
+        Reporting.saveLogsToFile();
     } else {
         console.log("SoCoABE object not ready, cannot save log file.");
     }
     console.log("--- onBeforeDestroy() complete. ---");
 }
+
+// ----- End of File: src/integration/socoabe_main.js -----```

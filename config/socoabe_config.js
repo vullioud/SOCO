@@ -4,15 +4,10 @@
  * available variables that were loaded by `Globals.include` in the main script.
  */
 
-// NOTE: We do NOT use 'require'. OWNER_TYPE_CONFIGS and PROTO_STPS
-// are expected to be in the global scope already.
-
-
 if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
-        // ... (OWNER_TYPE_CONFIGS and PROTO_STPS are unchanged)
+        core_abe_agent_type: 'socoabe_controller', 
 
-        // C. Global Simulation Parameters
         INSTITUTION: {
             ownerTypeDistribution: [0.2, 0.7, 0.1], // [state, big_company, small_private] by AREA
         },
