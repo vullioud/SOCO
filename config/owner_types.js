@@ -1,8 +1,5 @@
-/**
- * Owner Type Configurations for the SoCoABE Model.
- */
+// ----- Start of File: config/owner_types.js (Cleaned) -----
 
-// Declaring with 'var' at the top level makes this global in the iLand environment.
 var OWNER_TYPE_CONFIGS = {
     'state': {
         esPreferences: [2, 8, 3],
@@ -11,7 +8,7 @@ var OWNER_TYPE_CONFIGS = {
         tenure: { min: 12, max: 45, alpha: 3.5, beta: 2.8},
         freedomDistribution: { alpha: 3, beta: 7 },
         ageDistribution: { mean: 35, stddev: 8 },
-        protoSTPs: ['conservation_intensive', 'biodiversity_focused'],
+        // protoSTPs removed
         beliefPriors: {
             production: { alpha: 3, beta: 3 },
             biodiversity: { alpha: 5, beta: 2 },
@@ -26,7 +23,7 @@ var OWNER_TYPE_CONFIGS = {
         tenure: { min: 8, max: 40, alpha: 3.0, beta: 3.2 },
         freedomDistribution: { alpha: 4, beta: 6 },
         ageDistribution: { mean: 32, stddev: 6 },
-        protoSTPs: ['intensive_production', 'rotation_optimization'],
+        // protoSTPs removed
         beliefPriors: {
             production: { alpha: 5, beta: 2 },
             biodiversity: { alpha: 2, beta: 5 },
@@ -41,7 +38,7 @@ var OWNER_TYPE_CONFIGS = {
         tenure: { min: 5, max: 45, alpha: 3.2, beta: 2.6 },
         freedomDistribution: { alpha: 7, beta: 3 },
         ageDistribution: { mean: 45, stddev: 12 },
-        protoSTPs: ['traditional_mgmt', 'low_intensity'],
+        // protoSTPs removed
         beliefPriors: {
             production: { alpha: 4, beta: 3 },
             biodiversity: { alpha: 4, beta: 3 },
@@ -51,7 +48,7 @@ var OWNER_TYPE_CONFIGS = {
     }
 };
 
-// For NodeJS testing compatibility
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = OWNER_TYPE_CONFIGS;
 }
+// ----- End of File -----```

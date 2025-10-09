@@ -8,6 +8,19 @@ class CognitionModule {
     }
 
     makeDecision(currentYear) {
+        // --- Respect the enableReassessment debug flag ---
+        if (SoCoABE_CONFIG.DEBUG.enableReassessment === false) {
+            // If reassessment is disabled, only make a decision if no strategy has ever been set.
+            // This now correctly handles newly created agents.
+            this.agent.managedStands.forEach(standId => {
+                if (!this.agent.standStrategies[standId] || this.agent.standStrategies[standId] === 'Initial') {
+                     this.formulateNewStrategy(standId, currentYear);
+                }
+            });
+            return; // Exit after this check
+        }
+
+        // --- Normal Re-assessment Logic ---
         this.agent.managedStands.forEach(standId => {
             const snapshot = this.agent.standSnapshots[standId];
             if (snapshot && snapshot.isValid && (snapshot.nextAssessmentYear <= currentYear)) {
@@ -29,11 +42,31 @@ class CognitionModule {
     }
 
     formulateNewStrategy(standId, currentYear) {
+
+        if (SoCoABE_CONFIG.DEBUG && SoCoABE_CONFIG.DEBUG.forceSingleSTP) {
+            const forcedStpName = SoCoABE_CONFIG.DEBUG.forceSingleSTP;
+            // First, verify the forced STP name is valid before using it.
+            if (!this.dependencies.BASE_STP_DEFINITIONS[forcedStpName]) {
+                 console.error(`!!! DEBUG ERROR: The forced STP name '${forcedStpName}' is NOT a valid STP defined in base_STP_definitions.js. Aborting decision.`);
+                 return;
+            }
+            this.logAndExecuteDecision(standId, forcedStpName, currentYear, 'FORCED_DEBUG', 'FORCED_DEBUG');
+            return;
+        }
+
         const snapshot = this.agent.standSnapshots[standId];
         const benchmark = this.agent.owner.institution.dynamicBenchmark;
-        if (!benchmark || !benchmark.dbhStdDev) return;
 
-        // --- NEW LOGIC TO BUILD THE FULL STP NAME ---
+        // --- ADD THESE GUARD CLAUSES ---
+        if (!snapshot || !snapshot.isValid) {
+            console.error(`Agent ${this.agent.agentId} cannot decide for stand ${standId}: Stand Snapshot is missing or invalid.`);
+            return;
+        }
+        if (!benchmark || !benchmark.dbhStdDev || !benchmark.dbhStdDev.max) {
+            console.error(`Agent ${this.agent.agentId} cannot decide for stand ${standId}: Dynamic Benchmark is not ready.`);
+            return;
+        }
+        // --- END OF ADDED GUARD CLAUSES ---
 
         // 1. Determine base STP from structure and owner type
         const ownerType = this.agent.owner.type;
@@ -46,25 +79,23 @@ class CognitionModule {
         
         const choices = this.dependencies.STP_DECISION_MATRIX[ownerType]?.[structureClass]?.[speciesClass];
         if (!choices) {
-            console.error(`No choices found in matrix for: ${ownerType}, ${structureClass}, ${speciesClass}`);
-            return;
+            console.error(`No choices found in STP_DECISION_MATRIX for: Owner='${ownerType}', Structure='${structureClass}', Species='${speciesClass}'. Aborting decision for stand ${standId}.`);
+            return; // This prevents proceeding with an undefined choice.
         }
         const baseStpName = this.weightedRandomChoice(choices);
 
         // If 'no_management' is chosen, we don't need suffixes.
         if (baseStpName === 'no_management') {
             const finalStpName = 'no_management';
-            this.logAndExecuteDecision(standId, finalStpName, currentYear);
+            this.logAndExecuteDecision(standId, finalStpName, currentYear, 'None', structureClass); // Pass valid strings
             return;
         }
 
         // 2. Determine Species Choice suffix (_SC or _noSC)
         const speciesStrategy = this.agent.speciesModule.determineSpeciesStrategy();
-        // A simple logic: if the strategy is to just use what's there ('IST' in your file), we don't need dynamic species choice.
         const speciesChoiceSuffix = (speciesStrategy === 'IST') ? '_noSC' : '_SC';
 
         // 3. Determine Speed suffix (_slow, _fast, or '')
-        // Placeholder logic: Low resource agents work slower, high resource agents work faster.
         let speedSuffix = '';
         if (this.agent.resources < 40) speedSuffix = '_slow';
         if (this.agent.resources > 120) speedSuffix = '_fast';
@@ -88,18 +119,21 @@ class CognitionModule {
         }
         console.log(decisionLog);
 
-        fmengine.standId = standId;
-        if (stand && stand.id > 0) {
-            const newAssessmentYear = currentYear + 10;
-            stand.setFlag('nextAssessmentYear', newAssessmentYear);
-            stand.setFlag('targetSpecies', speciesStrategy); 
-        }
+        // --- REMOVE THIS ENTIRE BLOCK ---
+        // fmengine.standId = standId;
+        // if (stand && stand.id > 0) {
+        //     const newAssessmentYear = currentYear + 10;
+        //     stand.setFlag('nextAssessmentYear', newAssessmentYear);
+        //     stand.setFlag('targetSpecies', speciesStrategy); 
+        // }
 
         if (newStpName !== currentSTP) {
             const decision = {
                 action: 'SWITCH_STRATEGY',
                 targetStand: standId,
-                baseStpName: newStpName, // Pass the final, correct name
+                baseStpName: newStpName,
+                // --- ADD speciesStrategy TO THE ACTION OBJECT ---
+                speciesStrategy: speciesStrategy, 
                 reason: `Strategy switch based on assessment.`
             };
             this.agent.actionModule.executeDecision(decision);

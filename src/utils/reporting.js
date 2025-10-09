@@ -133,7 +133,7 @@ class Reporting {
 
         if (!Reporting.isStandLogInitialized) {
             const newHeader = [
-                'year', 'standId', 'agentId', 'ownerType', 'currentSTP', 'age', 'volume', 'basalArea',
+                'year', 'standId', 'agentId', 'ownerType', 'currentSTP', 'age', 'absoluteAge', 'volume', 'basalArea',
                 'structure_dbh_stddev', 'structure_score_normalized', 'structure_class',
                 'species_class', 'dominant_species', 'species_count', 'species_distribution'
             ].join(',');
@@ -167,7 +167,7 @@ class Reporting {
                     .join('|');
 
                 const row = [
-                    year, snapshot.id, agent.agentId, agent.owner.type, currentSTP, snapshot.age.toFixed(1),
+                    year, snapshot.id, agent.agentId, agent.owner.type, currentSTP, snapshot.age.toFixed(1),  snapshot.age.toFixed(1), snapshot.absoluteAge.toFixed(1),
                     snapshot.volume.toFixed(2), snapshot.basalArea.toFixed(2),
                     rawStructureValue.toFixed(2), normalizedScore.toFixed(3), structureClass,
                     speciesClass, snapshot.composition.dominantSpecies, snapshot.composition.speciesCount,

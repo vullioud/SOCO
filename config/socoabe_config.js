@@ -6,14 +6,22 @@
 
 if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
+
         core_abe_agent_type: 'socoabe_controller', 
-
-        INSTITUTION: {
-            ownerTypeDistribution: [0.2, 0.7, 0.1], // [state, big_company, small_private] by AREA
-        },
-
+        warmupPeriod: 1,
+        
         AGENT: {
             forgettingFactor: 0.1
+        },
+
+        ECOMETRICS: {
+            benchmarkMemoryWindow: 20
+        },        
+         
+        DEBUG: {
+            enableAgentTurnover: true,
+            forceSingleSTP: null,
+            enableReassessment: true
         }
     };
 }

@@ -40,17 +40,17 @@ var STP_DECISION_MATRIX = {
     },
     'big_company': {
         'even_aged': {
-            'conifer_dominated': [ { stp: 'clearcut_system', probability: 1.0 } ],
-            'broadleaf_dominated': [ { stp: 'clearcut_system', probability: 1.0 } ]
+            'conifer_dominated': [ { stp: 'clearcut_system', probability: 1 } ],
+            'broadleaf_dominated': [ { stp: 'clearcut_system', probability: 1 } ]
         },
         'multi_layered': {
             'conifer_dominated': [
-                { stp: 'clearcut_system', probability: 0.6 },
-                { stp: 'shelterwood_system', probability: 0.4 }
+                { stp: 'clearcut_system', probability: 0.8 },
+                { stp: 'shelterwood_system', probability: 0.2}
             ],
             'broadleaf_dominated': [
-                { stp: 'clearcut_system', probability: 0.8 },
-                { stp: 'femel_system', probability: 0.2 }
+                { stp: 'clearcut_system', probability: 1},
+                { stp: 'femel_system', probability: 0 }
             ]
         },
         'complex_uneven_aged': {
