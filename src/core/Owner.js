@@ -51,19 +51,22 @@ Owner.prototype.createAgents = function() {
 };
 
 Owner.prototype.replaceAgent = function(retiringAgent, currentYear) {
-    var newGeneration = retiringAgent.generation + 1;
-    var newAgentName = this.type + "_agent_gen" + newGeneration + "_" + currentYear;
-    var newAgent = new this.SoCoABeAgent(this, newAgentName);
+    const newGeneration = (retiringAgent.generation || 1) + 1; // Add a fallback for safety
+    const newAgentName = `${this.type}_agent_gen${newGeneration}_${currentYear}`;
+    const newAgent = new this.SoCoABeAgent(this, newAgentName);
     
     newAgent.engineId = retiringAgent.engineId;
     newAgent.generation = newGeneration;
     newAgent.assignStands(retiringAgent.managedStands);
-    newAgent.sampleFromOwner(); 
-    
-    newAgent.managedStands.forEach(function(standId) {
+    newAgent.sampleFromOwner(); // The new agent gets its own personality
+
+    // --- ADDED: Trigger immediate re-assessment for the new agent ---
+    // The new manager should review all their stands in the current year.
+    newAgent.managedStands.forEach(standId => {
         fmengine.standId = standId;
         if (stand && stand.id > 0) {
-            stand.setFlag('nextAssessmentYear', 0); 
+            // Set the next assessment to the current year to force an immediate review.
+            stand.setFlag('nextAssessmentYear', currentYear); 
         }
     });
     
@@ -79,7 +82,7 @@ Owner.prototype.sampleAgentTenureYears = function() {
 };
 
 Owner.prototype.sampleAgentPreferences = function() { return this.Distributions.sampleDirichlet(this.config.esPreferences); };
-Owner.prototype.sampleAgentResources = function() { return this.Distributions.sampleGamma(this.config.resources.alpha, this.config.resources.scale); };
+Owner.prototype.sampleAgentResources = function() { return this.Distributions.sampleBeta(this.config.resources.alpha, this.config.resources.beta); };
 Owner.prototype.sampleAgentRisk = function() { return this.Distributions.sampleBeta(this.config.riskTolerance.alpha, this.config.riskTolerance.beta); };
 Owner.prototype.sampleAgentFreedom = function() { return this.Distributions.sampleBeta(this.config.freedomDistribution.alpha, this.config.freedomDistribution.beta); };
 

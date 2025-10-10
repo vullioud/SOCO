@@ -8,7 +8,7 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
 
         core_abe_agent_type: 'socoabe_controller', 
-        warmupPeriod: 1,
+        warmupPeriod: 5,
         
         AGENT: {
             forgettingFactor: 0.1

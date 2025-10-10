@@ -56,6 +56,16 @@ class CognitionModule {
 
         const snapshot = this.agent.standSnapshots[standId];
         const benchmark = this.agent.owner.institution.dynamicBenchmark;
+        
+        const resources = this.agent.resources; // Get the agent's 0-1 resource value
+        const minSpeed = 0.7;
+        const maxSpeed = 1.3;
+        const speedFactor = minSpeed + resources * (maxSpeed - minSpeed);
+
+        fmengine.standId = standId; // Set context to the correct stand
+        if (stand && stand.id > 0) {
+        stand.setFlag('agentSpeedFactor', speedFactor);
+        }
 
         // --- ADD THESE GUARD CLAUSES ---
         if (!snapshot || !snapshot.isValid) {
@@ -95,13 +105,8 @@ class CognitionModule {
         const speciesStrategy = this.agent.speciesModule.determineSpeciesStrategy();
         const speciesChoiceSuffix = (speciesStrategy === 'IST') ? '_noSC' : '_SC';
 
-        // 3. Determine Speed suffix (_slow, _fast, or '')
-        let speedSuffix = '';
-        if (this.agent.resources < 40) speedSuffix = '_slow';
-        if (this.agent.resources > 120) speedSuffix = '_fast';
-
         // 4. Assemble the final, valid STP name
-        const finalStpName = `${baseStpName}${speciesChoiceSuffix}${speedSuffix}`;
+        const finalStpName = `${baseStpName}${speciesChoiceSuffix}`;
         
         // 5. Log and execute the decision
         this.logAndExecuteDecision(standId, finalStpName, currentYear, speciesStrategy, structureClass);
@@ -119,13 +124,6 @@ class CognitionModule {
         }
         console.log(decisionLog);
 
-        // --- REMOVE THIS ENTIRE BLOCK ---
-        // fmengine.standId = standId;
-        // if (stand && stand.id > 0) {
-        //     const newAssessmentYear = currentYear + 10;
-        //     stand.setFlag('nextAssessmentYear', newAssessmentYear);
-        //     stand.setFlag('targetSpecies', speciesStrategy); 
-        // }
 
         if (newStpName !== currentSTP) {
             const decision = {

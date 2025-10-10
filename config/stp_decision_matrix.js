@@ -91,10 +91,11 @@ var STP_DECISION_MATRIX = {
         'complex_uneven_aged': {
             'conifer_dominated': [
                 { stp: 'no_management', probability: 0.7 },
-                { stp: 'plenter_system', probability: 0.3 }
+                { stp: 'plenter_system', probability: 0.3}
             ],
             'broadleaf_dominated': [
-                { stp: 'no_management', probability: 1.0 }
+                { stp: 'no_management', probability: 0.5 },
+                { stp: 'plenter_system', probability: 0.5}
             ]
         }
     }
