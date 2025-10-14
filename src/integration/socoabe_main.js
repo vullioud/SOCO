@@ -210,32 +210,27 @@ SoCoABeMain.prototype.executeActions = function(year) {
 // Tenure turnover unchanged except for safer logging & replacement plumbing
 SoCoABeMain.prototype.handleAgentTurnover = function(year) {
     var replacedAgentsLog = [];
-    var newAgentsList = this.agents.slice(); // copy
 
-    for (var i = 0; i < newAgentsList.length; i++) {
-        var agent = newAgentsList[i];
+    // Iterate over the existing array IN PLACE (no replacement of entries)
+    for (var i = 0; i < this.agents.length; i++) {
+        var agent = this.agents[i];
         if (agent.tenureLeft <= 0) {
             var owner = agent.owner;
-            var replacementAgent = owner.replaceAgent(agent, year);
+            var sameAgent = owner.replaceAgent(agent, year); // now mutates in place and returns same reference
 
-            if (replacementAgent) {
-                replacedAgentsLog.push({ old: agent.agentId, neo: replacementAgent.agentId });
-                newAgentsList[i] = replacementAgent;
-
-                var ownerAgentIndex = owner.agents.indexOf(agent);
-                if (ownerAgentIndex !== -1) {
-                    owner.agents[ownerAgentIndex] = replacementAgent;
-                }
-            }
+            // For logging only
+            replacedAgentsLog.push({ old: agent.agentId, neo: sameAgent.agentId });
         }
     }
 
-    this.agents = newAgentsList;
-    this.institution.agents = this.agents;
+    // No changes to owner.agents arrays or this.agents arrays are needed anymore.
 
     if (replacedAgentsLog.length > 0) {
-        console.log("--- Tenure turnover @ Year " + year + ": replaced " + replacedAgentsLog.length + " agents ---");
-        replacedAgentsLog.forEach(function(r) { console.log("  > " + r.old + " -> " + r.neo); });
+        console.log("--- Tenure turnover @ Year " + year + ": updated " + replacedAgentsLog.length + " agents in place ---");
+        for (var j = 0; j < replacedAgentsLog.length; j++) {
+            var r = replacedAgentsLog[j];
+            console.log("  > " + r.old + " -> " + r.neo + " (in-place)");
+        }
     }
 };
 

@@ -1,6 +1,3 @@
-// File: src/core/Owner.js (ES5 Constructor Version) — FIXED
-
-// Per-process turnover sequence to guarantee unique replacement names
 var __OWNER_TURNOVER_SEQ__ = 0;
 
 function Owner(institution, type, config, assignedStands, dependencies) {
@@ -53,41 +50,45 @@ Owner.prototype.createAgents = function() {
  * NOTE: This does NOT create/remove any ABE engine agents. Engine bindings remain unchanged.
  */
 Owner.prototype.replaceAgent = function(retiringAgent, currentYear) {
-    var newGeneration = (retiringAgent.generation || 1) + 1;
+    // --- In-place persona switch (no object replacement, no engine rebinding) ---
+    // Keep the same JS object reference and the same ABE engine bindings.
+    var agent = retiringAgent;
 
-    // Ensure per-replacement uniqueness (avoid name collisions within same year/type)
-    __OWNER_TURNOVER_SEQ__ += 1;
-    var baseName = this.type + "_agent";
-    var newAgentName = baseName + "_gen" + newGeneration + "_" + currentYear + "_" + __OWNER_TURNOVER_SEQ__;
+    // Increment "generation" marker for logging/analysis.
+    agent.generation = (agent.generation || 1) + 1;
 
-    var newAgent = new this.SoCoABeAgent(this, newAgentName);
-    
-    // Preserve engine binding; do NOT touch fmengine here
-    newAgent.engineId   = retiringAgent.engineId;
-    newAgent.generation = newGeneration;
+    // Resample behavioral traits from owner config
+    var newPrefs = this.sampleAgentPreferences();
+    var newResources = this.sampleAgentResources();
+    var newRisk = this.sampleAgentRisk();
+    var newFreedom = this.sampleAgentFreedom ? this.sampleAgentFreedom() : undefined;
 
-    // Assign the same stands (use a copy to avoid aliasing the old array)
-    newAgent.assignStands([].concat(retiringAgent.managedStands));
+    agent.preferences = newPrefs;
+    agent.resources = newResources;
+    agent.riskTolerance = newRisk;
+    if (typeof newFreedom !== 'undefined') agent.freedom = newFreedom;
 
-    // The new persona draws its own preferences/resources
-    newAgent.sampleFromOwner();
+    // Reset tenure
+    agent.tenureLeft = this.sampleAgentTenureYears();
 
-    // Force immediate reassessment on all stands for the new manager
+    // Force immediate reassessment across all managed stands
     var i;
-    for (i = 0; i < newAgent.managedStands.length; i++) {
-        var standId = newAgent.managedStands[i];
+    for (i = 0; i < agent.managedStands.length; i++) {
+        var standId = agent.managedStands[i];
         fmengine.standId = standId;
         if (stand && stand.id > 0) {
-            stand.setFlag('nextAssessmentYear', currentYear);
+            // Trigger cognition soon: let nextAssessmentYear be currentYear
+            stand.setFlag('nextAssessmentYear', currentYear + 1);
+
         }
     }
 
-    // Helpful log mapping old -> new (with generation)
-    var oldId = retiringAgent.agentId || retiringAgent.name || (this.type + "_agent_unknown");
-    var newId = newAgent.agentId || newAgent.name;
-    console.log("  > " + oldId + " -> " + newId + " (gen " + newGeneration + ")");
+    // Log mapping old->same (in-place) with generation bump
+    var agentId = agent.agentId || agent.name || (this.type + "_agent");
+    console.log("  > " + agentId + " in-place persona switch (gen " + agent.generation + ")");
 
-    return newAgent;
+    // Return the SAME reference (important for callers that expect a return value)
+    return agent;
 };
 
 Owner.prototype.sampleAgentTenureYears = function() {
