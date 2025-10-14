@@ -1,20 +1,22 @@
+// ----- Start of Refactored File: src/utils/helpers.js -----
+
 /**
- * Helper utilities for the SoCoABE model.
+ * Helper utilities for the SoCoABE model. Converted to an ES5-compatible object literal.
  */
-class Helpers {
-    static calculateSatisfaction(preferences, beliefs) {
+var Helpers = {
+    calculateSatisfaction: function(preferences, beliefs) {
         if (preferences.length !== beliefs.length) {
             throw new Error('Preferences and beliefs arrays must have the same length.');
         }
-        let satisfactionByES = []; 
-        let totalSatisfaction = 0;
-        let weightSum = 0;
-        for (let i = 0; i < preferences.length; i++) {
-            const weight = preferences[i];
-            const belief = beliefs[i];
-            const beliefMean = belief.alpha / (belief.alpha + belief.beta);
-            const satisfaction = 1 - Math.abs(weight - beliefMean);
-            satisfactionByES.push(satisfaction); 
+        var satisfactionByES = [];
+        var totalSatisfaction = 0;
+        var weightSum = 0;
+        for (var i = 0; i < preferences.length; i++) {
+            var weight = preferences[i];
+            var belief = beliefs[i];
+            var beliefMean = belief.alpha / (belief.alpha + belief.beta);
+            var satisfaction = 1 - Math.abs(weight - beliefMean);
+            satisfactionByES.push(satisfaction);
             totalSatisfaction += weight * satisfaction;
             weightSum += weight;
         }
@@ -22,51 +24,54 @@ class Helpers {
             overallSatisfaction: weightSum > 0 ? totalSatisfaction / weightSum : 0,
             satisfactionByES: satisfactionByES
         };
-    }
+    },
 
-    static calculateSwitchProbability(satisfaction, precision, inertia = 0.5, steepness = 2.0) {
-        const dissatisfactionScore = (1 - satisfaction) * precision;
+    calculateSwitchProbability: function(satisfaction, precision, inertia, steepness) {
+        inertia = (typeof inertia === 'undefined') ? 0.5 : inertia;
+        steepness = (typeof steepness === 'undefined') ? 2.0 : steepness;
+        var dissatisfactionScore = (1 - satisfaction) * precision;
         return 1 / (1 + Math.exp(-steepness * (dissatisfactionScore - inertia)));
-    }
+    },
 
-    static softmax(values, temperature = 1.0) {
-        const maxVal = Math.max(...values);
-        const exp_values = values.map(v => Math.exp((v - maxVal) / temperature));
-        const sum_exp = exp_values.reduce((a, b) => a + b, 0);
-        return exp_values.map(v => v / sum_exp);
-    }
+    softmax: function(values, temperature) {
+        temperature = (typeof temperature === 'undefined') ? 1.0 : temperature;
+        var maxVal = Math.max.apply(null, values);
+        var exp_values = values.map(function(v) { return Math.exp((v - maxVal) / temperature); });
+        var sum_exp = exp_values.reduce(function(a, b) { return a + b; }, 0);
+        return exp_values.map(function(v) { return v / sum_exp; });
+    },
 
-    static assignStandsToAgents(standIds, numAgents, method = 'equal') {
-        const assignments = Array(numAgents).fill(0).map(() => []);
+    assignStandsToAgents: function(standIds, numAgents, method) {
+        method = (typeof method === 'undefined') ? 'equal' : method;
+        var assignments = Array(numAgents).fill(0).map(function() { return []; });
         switch (method) {
             case 'equal':
-                standIds.forEach((standId, index) => assignments[index % numAgents].push(standId));
+                standIds.forEach(function(standId, index) { assignments[index % numAgents].push(standId); });
                 break;
             case 'random':
-                standIds.forEach(standId => assignments[Math.floor(Math.random() * numAgents)].push(standId));
+                standIds.forEach(function(standId) { assignments[Math.floor(Math.random() * numAgents)].push(standId); });
                 break;
             default:
-                throw new Error(`Unknown stand assignment method: ${method}`);
+                throw new Error('Unknown stand assignment method: ' + method);
         }
         return assignments;
-    }
+    },
     
-    static normalizeVector(vector) {
-        const sum = vector.reduce((a, b) => a + b, 0);
-        return sum === 0 ? vector : vector.map(v => v / sum);
-    }
+    normalizeVector: function(vector) {
+        var sum = vector.reduce(function(a, b) { return a + b; }, 0);
+        return sum === 0 ? vector : vector.map(function(v) { return v / sum; });
+    },
 
-    static calculateStdDev(arr) {
+    calculateStdDev: function(arr) {
         if (!arr || arr.length < 2) {
             return 0;
         }
-        const n = arr.length;
-        const mean = arr.reduce(function(a, b) { return a + b; }) / n;
-        const variance = arr.map(function(x) { return Math.pow(x - mean, 2); }).reduce(function(a, b) { return a + b; }) / n;
+        var n = arr.length;
+        var mean = arr.reduce(function(a, b) { return a + b; }) / n;
+        var variance = arr.map(function(x) { return Math.pow(x - mean, 2); }).reduce(function(a, b) { return a + b; }) / n;
         return Math.sqrt(variance);
     }
-}
-
+};
 
 // Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {
@@ -74,3 +79,4 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     this.Helpers = Helpers;
 }
+// ----- End of Refactored File -----

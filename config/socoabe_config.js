@@ -8,7 +8,7 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
 
         core_abe_agent_type: 'socoabe_controller', 
-        warmupPeriod: 5,
+        warmupPeriod: 2,
         
         AGENT: {
             forgettingFactor: 0.1
@@ -19,9 +19,9 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
         },        
          
         DEBUG: {
-            enableAgentTurnover: true,
-            forceSingleSTP: null,
-            enableReassessment: true
+            enableAgentTurnover: false,
+            forceSingleSTP: "clearcut_system_noSC",
+            enableReassessment: false
         }
     };
 }

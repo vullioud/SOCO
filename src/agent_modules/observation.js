@@ -15,7 +15,7 @@ ObservationModule.prototype.performObservation = function() {
         if (snapshot.isValid) {
             this.agent.standSnapshots[standId] = snapshot;
             var trueStructureScore = this.metricsMapper.normalize(snapshot.structure.dbhStdDev, benchmark.dbhStdDev.min, benchmark.dbhStdDev.max);
-            var noiseLevel = Math.max(0, (1 - (this.agent.resources / 100)) * 0.3);
+            var noiseLevel = Math.max(0, (1 - (this.agent.resources)) * 0.3);
             var noise = (Math.random() - 0.5) * 2 * noiseLevel;
             var noisyStructureScore = Math.max(0, Math.min(1, trueStructureScore + noise));
             this.agent.updateBeliefs(noisyStructureScore);
