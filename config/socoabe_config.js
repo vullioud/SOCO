@@ -20,7 +20,7 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
          
         DEBUG: {
             enableAgentTurnover: true,
-            forceSingleSTP: "clearcut_system_noSC",
+            forceSingleSTP: null,
             enableReassessment: true
         }
     };

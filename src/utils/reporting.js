@@ -1,289 +1,190 @@
-// In: src/utils/reporting.js (Corrected ES5 Version)
+// ----- Start of File: src/utils/reporting.js -----
 
 /**
- * A utility object with static-like methods for handling all simulation reporting,
- * including population validation, periodic logging, and final file saving.
+ * Append helper for iLand's file API.
+ * If appendTextFile doesn't exist in your build, emulate it.
+ */
+if (typeof Globals.appendTextFile === 'undefined') {
+    Globals.appendTextFile = function(path, content) {
+        var already = "";
+        try { if (Globals.fileExists(path)) already = Globals.loadTextFile(path); } catch (e) { /* ignore */ }
+        Globals.saveTextFile(path, already + content + '\n');
+    };
+}
+
+/**
+ * Central place for all reporting. Keeps buffered yearly logs for agents/stands,
+ * and writes STP switch events immediately (crash-proof).
  */
 var Reporting = {
-    // --- Properties to hold log data ---
+    // Buffered yearly logs
     agentLogData: [],
-    isAgentLogInitialized: false,
     standLogData: [],
-    isStandLogInitialized: false,
 
-    /**
-     * Runs a full validation and reporting sequence on the initial agent population.
-     * @param {Owner[]} owners - The array of Owner objects.
-     * @param {SoCoABeAgent[]} agents - The array of SoCoABeAgent objects.
-     */
-    runPopulationValidation: function(owners, agents) {
-        console.log("\n--- Running Agent Population Validation & Visualization Report ---");
-        if (!agents || agents.length === 0) {
-            console.log("No agents to validate.");
-            return;
-        }
+    // CSV headers
+    agentLogHeader: "year,agentId,ownerType,standId,currentSTP,tenureLeft,pref_prod,pref_bio,pref_carb,agent_managed_stands,agent_unique_stps,agent_stp_coherence,bm_vol_min,bm_vol_max,bm_spec_min,bm_spec_max",
+    standLogHeader: "year,standId,agentId,ownerType,currentSTP,age,absoluteAge,volume,basalArea,structure_dbh_stddev,structure_score_normalized,structure_class,species_class,dominant_species,species_count,species_distribution",
+    stpLogHeader: "year_decision,year_apply,agent_id,stand_id,old_stp,new_stp,status",
 
-        var populationReport = this.generatePopulationReport(owners, agents);
-        this.printPopulationSummary(populationReport);
-        this.savePopulationReportToFile(populationReport);
+    // internal state
+    isStpLogInitialized: false,
 
-        console.log("--- Validation Complete. Check 'output/population_report.json' for details. ---\n");
-    },
-
-    /**
-     * Generates a structured object of all agent characteristics for external analysis.
-     */
-    generatePopulationReport: function(owners, agents) {
-        var report = {};
-        owners.forEach(function(owner) {
-            var ownerAgents = agents.filter(function(a) { return a.owner.type === owner.type; });
-            if (ownerAgents.length === 0) return;
-
-            report[owner.type] = {
-                config: {
-                    esPreferences: owner.config.esPreferences,
-                    riskTolerance: owner.config.riskTolerance,
-                    resources: owner.config.resources
-                },
-                agents: ownerAgents.map(function(agent) {
-                    return {
-                        agentId: agent.agentId,
-                        preferences: agent.preferences,
-                        riskTolerance: agent.riskTolerance,
-                        resources: agent.resources,
-                        freedom: agent.freedom,
-                        initialAge: agent.age
-                    };
-                })
-            };
-        });
-        return report;
-    },
-
-    /**
-     * Prints a summary of the initial agent population to the iLand console.
-     */
-    printPopulationSummary: function(report) {
-        for (var ownerType in report) {
-            var data = report[ownerType];
-            console.log("\n--- Owner: " + ownerType.toUpperCase() + " (" + data.agents.length + " agents) ---");
-            var riskTol = data.agents.map(function(a) { return a.riskTolerance; });
-            var avgRisk = riskTol.reduce(function(a, b) { return a + b; }, 0) / riskTol.length;
-            console.log("Risk Tolerance (Beta α=" + data.config.riskTolerance.alpha + ", β=" + data.config.riskTolerance.beta + "):");
-            console.log("  - Avg Sampled: " + avgRisk.toFixed(3) + " (Theoretical Mean: " + (data.config.riskTolerance.alpha / (data.config.riskTolerance.alpha + data.config.riskTolerance.beta)).toFixed(3) + ")");
-        }
-    },
-
-    /**
-     * Saves the detailed population report to a JSON file.
-     */
-    savePopulationReportToFile: function(report) {
+    // ---- Immediate STP switch logger (header-once + append) ----
+    logStpSwitchImmediate: function(yearDecision, yearApply, agentId, standId, oldStp, newStp, status) {
+        var row = [yearDecision, yearApply, agentId, standId, oldStp, newStp, status].join(',');
+        var filePath = Globals.path("output/socoabe_stp_switch_log.csv");
         try {
-            var filePath = Globals.path("output/population_report.json");
-            var fileContent = JSON.stringify(report, null, 2);
-            Globals.saveTextFile(filePath, fileContent);
-            console.log("\nSuccessfully saved population report to: " + filePath);
+            if (!this.isStpLogInitialized) {
+                Globals.saveTextFile(filePath, this.stpLogHeader + '\n');
+                this.isStpLogInitialized = true;
+            }
+            Globals.appendTextFile(filePath, row);
         } catch (e) {
-            console.error("ERROR saving population report: " + e.message);
+            console.error("STP switch log write failed: " + (e && e.message ? e.message : e));
         }
     },
 
-    /**
-     * Collects and formats data from all agents for the yearly CSV log.
-     */
+    // ---- Buffered yearly agent log ----
     collectAgentLog: function(year, agents, institution) {
         if (!agents || agents.length === 0) return;
-        
-        if (!this.isAgentLogInitialized) {
-            var newHeader = [
-                'year', 'agentId', 'ownerType', 'standId', 'currentSTP', 'tenureLeft',
-                'pref_prod', 'pref_bio', 'pref_carb',
-                'agent_managed_stands', 'agent_unique_stps', 'agent_stp_coherence',
-                'bm_vol_min', 'bm_vol_max', 'bm_spec_min', 'bm_spec_max'
-            ].join(',');
-            this.agentLogData.push(newHeader);
-            this.isAgentLogInitialized = true;
-        }
-    
-        var benchmark = institution.dynamicBenchmark || {};
-        var bm_vol = benchmark.volume || { min: -1, max: -1 };
-        var bm_spec = benchmark.speciesCount || { min: -1, max: -1 };
+        var bm = institution.dynamicBenchmark || { volume: {}, speciesCount: {} };
+        var self = this;
 
-        var self = this; // Store context for forEach
         agents.forEach(function(agent) {
-            var managedStandsCount = agent.managedStands.length;
+            var managed = agent.managedStands.length;
             var uniqueStps = new Set(Object.values(agent.standStrategies));
-            var uniqueStpsCount = uniqueStps.size > 0 ? uniqueStps.size : 1;
-            var stpCoherence = managedStandsCount / uniqueStpsCount;
+            var coherence = managed / (uniqueStps.size || 1);
 
             agent.managedStands.forEach(function(standId) {
-                var currentSTP = agent.standStrategies[standId] || 'None';
-    
                 var row = [
-                    year, agent.agentId, agent.owner.type, standId, currentSTP, agent.tenureLeft,
+                    year, agent.agentId, agent.owner.type, standId,
+                    agent.standStrategies[standId] || 'None', agent.tenureLeft,
                     agent.preferences[0].toFixed(3), agent.preferences[1].toFixed(3), agent.preferences[2].toFixed(3),
-                    managedStandsCount, uniqueStpsCount, stpCoherence.toFixed(2),
-                    bm_vol.min.toFixed(2), bm_vol.max.toFixed(2),
-                    bm_spec.min.toFixed(0), bm_spec.max.toFixed(0)
+                    managed, uniqueStps.size, coherence.toFixed(2),
+                    (bm.volume.min || -1).toFixed(2), (bm.volume.max || -1).toFixed(2),
+                    (bm.speciesCount.min || -1).toFixed(0), (bm.speciesCount.max || -1).toFixed(0)
                 ].join(',');
-                
                 self.agentLogData.push(row);
             });
-            
-            agent.standsChangedThisYear = 0;
         });
     },
 
-    /**
-     * Collects detailed data for each stand for the CSV log.
-     */
+    // ---- Buffered yearly stand log ----
     collectStandLog: function(year, agents, institution) {
         if (!agents || agents.length === 0) return;
+        var bm = institution.dynamicBenchmark;
+        if (!bm || !bm.dbhStdDev) return;
 
-        if (!this.isStandLogInitialized) {
-            var newHeader = [
-                'year', 'standId', 'agentId', 'ownerType', 'currentSTP', 'age', 'absoluteAge', 'volume', 'basalArea',
-                'structure_dbh_stddev', 'structure_score_normalized', 'structure_class',
-                'species_class', 'dominant_species', 'species_count', 'species_distribution'
-            ].join(',');
-            this.standLogData.push(newHeader);
-            this.isStandLogInitialized = true;
-        }
-
-        var benchmark = institution.dynamicBenchmark;
-        if (!benchmark || !benchmark.dbhStdDev) return;
-
-        var metricsMapper = new ForestMetricsMapper();
-        var self = this; // Store context for forEach
+        var mapper = new ForestMetricsMapper();
+        var self = this;
 
         agents.forEach(function(agent) {
             agent.managedStands.forEach(function(standId) {
-                var snapshot = agent.standSnapshots[standId];
-                if (!snapshot || !snapshot.isValid) return;
+                var s = agent.standSnapshots[standId];
+                if (!s || !s.isValid) return;
 
-                var currentSTP = agent.standStrategies[standId] || 'None';
-                
-                var rawStructureValue = snapshot.structure.dbhStdDev;
-                var normalizedScore = metricsMapper.normalize(rawStructureValue, benchmark.dbhStdDev.min, benchmark.dbhStdDev.max);
-                var structureClass = metricsMapper.classifyStructure(normalizedScore);
-                
-                var speciesClass = metricsMapper.classifySpecies(snapshot.composition);
-                
-                var speciesDistString = Object.keys(snapshot.composition.distribution)
-                    .map(function(species) {
-                        return species + ':' + snapshot.composition.distribution[species].toFixed(2);
-                    })
+                var raw = s.structure.dbhStdDev;
+                var norm = mapper.normalize(raw, bm.dbhStdDev.min, bm.dbhStdDev.max);
+                var dist = Object.keys(s.composition.distribution)
+                    .map(function(sp){ return sp + ':' + s.composition.distribution[sp].toFixed(2); })
                     .join('|');
 
                 var row = [
-                    year, snapshot.id, agent.agentId, agent.owner.type, currentSTP, snapshot.age.toFixed(1), snapshot.absoluteAge.toFixed(1),
-                    snapshot.volume.toFixed(2), snapshot.basalArea.toFixed(2),
-                    rawStructureValue.toFixed(2), normalizedScore.toFixed(3), structureClass,
-                    speciesClass, snapshot.composition.dominantSpecies, snapshot.composition.speciesCount,
-                    speciesDistString
+                    year, s.id, agent.agentId, agent.owner.type, agent.standStrategies[standId] || 'None',
+                    s.age.toFixed(1), s.absoluteAge.toFixed(1), s.volume.toFixed(2), s.basalArea.toFixed(2),
+                    raw.toFixed(2), norm.toFixed(3), mapper.classifyStructure(norm),
+                    mapper.classifySpecies(s.composition), s.composition.dominantSpecies,
+                    s.composition.speciesCount, dist
                 ].join(',');
-
                 self.standLogData.push(row);
             });
         });
     },
 
-    /**
-     * NEW FUNCTION: Prints a snapshot of all stand data directly to the console.
-     */
-logStandSnapshotsToConsole: function(year, agents, institution) {
-    console.log("\n--- Stand Snapshot Log for Year " + year + " ---");
-    if (!agents || agents.length === 0) {
-        console.log("No agents to report on.");
-        return;
-    }
-
-    // Define and print the new header
-    var header = [
-        'standId', 'agentId', 'currentSTP', 'age', 'absoluteAge', 'volume',
-        'lastActivity', 'nextAssessment'
-    ].join(',');
-    console.log(header);
-
-    agents.forEach(function(agent) {
-        agent.managedStands.forEach(function(standId) {
-            // We MUST set the fmengine context to get live stand data for each stand
-            fmengine.standId = standId;
-            if (!stand || stand.id <= 0) return;
-
-            // Get the new data directly from the live stand object
-            var currentSTP = agent.standStrategies[standId] || 'None';
-            var lastActivity = stand.lastActivity || 'None';
-            var nextAssessment = stand.flag('nextAssessmentYear') || 'N/A';
-            
-            var row = [
-                stand.id,
-                agent.agentId,
-                currentSTP,
-            //    stand.age.toFixed(1),
-                stand.absoluteAge.toFixed(1),
-              //  stand.volume.toFixed(2),
-                lastActivity,
-                nextAssessment
-            ].join(',');
-
-            console.log(row);
-        });
-    });
-    console.log("--- End of Snapshot Log for Year " + year + " ---\n");
-},
- 
-    /**
-     * Saves all collected log data to their respective CSV files.
-     */
-    saveLogsToFile: function() {
-        console.log("--- Preparing to save SoCoABE logs. ---");
-        this._saveAgentLog();
-        this._saveStandLog();
+    // ---- End-of-run saves for buffered yearly logs ----
+    saveFinalLogs: function() {
+        console.log("--- Saving final buffered SoCoABE logs. ---");
+        this._save("output/socoabe_agent_log.csv", this.agentLogHeader, this.agentLogData, "Agent");
+        this._save("output/socoabe_stand_log.csv", this.standLogHeader, this.standLogData, "Stand");
     },
 
-    /**
-     * Private helper to save the agent log.
-     */
-    _saveAgentLog: function() {
-        if (this.agentLogData.length > 1) {
-            var filePath = Globals.path("output/socoabe_agent_log.csv");
-            var fileContent = this.agentLogData.join('\n');
-            console.log("Attempting to save " + this.agentLogData.length + " agent log rows to: " + filePath);
-            try {
-                Globals.saveTextFile(filePath, fileContent);
-                console.log("--- Agent log successfully saved! ---");
-            } catch (e) {
-                console.error("ERROR during agent log save:", e.message);
-            }
-        } else {
-            console.log("No agent log data collected, skipping file write.");
+    _save: function(path, header, buffer, name) {
+        if (!buffer || buffer.length === 0) return;
+        try {
+            Globals.saveTextFile(Globals.path(path), header + '\n' + buffer.join('\n'));
+            console.log("--- " + name + " log saved (" + buffer.length + " rows). ---");
+        } catch (e) {
+            console.error("ERROR saving " + name + " log: " + (e && e.message ? e.message : e));
         }
     },
 
-    /**
-     * Private helper to save the stand log.
-     */
-    _saveStandLog: function() {
-        if (this.standLogData.length > 1) {
-            var filePath = Globals.path("output/socoabe_stand_log.csv");
-            var fileContent = this.standLogData.join('\n');
-            console.log("Attempting to save " + this.standLogData.length + " stand log rows to: " + filePath);
-            try {
-                Globals.saveTextFile(filePath, fileContent);
-                console.log("--- Stand log successfully saved! ---");
-            } catch (e) {
-                console.error("ERROR during stand log save:", e.message);
+    // ---- Diagnostics (console) ----
+    logStandSnapshotsToConsole: function(year, agents) {
+        console.log("\n--- Stand Snapshot Log for Year " + year + " ---");
+        console.log(['standId','agentId','currentSTP','absoluteAge','lastActivity','nextAssessment'].join(','));
+        agents.forEach(function(agent){
+            agent.managedStands.forEach(function(standId){
+                fmengine.standId = standId;
+                if (!stand || stand.id <= 0) return;
+                var row = [
+                    stand.id,
+                    agent.agentId,
+                    agent.standStrategies[standId] || 'None',
+                    stand.absoluteAge.toFixed(1),
+                    stand.lastActivity || 'None',
+                    stand.flag('nextAssessmentYear') || 'N/A'
+                ].join(',');
+                console.log(row);
+            });
+        });
+        console.log("--- End of Snapshot Log for Year " + year + " ---\n");
+    },
+
+    // ---- Optional: population validation helpers (unchanged) ----
+    runPopulationValidation: function(owners, agents) {
+        console.log("\n--- Running Agent Population Validation ---");
+        if (!agents || agents.length === 0) return;
+        var report = this.generatePopulationReport(owners, agents);
+        this.printPopulationSummary(report);
+        this.savePopulationReportToFile(report);
+        console.log("--- Validation Complete. ---\n");
+    },
+    generatePopulationReport: function(owners, agents) {
+        var rep = {};
+        owners.forEach(function(owner){
+            var list = agents.filter(function(a){ return a.owner.type === owner.type; });
+            if (list.length > 0) {
+                rep[owner.type] = {
+                    config: owner.config,
+                    agents: list.map(function(a){ return { agentId:a.agentId, preferences:a.preferences, riskTolerance:a.riskTolerance, resources:a.resources }; })
+                };
             }
-        } else {
-            console.log("No stand log data collected, skipping file write.");
+        });
+        return rep;
+    },
+    printPopulationSummary: function(rep) {
+        for (var k in rep) {
+            var data = rep[k];
+            console.log("\n--- Owner: " + k.toUpperCase() + " (" + data.agents.length + " agents) ---");
+            var r = data.agents.map(function(a){ return a.riskTolerance; });
+            var avg = r.reduce(function(a,b){return a+b;},0) / r.length;
+            console.log("Risk Tolerance avg: " + avg.toFixed(3));
+        }
+    },
+    savePopulationReportToFile: function(rep) {
+        try {
+            Globals.saveTextFile(Globals.path("output/population_report.json"), JSON.stringify(rep, null, 2));
+            console.log("Saved population_report.json");
+        } catch (e) {
+            console.error("ERROR saving population report: " + (e && e.message ? e.message : e));
         }
     }
 };
 
-// Universal Module Definition
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Reporting;
 } else {
     this.Reporting = Reporting;
 }
+
+// ----- End of File: src/utils/reporting.js -----

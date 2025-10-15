@@ -56,7 +56,7 @@ Owner.prototype.replaceAgent = function(retiringAgent, currentYear) {
 
     // Increment "generation" marker for logging/analysis.
     agent.generation = (agent.generation || 1) + 1;
-
+    agent.agentId = agent.agentId + "_g" + agent.generation;
     // Resample behavioral traits from owner config
     var newPrefs = this.sampleAgentPreferences();
     var newResources = this.sampleAgentResources();
