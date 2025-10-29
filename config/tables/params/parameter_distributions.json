@@ -1,0 +1,713 @@
+{
+  "femel": [
+    {
+      "preference_focus": "Production",
+      "parameter": "steps",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 8
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "N",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "steps",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 15
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "N",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "steps",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 4
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 12
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "N",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 4
+      }
+    }
+  ],
+  "noManagement": [],
+  "AllBigTrees": [
+    {
+      "preference_focus": "Production",
+      "parameter": "dbh_threshold",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 55,
+        "sd": 5
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "dbh_threshold",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 75,
+        "sd": 10
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "dbh_threshold",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 70,
+        "sd": 8
+      }
+    }
+  ],
+  "clearcut": [
+    {
+      "preference_focus": "Production",
+      "parameter": "rotation_age",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 90,
+        "sd": 8
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "rotation_age",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 140,
+        "sd": 20
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "rotation_age",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 120,
+        "sd": 15
+      }
+    }
+  ],
+  "shelterwood": [
+    {
+      "preference_focus": "Production",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 2
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 30
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "shelterwood_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 4
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 10
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 60
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "shelterwood_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 8
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 45
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "shelterwood_profiles"
+      }
+    }
+  ],
+  "targetDBH": [
+    {
+      "preference_focus": "Production",
+      "parameter": "targetDBH",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 45,
+        "sd": 5
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "dbhListProfile",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_name": "conifer_production"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "targetDBH",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 65,
+        "sd": 10
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 10
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "dbhListProfile",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_name": "broadleaf_conservation"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "targetDBH",
+      "structure": "any",
+      "distribution_function": "normal",
+      "distribution_params": {
+        "mean": 60,
+        "sd": 8
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 8
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "dbhListProfile",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_name": "default_central_europe"
+      }
+    }
+  ],
+  "selectiveThinning": [
+    {
+      "preference_focus": "Production",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 6
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 100
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "nCompetitors",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 4
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 10
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 70
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "nCompetitors",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 2
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 8
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "nTrees",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 80
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "nCompetitors",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    }
+  ],
+  "fromBelow": [
+    {
+      "preference_focus": "Production",
+      "parameter": "thinningShare",
+      "structure": "any",
+      "distribution_function": "beta",
+      "distribution_params": {
+        "alpha": 5,
+        "beta": 2
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "thinningShare",
+      "structure": "any",
+      "distribution_function": "beta",
+      "distribution_params": {
+        "alpha": 2,
+        "beta": 5
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "thinningShare",
+      "structure": "any",
+      "distribution_function": "beta",
+      "distribution_params": {
+        "alpha": 3,
+        "beta": 4
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "thinning_profiles"
+      }
+    }
+  ],
+  "plenter": [
+    {
+      "preference_focus": "Production",
+      "structure": "any",
+      "parameter": "plenterCurve",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "plenter_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "structure": "any",
+      "parameter": "plenterCurve",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "plenter_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "structure": "any",
+      "parameter": "plenterCurve",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "plenter_profiles"
+      }
+    }
+  ],
+  "no_thinning": [],
+  "tending": [
+    {
+      "preference_focus": "Production",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 4
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "intensity",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 15
+      }
+    },
+    {
+      "preference_focus": "Production",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "tending_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 2
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 6
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "intensity",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 8
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "tending_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "times",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 3
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "interval",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 5
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "intensity",
+      "structure": "any",
+      "distribution_function": "poisson",
+      "distribution_params": {
+        "lambda": 10
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "parameter": "speciesSelectivity",
+      "structure": "any",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "tending_profiles"
+      }
+    }
+  ],
+  "no_tending": [],
+  "planting": [
+    {
+      "preference_focus": "Production",
+      "structure": "any",
+      "parameter": "speciesSelectivity",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "planting_profiles"
+      }
+    },
+    {
+      "preference_focus": "Biodiversity",
+      "structure": "any",
+      "parameter": "speciesSelectivity",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "planting_profiles"
+      }
+    },
+    {
+      "preference_focus": "CO2",
+      "structure": "any",
+      "parameter": "speciesSelectivity",
+      "distribution_function": "lookup",
+      "distribution_params": {
+        "profile_group": "planting_profiles"
+      }
+    }
+  ],
+  "no_planting": []
+}

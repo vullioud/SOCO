@@ -6,7 +6,7 @@
 
 if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
-
+        csv_path: "./abe/stand_files/agent_table_low_shuffled-true.csv", // Default path, can be overridden in the main script
         core_abe_agent_type: 'socoabe_controller', 
         warmupPeriod: 2,
         
@@ -19,8 +19,8 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
         },        
          
         DEBUG: {
-            enableAgentTurnover: false,
-            forceSingleSTP: "clearcut_system_noSC",
+            enableAgentTurnover: true,
+            forceSingleSTP: null,
             enableReassessment: false
         }
     };
