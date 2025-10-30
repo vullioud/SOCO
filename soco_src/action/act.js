@@ -23,21 +23,37 @@ var Action = {
  * corresponding flags on the iLand stand.
  * @param {stand_data} stand_data_obj - The data object for the stand to act upon.
  */
+var Action = {
+    prepare: {}
+};
+
+/**
+ * Main entry point for the Action module.
+ * Takes a completed plan from a stand_data object and sets the
+ * corresponding flags on the iLand stand.
+ * @param {stand_data} stand_data_obj - The data object for the stand to act upon.
+ */
+
 Action.set_flags_for_execution = function(stand_data_obj) {
     fmengine.standId = stand_data_obj.stand_id;
     if (!stand || stand.id <= 0) return;
 
+    // --- THIS IS THE CRITICAL STEP ---
+    // Always clear all old flags before setting new ones.
     Action.prepare.clear_flags();
 
     const activity_name = stand_data_obj.activity.chosen_Activity;
     const prepare_function = Action.prepare[activity_name];
 
     if (typeof prepare_function === 'function') {
-        prepare_function(stand_data_obj.activity.parameters);
+        prepare_function(stand_data_obj.activity.parameters, stand_data_obj);
         stand.setFlag('abe_next_activity', activity_name);
         console.log(`ACTION: Stand ${stand_data_obj.stand_id} flagged for '${activity_name}'.`);
     } else {
-        console.warn(`ACTION: No flag function for '${activity_name}'. Defaulting to noManagement.`);
-        stand.setFlag('abe_next_activity', 'noManagement');
+        // Default to noManagement if no prepare function exists, but still set the flag.
+        stand.setFlag('abe_next_activity', activity_name || 'noManagement');
+        if (!activity_name) {
+            console.warn(`ACTION: No activity chosen for stand ${stand_data_obj.stand_id}. Defaulting to noManagement.`);
+        }
     }
 };

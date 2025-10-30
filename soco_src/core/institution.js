@@ -1,3 +1,5 @@
+// ----- START OF CORRECTED FILE: soco_src/core/institution.js -----
+
 /**
  * =================================================================================
  * FILE: institution.js
@@ -27,7 +29,7 @@ class institution {
     }
 
     discover_and_create() {
-        // This map is all we need: { owner_type: { agent_name: [stand_ids] } }
+        // This map will hold the structure: { owner_type: { agent_name: [stand_ids] } }
         const owner_agent_stand_map = {};
 
         fmengine.standIds.forEach(id => {
@@ -35,10 +37,17 @@ class institution {
             if (stand && stand.agent) {
                 const agent_name = stand.agent.name;
                 const owner_type = stand.flag('owner_type');
-                if (!owner_type) return;
+                if (!owner_type) {
+                    console.warn(`Stand ${id} is managed by agent '${agent_name}' but is missing the 'owner_type' flag. It will be ignored by the cognitive layer.`);
+                    return;
+                }
 
-                if (!owner_agent_stand_map[owner_type]) owner_agent_stand_map[owner_type] = {};
-                if (!owner_agent_stand_map[owner_type][agent_name]) owner_agent_stand_map[owner_type][agent_name] = [];
+                if (!owner_agent_stand_map[owner_type]) {
+                    owner_agent_stand_map[owner_type] = {};
+                }
+                if (!owner_agent_stand_map[owner_type][agent_name]) {
+                    owner_agent_stand_map[owner_type][agent_name] = [];
+                }
                 owner_agent_stand_map[owner_type][agent_name].push(id);
             }
         });
@@ -46,8 +55,11 @@ class institution {
         console.log("--- Creating SoCoABE Agents per Owner ---");
         for (const owner_type in owner_agent_stand_map) {
             const agent_stand_map = owner_agent_stand_map[owner_type];
-            // We don't need to pass the agent_body_map anymore
-            const new_owner = new owner(owner_type, agent_stand_map, this.configs);
+            
+            // --- THIS IS THE CRITICAL FIX ---
+            // Pass 'this' (the institution instance) as the first argument to the owner constructor.
+            const new_owner = new owner(this, owner_type, agent_stand_map, this.configs);
+            
             this.owners[owner_type] = new_owner;
             this.all_agents.push(...new_owner.agent_list);
             console.log(`  -> Owner '${owner_type}': created ${new_owner.agent_list.length} agents.`);
@@ -56,3 +68,5 @@ class institution {
     }
 }
 this.institution = institution;
+
+// ----- END OF CORRECTED FILE: soco_src/core/institution.js -----

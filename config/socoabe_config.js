@@ -8,14 +8,15 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
         csv_path: "./abe/stand_files/agent_table_low_shuffled-true.csv", // Default path, can be overridden in the main script
         core_abe_agent_type: 'socoabe_controller', 
-        warmupPeriod: 2,
+        warmupPeriod: 0,
         
         TESTING: {
         // SET THE ACTIVE TEST SCENARIO HERE.
         // 'none' or null      -> Run the normal agent logic.
         // 'puppet_master_v1'  -> Run the simple clearcut test.
         // 'observe_and_report'-> Run a test to validate the perception module.
-        active_scenario: "none" // 'puppet_master_v1'
+        active_scenario: "perception_action_loop" // Options: 'none', 'puppet_master_v1', 'observe_and_report'
+
     }
     };
 }
