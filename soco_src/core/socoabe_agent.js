@@ -73,6 +73,7 @@ class socoabe_agent {
      * The agent's main annual cycle.
      * It first checks if a test is active. If not, it proceeds with normal logic.
      */
+    
     run_yearly_cycle(current_year) {
         // --- 1. Check if a test scenario is active ---
     const test_was_run = Test_Runner.run(this, current_year);
@@ -80,15 +81,7 @@ class socoabe_agent {
         return; // If a test was run, skip the normal agent logic.
     }
 
-    // --- 2. If no test is active, run the REAL agent logic ---
-    
-    // OBSERVE: Update all stand_data objects with fresh data from iLand.
     this.observe();
-
-    // CHECK (Placeholder for now)
-    // const stands_to_plan_for = this.check(current_year);
-
-    // PLAN & ACT (Placeholder for now)
     }
 }
 this.socoabe_agent = socoabe_agent;
