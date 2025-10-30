@@ -1,27 +1,21 @@
-/**
- * Reads STP bottom-up flags to update history
- * (called at the end of the pipeline).
- */
+// ===================================================================
+// FILE: update_history.js
+// ===================================================================
 
+// Attaches the function to the globally available 'Perception' object.
+Perception.update_history = function(stand_data_obj) {
+    fmengine.standId = stand_data_obj.stand_id;
+    if (!stand || stand.id <= 0) return stand_data_obj;
 
-function update_history(standData) {
-  fmengine.standId = Number(standData.id);
-  if (!stand || !stand.id) return standData;
-
-  const lastAct = stand.flag("abe_last_activity");
-  const lastYear = stand.flag("abe_last_activity_year");
-
-  if (
-    lastAct &&
-    Number.isFinite(lastYear) &&
-    (standData.history.lastActivityYear == null ||
-      lastYear > standData.history.lastActivityYear)
-  ) {
-    standData.history.lastActivity = lastAct;
-    standData.history.lastActivityYear = lastYear;
-    standData.history.lastOutcomes = standData.history.lastOutcomes || {};
-  }
-
-  return standData;
-}
-module.exports = update_history;
+    const last_activity = getFlag('abe_last_activity', null);
+    
+    if (last_activity && last_activity !== stand_data_obj.history.last_activity) {
+        stand_data_obj.history.last_activity = last_activity;
+        stand_data_obj.history.last_activity_Year = getFlag('abe_last_activity_year', -1);
+        
+        stand.setFlag('abe_last_activity', null);
+        stand.setFlag('abe_last_activity_year', null);
+    }
+    
+    return stand_data_obj;
+};

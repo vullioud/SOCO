@@ -1,51 +1,24 @@
-/**
- * compute_classified_data.js
- * ------------------------------------------------------------
- * Converts numeric stand metrics into categorical classes.
- * Classification logic is self-contained here (no external core deps).
- * ------------------------------------------------------------
- */
+// ===================================================================
+// FILE: compute_classified_data.js
+// ===================================================================
 
-// Example thresholds – replace later with config or lookup JSONs
-const AGE_CLASSES = [
-  { name: "planting", max: 20 },
-  { name: "tending", max: 60 },
-  { name: "thinning", max: 100 },
-  { name: "harvesting", max: Infinity }
-];
+// Attaches the function to the globally available 'Perception' object.
+Perception.compute_classified_data = function(stand_data_obj, institution) {
+    const age = stand_data_obj.iLand_stand_data.absolute_age;
+    const age_class_lookup = institution.age_class_lookup;
+    
+    if (age <= age_class_lookup.planting.max_age) {
+        stand_data_obj.classified.age_class = 'planting';
+    } else if (age <= age_class_lookup.tending.max_age) {
+        stand_data_obj.classified.age_class = 'tending';
+    } else if (age <= age_class_lookup.thinning.max_age) {
+        stand_data_obj.classified.age_class = 'thinning';
+    } else {
+        stand_data_obj.classified.age_class = 'harvesting';
+    }
 
-function get_age_class(age) {
-  for (const cls of AGE_CLASSES) if (age <= cls.max) return cls.name;
-  return "unknown";
-}
+    stand_data_obj.classified.structure_class = 'medium'; // Placeholder
+    stand_data_obj.classified.species_dominance = 'mixed'; // Placeholder
 
-function get_structure_class(stddev) {
-  if (stddev < 5) return "low";
-  if (stddev < 15) return "medium";
-  return "high";
-}
-
-function get_species_dominance(raw) {
-  // Placeholder: extend with species info if available in raw
-  // For now we just guess based on volume ratios if present
-  return raw.speciesDominance || "mixed";
-}
-
-/**
- * Main classification function.
- * @param {Object} standData
- * @returns {Object} standData
- */
-function compute_classified_data(standData) {
-  const raw = standData.raw_data || {};
-
-  standData.classified_data = {
-    ageClass: get_age_class(raw.absoluteAge ?? 0),
-    structureClass: get_structure_class(raw.dbhStdDev ?? 0),
-    speciesDominance: get_species_dominance(raw)
-  };
-
-  return standData;
-}
-
-module.exports = compute_classified_data;
+    return stand_data_obj;
+};

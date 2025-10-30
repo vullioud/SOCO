@@ -1,14 +1,13 @@
-/**
- * get_reassessment_flags.js
- * ------------------------------------------------------------
- * Placeholder: in future will read iLand flags like
- * 'abe_need_reassessment', 'abe_salvage_flag', etc.
- * For now, always returns false.
- * ------------------------------------------------------------
- */
-function get_reassessment_flags(standData) {
-  standData.need_reassessment = false;
-  return standData;
-}
+// ===================================================================
+// FILE: get_reassessment_flags.js
+// ===================================================================
 
-module.exports = get_reassessment_flags;
+// Attaches the function to the globally available 'Perception' object.
+Perception.get_reassessment_flags = function(stand_data_obj) {
+    fmengine.standId = stand_data_obj.stand_id;
+    if (!stand || stand.id <= 0) return stand_data_obj;
+
+    stand_data_obj.iLand_stand_data.needs_reassessment = getFlag('abe_need_reassessment', false);
+
+    return stand_data_obj;
+};
