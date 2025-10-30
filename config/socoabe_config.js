@@ -10,19 +10,13 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
         core_abe_agent_type: 'socoabe_controller', 
         warmupPeriod: 2,
         
-        AGENT: {
-            forgettingFactor: 0.1
-        },
-
-        ECOMETRICS: {
-            benchmarkMemoryWindow: 20
-        },        
-         
-        DEBUG: {
-            enableAgentTurnover: true,
-            forceSingleSTP: null,
-            enableReassessment: false
-        }
+        TESTING: {
+        // SET THE ACTIVE TEST SCENARIO HERE.
+        // 'none' or null      -> Run the normal agent logic.
+        // 'puppet_master_v1'  -> Run the simple clearcut test.
+        // 'observe_and_report'-> Run a test to validate the perception module.
+        active_scenario: "none" // 'puppet_master_v1'
+    }
     };
 }
 
