@@ -21,34 +21,32 @@
  */
 
 class owner {
-    // --- THIS IS THE CRITICAL FIX ---
-    // The constructor signature must match the order of parameters passed from institution.js
     constructor(institution, owner_type, agent_stand_map, all_configs) {
-        this.institution = institution; // Store the reference to the parent institution
-        this.type = owner_type;         // This will now correctly be a string like "small"
+        this.institution = institution;
+        this.type = owner_type;
         this.agent_list = [];
-        this.configs = all_configs;
 
+        // --- THE DEFINITIVE, EXPLICIT STRUCTURE ---
+        // Each configuration is assigned to its own top-level property.
+        
+        // Owner-specific tables
+        this.trait_table = all_configs.traits[this.type];
+        this.activity_table = all_configs.activities[this.type];
+        this.species_config_table = all_configs.species_config[this.type];
+
+        // Universal tables (shared by all owners of this type)
+        this.age_class_table = all_configs.age_class['all'];
+        this.parameter_table = all_configs.parameters['all'];
+        this.plenter_profiles_table = all_configs.plenter_profiles['all'];
+        this.targetDBH_profiles_table = all_configs.targetDBH_profiles['all'];
+        this.species_list_table = all_configs.species_list['all'];
+
+        // Create the agents, which will inherit these properties.
         for (const agent_name in agent_stand_map) {
-            // Get the list of stand IDs for this agent from the map
             const stand_ids = agent_stand_map[agent_name];
-            // Pass the agent's name and its list of stands to the constructor
-            // 'this' correctly refers to this owner instance.
             const new_agent = new socoabe_agent(agent_name, this, stand_ids);
             this.agent_list.push(new_agent);
         }
     }
-
-    get_config_for_owner(config_group, is_owner_specific = true) {
-        try {
-            // This lookup will now work because 'this.type' is a string key
-            return is_owner_specific ? this.configs[config_group][this.type] : this.configs[config_group];
-        } catch (e) {
-            console.error(`Error getting config for group '${config_group}' and owner '${this.type}'.`);
-            return null;
-        }
-    }
 }
 this.owner = owner;
-
-// ----- END OF CORRECTED FILE: soco_src/core/owner.js -----
