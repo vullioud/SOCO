@@ -1,35 +1,21 @@
-    
-// ----- START OF CORRECTED FILE: soco_src/test/scenarios/perception_action_loop.js -----
 
-/**
- * =================================================================================
- * TEST SCENARIO: Validating the One-Year Action Delay
- * =================================================================================
- * This test validates the full feedback loop, accounting for the one-year delay
- * between flagging an action and its execution by the iLand engine.
- *
- * SEQUENCE:
- * 1. Year 9: Observe the stand in its initial state ("Pre-Action").
- * 2. Year 10: Order a 'clearcut' action. The action will be executed by iLand
- *    at the beginning of year 11.
- * 3. Year 11: Observe the stand. We expect to see the results of the clearcut
- *    (zero volume) and the "receipt" flags (`needs_reassessment`, `last_activity`).
- * 4. Year 12: Observe again to confirm the state persists and that a subsequent
- *    'noManagement' action would have cleared the receipt flags.
- * =================================================================================
- */
+// =================================================================================
+// TEST SCENARIO 1: Perception-Action Feedback Loop
+// =================================================================================
 Test_Scenarios.perception_action_loop = function(agent, current_year) {
     
-    function getTestStands(agent) {
-        if (agent.id !== socoabe.institution.all_agents[0].id) return [];
-        return agent.managed_stand_ids.slice(0, 4);
+    const AGENT_ID_TO_TEST = "small_agent_51";
+    if (agent.id !== AGENT_ID_TO_TEST) return;
+
+    function getTestStands(_agent) {
+        return _agent.managed_stand_ids.slice(0, 4);
     }
 
-    function observe_and_log(stand_id, year_label) {
+    function observe_and_log(_agent, stand_id, year_label) {
         console.log(`--- [TEST] Observation for Stand ${stand_id} (${year_label}) ---`);
-        const stand_data_obj = agent.managed_stands_data[stand_id];
-        const updated_stand_data = Perception.observe_stand(stand_data_obj, agent.owner.institution);
-        
+        const stand_data_obj = _agent.managed_stands_data[stand_id];
+        // The call inside here was also wrong, it should pass the agent directly.
+        const updated_stand_data = Perception.observe_stand(stand_data_obj, _agent);
         console.log(JSON.stringify(updated_stand_data, null, 2));
         console.log("--------------------------------------------------");
     }
@@ -37,106 +23,81 @@ Test_Scenarios.perception_action_loop = function(agent, current_year) {
     const test_stands = getTestStands(agent);
     if (test_stands.length === 0) return;
 
-    // --- Year 9: Pre-Action Observation ---
-    if (current_year === 9) {
-        console.log(`[TEST] Year 9: Performing initial observation.`);
-        test_stands.forEach(stand_id => observe_and_log(stand_id, "Pre-Action"));
-    } 
-    
-    // --- Year 10: Order the Action ---
-    else if (current_year === 10) {
-        console.log(`[TEST] Year 10: Ordering 'clearcut'. Action will execute at the start of Year 11.`);
-        test_stands.forEach(stand_id => {
-            const stand_data_obj = agent.managed_stands_data[stand_id];
-            stand_data_obj.activity.chosen_Activity = 'clearcut';
-            stand_data_obj.activity.parameters = {};
-            Action.set_flags_for_execution(stand_data_obj);
-        });
-    }
-    
-    // --- Year 11: Observe the Results ---
-    else if (current_year === 11) {
-        console.log(`[TEST] Year 11: Observing stands immediately after clearcut execution.`);
-        test_stands.forEach(stand_id => observe_and_log(stand_id, "Post-Action (Results Year)"));
-    }
-
-    // --- Year 12: Confirm State and Flag Clearing ---
-    else if (current_year === 12) {
-        console.log(`[TEST] Year 12: Observing to confirm flags were cleared.`);
+    if (current_year >= 9 && current_year <= 12) {
+        console.log(`[TEST] Running 'perception_action_loop' for agent ${agent.id} in year ${current_year}`);
         
-        // In a real scenario, the agent's Cognition module would see 'needs_reassessment: true'
-        // in year 11 and decide on a new action (e.g., 'noManagement'). Let's simulate that.
-        test_stands.forEach(stand_id => {
-            const stand_data_obj = agent.managed_stands_data[stand_id];
-            stand_data_obj.activity.chosen_Activity = 'noManagement';
-            Action.set_flags_for_execution(stand_data_obj);
-        });
-
-        // Now, observe again. The flags should be gone.
-        test_stands.forEach(stand_id => observe_and_log(stand_id, "Confirmation Year"));
-    }
-
-        else if (current_year === 22) {
-        console.log(`[TEST] Year 13: Observing to confirm flags were cleared.`);
-        
-        // In a real scenario, the agent's Cognition module would see 'needs_reassessment: true'
-        // in year 11 and decide on a new action (e.g., 'noManagement'). Let's simulate that.
-        test_stands.forEach(stand_id => {
-            const stand_data_obj = agent.managed_stands_data[stand_id];
-            stand_data_obj.activity.chosen_Activity = 'noManagement';
-            Action.set_flags_for_execution(stand_data_obj);
-        });
-
-        // Now, observe again. The flags should be gone.
-        test_stands.forEach(stand_id => observe_and_log(stand_id, "Confirmation Year"));
+        if (current_year === 9) {
+            // --- THE FIX --- Pass the 'agent' object here.
+            test_stands.forEach(stand_id => observe_and_log(agent, stand_id, "Pre-Action"));
+        } else if (current_year === 10) {
+            test_stands.forEach(stand_id => {
+                const stand_data_obj = agent.managed_stands_data[stand_id];
+                stand_data_obj.activity.chosen_Activity = 'clearcut';
+                Action.set_flags_for_execution(stand_data_obj);
+            });
+        } else if (current_year === 11) {
+            // --- THE FIX --- Pass the 'agent' object here.
+            test_stands.forEach(stand_id => observe_and_log(agent, stand_id, "Post-Action (Results Year)"));
+        } else if (current_year === 12) {
+            test_stands.forEach(stand_id => {
+                const stand_data_obj = agent.managed_stands_data[stand_id];
+                stand_data_obj.activity.chosen_Activity = 'noManagement';
+                Action.set_flags_for_execution(stand_data_obj);
+            });
+            // --- THE FIX --- Pass the 'agent' object here.
+            test_stands.forEach(stand_id => observe_and_log(agent, stand_id, "Confirmation Year"));
+        }
     }
 };
 
-// ----- END OF CORRECTED FILE: soco_src/test/scenarios/perception_action_loop.js -----
-
-  
-Test_Scenarios.single_action_validation = function(agent, current_year) {
+// =================================================================================
+// TEST SCENARIO 2: Cognition and Planning Loop
+// =================================================================================
+Test_Scenarios.cognition_planning_loop = function(agent, current_year) {
     
-    // --- We will only test the very first stand of the very first agent ---
-    const first_agent_id = socoabe.institution.all_agents[0].id;
-    if (agent.id !== first_agent_id) {
-        return; // Do nothing for all other agents.
-    }
-    const stand_to_test = agent.managed_stand_ids[0];
+    const AGENT_ID_TO_TEST = "small_agent_51";
+    if (agent.id !== AGENT_ID_TO_TEST) return;
 
-    // --- Helper function to log a detailed observation ---
-    function observe_and_log(stand_id, year_label) {
-        console.log(`--- [TEST] Observation for Stand ${stand_id} (${year_label}) ---`);
-        const stand_data_obj = agent.managed_stands_data[stand_id];
-        const updated_stand_data = Perception.observe_stand(stand_data_obj, agent.owner.institution);
-        console.log(JSON.stringify(updated_stand_data, null, 2));
+    function getTestStands(_agent) {
+        return Object.keys(_agent.managed_stands_data).slice(0, 2);
+    }
+
+    function log_stand_data(stand_data_obj, year_label) {
+        console.log(`--- [TEST] Final State of Stand ${stand_data_obj.stand_id} (Agent: ${stand_data_obj.agent_id}, Year: ${year_label}) ---`);
+        console.log(JSON.stringify(stand_data_obj, null, 2));
         console.log("--------------------------------------------------");
     }
 
-    // --- Test Logic ---
+    const test_stand_ids = getTestStands(agent);
+    if (test_stand_ids.length === 0) return;
 
-    if (current_year === 5) {
-        console.log(`[TEST] Year 5: Ordering 'clearcut' for stand ${stand_to_test}. Action should execute in Year 6.`);
+    if (current_year >= 3 && current_year <= 7) {
+        console.log(`\n[TEST] ==================== Running Cognition Test Cycle for Year ${current_year} for Agent ${agent.id} ====================`);
         
-        // Get the stand_data object for our target stand
-        const stand_data_obj = agent.managed_stands_data[stand_to_test];
-        
-        // Set the plan
-        stand_data_obj.activity.chosen_Activity = 'clearcut';
-        stand_data_obj.activity.parameters = {};
-        
-        // Execute the action (this sets the iLand flags)
-        Action.set_flags_for_execution(stand_data_obj);
+        test_stand_ids.forEach(stand_id => {
+            console.log(`\n[TEST] Processing Stand: ${stand_id}`);
+            let stand_data_obj = agent.managed_stands_data[stand_id];
 
-        // Log the state of the stand BEFORE the action takes effect
-        observe_and_log(stand_to_test, "Pre-Action");
-    } 
-    else if (current_year === 6) {
-        console.log(`[TEST] Year 6: Observing stand ${stand_to_test} to verify clearcut results.`);
-        
-        // Observe the stand. The clearcut should have executed at the start of this year.
-        observe_and_log(stand_to_test, "Post-Action");
+            // 1. OBSERVE - Pass the agent object correctly.
+            stand_data_obj = Perception.observe_stand(stand_data_obj, agent);
+
+            // 2. MANIPULATE
+            if (current_year === 5) {
+                console.log(`  [TEST] Artificially triggering 'needs_reassessment' for stand ${stand_id}.`);
+                stand_data_obj.iLand_stand_data.needs_reassessment = true;
+            }
+
+            // 3. COGNITION
+            const needs_new_plan = Cognition.check_need(stand_data_obj, current_year);
+            if (needs_new_plan) {
+                stand_data_obj = Cognition.plan(stand_data_obj, agent);
+            }
+            
+            // Update the agent's memory
+            agent.managed_stands_data[stand_id] = stand_data_obj;
+
+            // 4. LOG THE RESULT
+            log_stand_data(stand_data_obj, current_year);
+        });
     }
 };
-
-// ----- END OF SIMPLIFIED TEST FILE: soco_src/test/scenarios/perception_action_loop.js -----
