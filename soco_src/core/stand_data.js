@@ -31,10 +31,12 @@ class stand_data {
         // --- II. PERCEPTION DATA ---
         this.iLand_stand_data = {
             absolute_age: 0,
+            absolute_age_agent_count: 0,
             stand_age: 0,
             basal_area: 0,
             volume: 0,
-            needs_reassessment: true // Default to true for initial planning
+            year_of_observation: -1,
+            needs_reassessment: true
         };
         this.classified = {
             age_class: 'unknown',

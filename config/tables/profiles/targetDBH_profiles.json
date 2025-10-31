@@ -1,29 +1,31 @@
 {
-  "default_central_europe": {
-    "fasy": 65,
-    "frex": 60,
-    "piab": 45,
-    "quro": 75,
-    "pisy": 45,
-    "lade": 65,
-    "qupe": 75,
-    "psme": 65,
-    "abal": 45,
-    "acps": 60,
-    "pini": 45
-  },
-  "conifer_production": {
-    "piab": 40,
-    "pisy": 40,
-    "lade": 55,
-    "psme": 50,
-    "abal": 45
-  },
-  "broadleaf_conservation": {
-    "fasy": 80,
-    "quro": 90,
-    "qupe": 90,
-    "frex": 70,
-    "acps": 70
+  "all": {
+    "default_central_europe": {
+      "fasy": 65,
+      "frex": 60,
+      "piab": 45,
+      "quro": 75,
+      "pisy": 45,
+      "lade": 65,
+      "qupe": 75,
+      "psme": 65,
+      "abal": 45,
+      "acps": 60,
+      "pini": 45
+    },
+    "conifer_production": {
+      "piab": 40,
+      "pisy": 40,
+      "lade": 55,
+      "psme": 50,
+      "abal": 45
+    },
+    "broadleaf_conservation": {
+      "fasy": 80,
+      "quro": 90,
+      "qupe": 90,
+      "frex": 70,
+      "acps": 70
+    }
   }
 }

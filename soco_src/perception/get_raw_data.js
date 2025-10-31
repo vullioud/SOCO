@@ -13,6 +13,7 @@ Perception.get_raw_data = function(stand_data_obj) {
     stand_data_obj.iLand_stand_data.basal_area = stand.basalArea;
     stand_data_obj.iLand_stand_data.top_height = stand.topHeight;
     stand_data_obj.iLand_stand_data.species_count = stand.nspecies;
-
+    stand_data_obj.iLand_stand_data.year_of_observation = Globals.year;
+    
     return stand_data_obj;
 };
