@@ -1,0 +1,314 @@
+{
+  "P1": {
+    "tending": {
+      "species": [
+        "fasy-quro-qupe"
+      ],
+      "intensity": [
+        "0.6-0.3-0.1"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "fasy-quro-qupe"
+      ],
+      "intensity": [
+        "0.5-0.3-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "fasy-quro-qupe"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    }
+  },
+  "P2": {
+    "tending": {
+      "species": [
+        "piab-pisy-abal"
+      ],
+      "intensity": [
+        "0.6-0.3-0.1"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "piab-pisy-abal"
+      ],
+      "intensity": [
+        "0.5-0.3-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "piab-pisy-abal"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    }
+  },
+  "P3": {
+    "tending": {
+      "species": [
+        "fasy-piab-quro"
+      ],
+      "intensity": [
+        "0.6-0.3-0.1"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "fasy-piab-quro"
+      ],
+      "intensity": [
+        "0.5-0.3-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "fasy-piab-quro"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    }
+  },
+  "P4": {
+    "tending": {
+      "species": [
+        "quro-fasy-cabe"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "quro-fasy-cabe"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "quro-fasy-cabe"
+      ],
+      "intensity": [
+        "0.3-0.3-0.4"
+      ]
+    }
+  },
+  "P5": {
+    "tending": {
+      "species": [
+        "psme-abal-pisy"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "psme-abal-pisy"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "psme-abal-pisy"
+      ],
+      "intensity": [
+        "0.3-0.3-0.4"
+      ]
+    }
+  },
+  "P6": {
+    "tending": {
+      "species": [
+        "quro-piab-fasy"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "quro-piab-fasy"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "quro-piab-fasy"
+      ],
+      "intensity": [
+        "0.3-0.3-0.4"
+      ]
+    }
+  },
+  "P7": {
+    "tending": {
+      "species": [
+        "acpl-qupe-bepe"
+      ],
+      "intensity": [
+        "0.33-0.33-0.34"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "acpl-qupe-bepe"
+      ],
+      "intensity": [
+        "0.34-0.33-0.33"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "acpl-qupe-bepe"
+      ],
+      "intensity": [
+        "0.33-0.34-0.33"
+      ]
+    }
+  },
+  "P8": {
+    "tending": {
+      "species": [
+        "psme-pisy-lade"
+      ],
+      "intensity": [
+        "0.33-0.33-0.34"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "psme-pisy-lade"
+      ],
+      "intensity": [
+        "0.34-0.33-0.33"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "psme-pisy-lade"
+      ],
+      "intensity": [
+        "0.33-0.34-0.33"
+      ]
+    }
+  },
+  "P9": {
+    "tending": {
+      "species": [
+        "quro-psme-fasy"
+      ],
+      "intensity": [
+        "0.33-0.33-0.34"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "quro-psme-fasy"
+      ],
+      "intensity": [
+        "0.34-0.33-0.33"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "quro-psme-fasy"
+      ],
+      "intensity": [
+        "0.33-0.34-0.33"
+      ]
+    }
+  },
+  "P10": {
+    "tending": {
+      "species": [
+        "fasy-quro-acpl"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "fasy-quro-acpl"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "fasy-quro-acpl"
+      ],
+      "intensity": [
+        "0.3-0.4-0.3"
+      ]
+    }
+  },
+  "P11": {
+    "tending": {
+      "species": [
+        "abal-piab-pisy"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "abal-piab-pisy"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "abal-piab-pisy"
+      ],
+      "intensity": [
+        "0.3-0.4-0.3"
+      ]
+    }
+  },
+  "P12": {
+    "tending": {
+      "species": [
+        "fasy-piab-abal"
+      ],
+      "intensity": [
+        "0.4-0.4-0.2"
+      ]
+    },
+    "thinning": {
+      "species": [
+        "fasy-piab-abal"
+      ],
+      "intensity": [
+        "0.4-0.3-0.3"
+      ]
+    },
+    "shelterwood": {
+      "species": [
+        "fasy-piab-abal"
+      ],
+      "intensity": [
+        "0.3-0.4-0.3"
+      ]
+    }
+  }
+}

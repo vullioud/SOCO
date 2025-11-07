@@ -1,752 +1,752 @@
 {
   "big": {
-    "harvest": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 3, 9, 5, 1, 1]
+    "harvesting": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 3, 5, 3, 6, 5, 6]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [5, 1, 2, 7, 4, 3, 2]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [4, 1, 4, 9, 3, 1, 4]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 2, 9, 6, 2, 1]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 3, 3, 2, 5, 3, 3]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 1, 3, 8, 4, 2, 3]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [4, 1, 2, 6, 4, 4, 2]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 4, 10, 2, 1, 1]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 3, 5, 3, 6, 5, 6]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [5, 1, 2, 7, 4, 3, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [4, 1, 4, 9, 3, 1, 4]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 3, 3, 2, 5, 3, 3]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 1, 3, 8, 4, 2, 3]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [4, 1, 2, 6, 4, 4, 2]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 3, 9, 5, 1, 1]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 2, 9, 6, 2, 1]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 4, 10, 2, 1, 1]
+            }
+          ]
         }
       }
-    ],
-    "thinning": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 4, 1, 7]
+    },
+    "thinning": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 5, 2, 8]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [6, 6, 3, 4]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 7, 4, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [7, 5, 2, 3]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 3, 2, 10]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 4, 3, 6]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 5, 3, 5]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [8, 6, 2, 1]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 5, 2, 8]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [6, 6, 3, 4]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 7, 4, 3]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 3, 2, 10]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 4, 3, 6]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 5, 3, 5]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 4, 1, 7]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [7, 5, 2, 3]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [8, 6, 2, 1]
+            }
+          ]
         }
       }
-    ],
-    "tending": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [9, 1]
+    },
+    "tending": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [7, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [7, 3]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [8, 2]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [8, 2]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [9, 1]
+            }
+          ]
         }
       }
-    ],
-    "planting": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [9, 1]
+    },
+    "planting": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [8, 2]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [8, 2]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [8, 2]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [8, 2]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [9, 1]
+            }
+          ]
         }
       }
-    ]
+    }
   },
   "state": {
-    "harvest": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 2, 5, 2, 5, 6, 3]
+    "harvesting": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 4, 5, 2, 5, 8, 4]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [5, 5, 2, 2, 4, 3, 6]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [4, 3, 4, 1, 3, 1, 4]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 4, 2, 1, 6, 2, 3]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 6, 2, 2, 5, 1, 4]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 4, 3, 1, 4, 2, 7]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [4, 6, 2, 2, 4, 4, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 4, 1, 5, 1, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 4, 5, 2, 5, 8, 4]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [5, 5, 2, 2, 4, 3, 6]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [4, 3, 4, 1, 3, 1, 4]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 6, 2, 2, 5, 1, 4]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 4, 3, 1, 4, 2, 7]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [4, 6, 2, 2, 4, 4, 3]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 2, 5, 2, 5, 6, 3]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 4, 2, 1, 6, 2, 3]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 4, 1, 5, 1, 2]
+            }
+          ]
         }
       }
-    ],
-    "thinning": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 3, 2, 8]
+    },
+    "thinning": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [2, 4, 4, 7]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 5, 5, 2]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 6, 6, 1]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 4, 3, 4]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 2, 3, 10]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 3, 4, 5]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 4, 5, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [6, 5, 4, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [2, 4, 4, 7]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 5, 5, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 6, 6, 1]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 2, 3, 10]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 3, 4, 5]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 4, 5, 3]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 3, 2, 8]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 4, 3, 4]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [6, 5, 4, 2]
+            }
+          ]
         }
       }
-    ],
-    "tending": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [8, 2]
+    },
+    "tending": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [6, 4]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [6, 4]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [7, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [7, 3]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [8, 2]
+            }
+          ]
         }
       }
-    ],
-    "planting": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [8, 2]
+    },
+    "planting": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [7, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [7, 3]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [7, 3]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [7, 3]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [8, 2]
+            }
+          ]
         }
       }
-    ]
+    }
   },
   "small": {
-    "harvest": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [5, 12, 5, 2, 5, 2, 1]
+    "harvesting": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [4, 7, 5, 2, 5, 2, 3]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 1, 2, 1, 1, 2]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 1, 1, 1, 1, 1]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [10, 1, 2, 1, 1, 2, 4]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 13, 2, 2, 5, 8, 1]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 4, 3, 1, 4, 2, 2]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [1, 1, 1, 1, 1, 1, 1]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 2, 2, 2, 2, 2, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [4, 7, 5, 2, 5, 2, 3]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 1, 2, 1, 1, 2]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 1, 1, 1, 1, 1]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 13, 2, 2, 5, 8, 1]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [2, 4, 3, 1, 4, 2, 2]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
-          "alpha": [1, 1, 1, 1, 1, 1, 1]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [5, 12, 5, 2, 5, 2, 1]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [10, 1, 2, 1, 1, 2, 4]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["femel", "noManagement", "AllBigTrees", "clearcut", "shelterwood", "plenter", "targetDBH"],
+              "alpha": [2, 2, 2, 2, 2, 2, 2]
+            }
+          ]
         }
       }
-    ],
-    "thinning": [
-      {
-        "preference_focus": "Production",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 2, 1, 12]
+    },
+    "thinning": {
+      "Biodiversity": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [2, 3, 2, 11]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 4, 3, 7]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 5, 4, 4]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 3, 2, 8]
+      "CO2": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [2, 1, 2, 13]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 2, 3, 9]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 3, 4, 6]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Production",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [5, 4, 3, 5]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [2, 3, 2, 11]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 4, 3, 7]
-        }
-      },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 5, 4, 4]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "high",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [2, 1, 2, 13]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "medium",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [3, 2, 3, 9]
-        }
-      },
-      {
-        "preference_focus": "CO2",
-        "structure": "low",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
-          "alpha": [4, 3, 4, 6]
+      "Production": {
+        "high": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [3, 2, 1, 12]
+            }
+          ]
+        },
+        "medium": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [4, 3, 2, 8]
+            }
+          ]
+        },
+        "low": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["selectiveThinning", "fromBelow", "plenter", "no_thinning"],
+              "alpha": [5, 4, 3, 5]
+            }
+          ]
         }
       }
-    ],
-    "tending": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [6, 4]
+    },
+    "tending": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [5, 5]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [5, 5]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [5, 5]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["tending", "no_tending"],
-          "alpha": [5, 5]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["tending", "no_tending"],
+              "alpha": [6, 4]
+            }
+          ]
         }
       }
-    ],
-    "planting": [
-      {
-        "preference_focus": "Production",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [6, 4]
+    },
+    "planting": {
+      "Biodiversity": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [5, 5]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "Biodiversity",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [5, 5]
+      "CO2": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [5, 5]
+            }
+          ]
         }
       },
-      {
-        "preference_focus": "CO2",
-        "structure": "any",
-        "parameter": "activity_choice",
-        "distribution_function": "dirichlet",
-        "distribution_params": {
-          "options": ["planting", "no_planting"],
-          "alpha": [5, 5]
+      "Production": {
+        "any": {
+          "distribution_function": "dirichlet",
+          "distribution_params": [
+            {
+              "options": ["planting", "no_planting"],
+              "alpha": [6, 4]
+            }
+          ]
         }
       }
-    ]
+    }
   }
 }

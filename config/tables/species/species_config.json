@@ -1,278 +1,215 @@
 {
-  "big": [
-    {
-      "preference_focus": "Production",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [10.5, 5.5, 5.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+  "big": {
+    "Biodiversity": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [7.5, 2.5, 2.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [2.5, 7.5, 2.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [2.5, 2.5, 7.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 5.5, 10.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+    "CO2": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [7.5, 2.5, 2.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [2.5, 7.5, 2.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [2.5, 2.5, 7.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 10.5, 5.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [7.5, 2.5, 2.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [2.5, 2.5, 7.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [2.5, 7.5, 2.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [7.5, 2.5, 2.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [2.5, 2.5, 7.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [2.5, 7.5, 2.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+    "Production": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [10.5, 5.5, 5.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 10.5, 5.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 5.5, 10.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+        }
       }
     }
-  ],
-  "small": [
-    {
-      "preference_focus": "Production",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
+  },
+  "small": {
+    "Biodiversity": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 8.5, 3.5, 3.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 3.5, 8.5, 3.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 3.5, 3.5, 8.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
+    "CO2": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 8.5, 3.5, 3.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 3.5, 3.5, 8.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 3.5, 8.5, 3.5]
+    "Production": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
+        }
       }
     }
-  ],
-  "state": [
-    {
-      "preference_focus": "Production",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+  },
+  "state": {
+    "Biodiversity": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+    "CO2": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+        }
       }
     },
-    {
-      "preference_focus": "Production",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
-      }
-    },
-    {
-      "preference_focus": "CO2",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Broadleaf",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Mixed",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
-      }
-    },
-    {
-      "preference_focus": "Biodiversity",
-      "dominance": "Conifer",
-      "parameter": "profile_choice",
-      "distribution_function": "dirichlet",
-      "distribution_params": {
-        "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-        "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+    "Production": {
+      "broadleaf": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+        }
+      },
+      "conifer": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+        }
+      },
+      "mixed": {
+        "distribution_function": "dirichlet",
+        "distribution_params": {
+          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
+          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+        }
       }
     }
-  ]
+  }
 }
