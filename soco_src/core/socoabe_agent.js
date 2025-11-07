@@ -1,23 +1,4 @@
-/**
- * =================================================================================
- * FILE: socoabe_agent.js
- * TYPE: Core Class (Cognitive Actor)
- * LOCATION: soco_src/core/
- * =================================================================================
- * DESCRIPTION:
- * The cognitive "brain" of a forest manager. It holds the state of its managed
- * stands and executes the perception-cognition-action cycle annually.
- *
- * VERTICAL INTEGRATION:
- * [Level 4] - Created by `owner`.
- *           - Links 1-to-1 with an iLand ABE agent "body".
- *           - Creates and holds many `stand_data` objects.
- *
- * HORIZONTAL INTEGRATION (Pipeline):
- * [Executor] - `run_yearly_cycle(year)` is the main loop that calls:
- *              Observe -> Check -> Plan -> Act.
- * =================================================================================
- */
+// ----- Start of File: soco_src/core/socoabe_agent.js -----
 
 class socoabe_agent {
     constructor(agent_id, owner, stand_ids) {
@@ -25,10 +6,6 @@ class socoabe_agent {
         this.owner = owner;
         this.managed_stand_ids = stand_ids;
         this.managed_stands_data = {};
-
-        // --- THE DEFINITIVE, EXPLICIT STRUCTURE ---
-        // The agent creates its own deep copy of each configuration table.
-        // This guarantees independence and prepares for future learning.
         this.trait_table = helpers.deepCopy(this.owner.trait_table);
         this.activity_table = helpers.deepCopy(this.owner.activity_table);
         this.species_config_table = helpers.deepCopy(this.owner.species_config_table);
@@ -36,88 +13,107 @@ class socoabe_agent {
         this.parameter_table = helpers.deepCopy(this.owner.parameter_table);
         this.plenter_profiles_table = helpers.deepCopy(this.owner.plenter_profiles_table);
         this.targetDBH_profiles_table = helpers.deepCopy(this.owner.targetDBH_profiles_table);
-        this.species_list_table = helpers.deepCopy(this.owner.species_list_table);
-
-        // Agent-specific properties (sampled once at initialization)
+        this.species_profile_per_activity_table = helpers.deepCopy(this.owner.species_profile_per_activity_table);
         this.preferences = {};
         this.resources = 0;
         this.risk_tolerance = 0;
-        
+        this.planning_offset = Math.floor(Math.random() * 10) + 5;
+        this.is_initialized = false;
         this.init();
     }
 
     init() {
-        this.sample_my_traits(); // This now uses this.trait_table
+        this.sample_my_traits();
         this.initialize_managed_stands();
-        console.log(`Agent '${this.id}' initialized, managing ${Object.keys(this.managed_stands_data).length} stands.`);
     }
 
     sample_my_traits() {
         const trait_configs = this.trait_table;
-        
         if (!trait_configs) throw new Error(`Agent '${this.id}' has no trait_table.`);
-        if (trait_configs.preferences) {
-            this.preferences = Distributions.sample(trait_configs.preferences);
-        }
-        if (trait_configs.resources) {
-            this.resources = Distributions.sample(trait_configs.resources);
-        }
-        if (trait_configs.riskTolerance) {
-            this.risk_tolerance = Distributions.sample(trait_configs.riskTolerance);
-        }
+        if (trait_configs.preferences) this.preferences = Distributions.sample(trait_configs.preferences);
+        if (trait_configs.resources) this.resources = Distributions.sample(trait_configs.resources);
+        if (trait_configs.riskTolerance) this.risk_tolerance = Distributions.sample(trait_configs.riskTolerance);
     }
+
     initialize_managed_stands() {
         this.managed_stand_ids.forEach(id => {
             const stand_preference_focus = Distributions.weighted_random_choice(this.preferences);
-            const new_stand_data = new stand_data(id, this.id, stand_preference_focus);
-            this.managed_stands_data[id] = new_stand_data;
+            this.managed_stands_data[id] = new stand_data(id, this.id, stand_preference_focus);
         });
     }
 
+    assign_species_profiles() {
+        console.log(`[AGENT DEBUG] Agent ${this.id}: Assigning species profiles...`);
+        for (const stand_id in this.managed_stands_data) {
+            const stand_data_obj = this.managed_stands_data[stand_id];
+            if (stand_data_obj.species_profile === "none") {
+                const dominance = stand_data_obj.classified.species_dominance;
+                const preference = stand_data_obj.preference_focus;
+                console.log(`[AGENT DEBUG] Stand ${stand_id}: Looking up with pref='${preference}', dom='${dominance}'`);
+                const species_dist_config = this.species_config_table?.[preference]?.[dominance];
+                if (species_dist_config) {
+                    console.log(`[AGENT DEBUG] Stand ${stand_id}: Found distribution config. Sampling...`);
+                    const profile_weights = Distributions.sample(species_dist_config);
+                    stand_data_obj.species_profile = Distributions.weighted_random_choice(profile_weights);
+                } else {
+                    console.warn(`[AGENT DEBUG] Stand ${stand_id}: No species distribution found.`);
+                    stand_data_obj.species_profile = "default";
+                }
+            }
+        }
+    }
+
     observe() {
-    for (const stand_id of this.managed_stand_ids) {
-        let stand_data_obj = this.managed_stands_data[stand_id];
-        // Pass the institution object, which the agent can access via its owner
-        this.managed_stands_data[stand_id] = Perception.observe_stand(stand_data_obj, this.owner.institution);
+        for (const stand_id of this.managed_stand_ids) {
+            this.managed_stands_data[stand_id] = Perception.observe_stand(this.managed_stands_data[stand_id], this);
+        }
     }
-}
 
-    /**
-     * The agent's main annual cycle.
-     * It first checks if a test is active. If not, it proceeds with normal logic.
-     */
- run_yearly_cycle(current_year) {
-    // --- 1. Check if an active test scenario should run for THIS agent ---
-    // The Test_Runner will execute the test and return 'true' if it did.
-    const test_was_run = Test_Runner.run_for_agent(this, current_year);
+    check(current_year) {
+        const stands_needing_plan = [];
+        for (const stand_id in this.managed_stands_data) {
+            const stand_data_obj = this.managed_stands_data[stand_id];
+            if (Cognition.check_need(stand_data_obj, current_year, this)) {
+                stands_needing_plan.push(stand_data_obj);
+            }
+        }
+        return stands_needing_plan;
+    }
     
-    // If the Test_Runner ran a scenario, the agent's job for this year is done.
-    if (test_was_run) {
-        return;
+    plan(stands_to_plan) {
+        const planned_stands = [];
+        for (const stand_data_obj of stands_to_plan) {
+            let updated_stand_data = Cognition.select_activity(stand_data_obj, this);
+            updated_stand_data = Cognition.select_parameters(updated_stand_data, this);
+            this.managed_stands_data[updated_stand_data.stand_id] = updated_stand_data;
+            planned_stands.push(updated_stand_data);
+        }
+        return planned_stands;
     }
 
-    // --- 2. Normal Agent Logic (runs ONLY if no test was active) ---
-    // This is the code you want to see running when SoCoABE_CONFIG.TESTING.active_scenario = 'none'
-
-    // [Observe]
-    this.observe();
-
-    // [Check & Plan & Act]
-    for (const stand_id in this.managed_stands_data) {
-        let stand_data_obj = this.managed_stands_data[stand_id];
-
-        const needs_new_plan = Cognition.check_need(stand_data_obj, current_year);
-        if (needs_new_plan) {
-            stand_data_obj = Cognition.plan(stand_data_obj, this);
+    run_yearly_cycle(current_year) {
+        // Allow test scenarios to override the entire loop.
+        // Note: The snapshot scenario returns false, so it does NOT override.
+        const test_overrode_cycle = Test_Runner.run_for_agent(this, current_year);
+        if (test_overrode_cycle) {
+            return;
         }
 
-        const is_actionable_this_year = (stand_data_obj.activity.is_actionable && 
-                                         stand_data_obj.activity.target_year === current_year);
-        if (is_actionable_this_year) {
-            Action.set_flags_for_execution(stand_data_obj);
-           }
+        // --- Normal P-C-A Logic ---
+        this.observe();
+        
+        // In the very first year, after observing, assign the strategic profiles.
+        if (current_year === 1) {
+            this.assign_species_profiles();
+        }
+        
+        const stands_to_plan = this.check(current_year);
+
+        if (stands_to_plan.length > 0) {
+            this.plan(stands_to_plan);
         }
     }
 };
-
 this.socoabe_agent = socoabe_agent;
+
+// ----- End of File: soco_src/core/socoabe_agent.js -----

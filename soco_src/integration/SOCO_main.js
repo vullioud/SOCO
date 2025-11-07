@@ -46,7 +46,9 @@ class socoabe_main {
                 plenter_profiles:   JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/profiles/plenter_profiles.json'))),
                 targetDBH_profiles: JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/profiles/targetDBH_profiles.json'))),           
                 species_config:     JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/species/species_config.json'))),
-                species_list:       JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/species/species_list.json')))
+                species_list:       JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/species/species_list.json'))),
+                species_profile_per_activity_table:    JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/species/species_profile_per_activity.json')))
+
             };
         } catch (e) {
             console.error("FATAL ERROR parsing JSON configuration files: " + e.message);
@@ -62,24 +64,6 @@ class socoabe_main {
     });
     }
 
-    run_post_initialization_report() {
-        console.log("\n--- SoCoABE Post-Initialization Agent & Stand Report (Year 1) ---");
-        console.log("--- AGENT TRAITS ---");
-         console.log("agent_id,owner_type,preferences,resources,risk_tolerance");
-         this.institution.all_agents.forEach(agent => {
-        const prefs_string = JSON.stringify(agent.preferences);
-        console.log(`${agent.id},${agent.owner.type},"${prefs_string}",${agent.resources.toFixed(3)},${agent.risk_tolerance.toFixed(3)}`);
-        });
-        console.log("\n--- STAND INITIALIZATION ---");
-        console.log("agent_id,stand_id,preference_focus");
-        this.institution.all_agents.forEach(agent => {
-            // THE FIX: Iterate over the keys of the object.
-            for (const stand_id in agent.managed_stands_data) {
-                const stand_data = agent.managed_stands_data[stand_id];
-                console.log(`${stand_data.agent_id},${stand_data.stand_id},${stand_data.preference_focus}`);
-            }
-        });
-        console.log("--- End of Report ---");
-    }
+  
 }
 this.socoabe_main = socoabe_main;

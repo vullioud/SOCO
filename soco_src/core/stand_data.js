@@ -1,23 +1,9 @@
+// ----- Start of File: soco_src/core/stand_data.js -----
+
 /**
  * =================================================================================
  * FILE: stand_data.js
  * TYPE: Core Class (Data Transfer Object)
- * LOCATION: soco_src/core/
- * =================================================================================
- * DESCRIPTION:
- * A structured container representing the agent's complete knowledge and plan
- * for a single forest stand. It decouples the cognitive layer from the iLand
- * physical layer.
- *
- * VERTICAL INTEGRATION:
- * [Level 5] - Created and held by `socoabe_agent`.
- *           - Links logically 1-to-1 with an iLand `Stand` (via `stand_id`).
- *
- * HORIZONTAL INTEGRATION (Pipeline):
- * [Data Subject] - Passed through the pipeline:
- *                  - Updated by Perception modules.
- *                  - Read/Updated by Cognition modules.
- *                  - Read by Action modules to set iLand flags.
  * =================================================================================
  */
 
@@ -27,16 +13,29 @@ class stand_data {
         this.stand_id = stand_id;
         this.agent_id = agent_id;
         this.preference_focus = preference_focus;
+        this.species_profile = "none";
 
         // --- II. PERCEPTION DATA ---
         this.iLand_stand_data = {
-            absolute_age: 0,
-            absolute_age_agent_count: 0,
+            // Agent-managed age counter
+            absolute_age_soco: 0,
+            absolute_age_iLand: 0,
+            // Raw iLand metrics
             stand_age: 0,
             basal_area: 0,
             volume: 0,
+            top_height: 0,
+            species_count: 0,
+            
+            // Management context from iLand
+            U: 0,
+            thinning_intensity: 'unknown',
+            time_since_last_activity_iLand: -1,
+            last_activity_name_iLand: 'none',
+
+            // Observation metadata
             year_of_observation: -1,
-            needs_reassessment: true
+            needs_reassessment: false
         };
         this.classified = {
             age_class: 'unknown',
@@ -45,7 +44,8 @@ class stand_data {
         };
         this.history = {
             last_activity: 'none',
-            last_activity_Year: -1
+            last_activity_Year: -1, 
+            time_since_last_activity: -1
         };
 
         // --- III. AGENT'S PLAN ---
@@ -64,3 +64,5 @@ class stand_data {
     }
 }
 this.stand_data = stand_data;
+
+// ----- End of File: soco_src/core/stand_data.js -----

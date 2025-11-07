@@ -1,24 +1,3 @@
-// ----- START OF CORRECTED FILE: soco_src/core/institution.js -----
-
-/**
- * =================================================================================
- * FILE: institution.js
- * TYPE: Core Class (Static Structure)
- * LOCATION: soco_src/core/
- * =================================================================================
- * DESCRIPTION:
- * Represents the top-level structural entity. It is responsible for discovering
- * the initial landscape setup from iLand and creating the agent hierarchy.
- *
- * VERTICAL INTEGRATION:
- * [Level 2] - Created by `SOCO_main`.
- *           - Creates and holds `owner` instances based on landscape discovery.
- *
- * HORIZONTAL INTEGRATION (Pipeline):
- * [Static] - Primarily active during initialization. Does not have a yearly cycle.
- * =================================================================================
- */
-
 class institution {
     constructor(all_configs) {
         this.owners = {};
@@ -29,7 +8,7 @@ class institution {
     }
 
     discover_and_create() {
-        // This map will hold the structure: { owner_type: { agent_name: [stand_ids] } }
+
         const owner_agent_stand_map = {};
 
         fmengine.standIds.forEach(id => {
@@ -37,6 +16,7 @@ class institution {
             if (stand && stand.agent) {
                 const agent_name = stand.agent.name;
                 const owner_type = stand.flag('owner_type');
+
                 if (!owner_type) {
                     console.warn(`Stand ${id} is managed by agent '${agent_name}' but is missing the 'owner_type' flag. It will be ignored by the cognitive layer.`);
                     return;
@@ -56,8 +36,6 @@ class institution {
         for (const owner_type in owner_agent_stand_map) {
             const agent_stand_map = owner_agent_stand_map[owner_type];
             
-            // --- THIS IS THE CRITICAL FIX ---
-            // Pass 'this' (the institution instance) as the first argument to the owner constructor.
             const new_owner = new owner(this, owner_type, agent_stand_map, this.configs);
             
             this.owners[owner_type] = new_owner;
@@ -69,4 +47,3 @@ class institution {
 }
 this.institution = institution;
 
-// ----- END OF CORRECTED FILE: soco_src/core/institution.js -----

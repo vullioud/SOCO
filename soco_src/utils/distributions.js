@@ -1,21 +1,6 @@
-// ===== FINAL, CLEAN FILE: src/utils/distributions.js =====
 
-/**
- * A centralized utility for sampling from statistical distributions
- * defined in the JSON configuration files.
- *
- * The primary entry point is the generic `sample()` function, which
- * dispatches to the correct underlying statistical sampler based on the
- * provided configuration object.
- */
 var Distributions = {
 
-    /**
-     * The main generic sampler function.
-     * Takes a distribution object from the JSON config and returns a single sampled value or object.
-     * @param {object} distObj - An object like { distribution_function: "normal", distribution_params: { mean: 10, sd: 2 } }.
-     * @returns {number|object} A single numeric sample, or a named object for categorical (Dirichlet) distributions.
-     */
     sample: function(distObj) {
         if (!distObj || !distObj.distribution_function) {
             console.error("Invalid distribution object passed to Distributions.sample:", distObj);
@@ -54,11 +39,6 @@ var Distributions = {
         return Object.keys(weights_object)[0];
     },
     
-    // =========================================================================
-    // "Private" Sampler Implementations
-    // These functions contain the core statistical logic.
-    // =========================================================================
-
     _sampleNormal: function(mean, stddev) {
         // Box-Muller transform for Normal distribution
         let u = 0, v = 0;
@@ -107,12 +87,6 @@ var Distributions = {
         }
     },
 
-    /**
-     * Samples from a Dirichlet distribution and returns a named object.
-     * @param {string[]} options - An array of names for each category (e.g., ["clearcut", "femel"]).
-     * @param {number[]} alphas - An array of alpha parameters.
-     * @returns {object} A named object of weights, e.g., { clearcut: 0.8, femel: 0.2 }.
-     */
     _sampleDirichlet: function(options, alphas) {
         const samples = alphas.map(alpha => this._sampleGamma(alpha, 1));
         const sum = samples.reduce((a, b) => a + b, 0);
@@ -121,7 +95,6 @@ var Distributions = {
             ? alphas.map(() => 1 / alphas.length)
             : samples.map(s => s / sum);
 
-        // Create the named object
         const namedResult = {};
         options.forEach((option, i) => {
             namedResult[option] = weights[i];
