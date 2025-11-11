@@ -275,14 +275,14 @@ Test_Scenarios.inspect_planning_trigger = function(agent, current_year) {
     console.log(`  Context:`);
     console.log(`    - Preference Focus: ${final_stand_data.preference_focus}`);
     console.log(`    - Species Focus: ${final_stand_data.species_profile}`);
-
-    // --- THIS IS THE ADDED LINE ---
     console.log(`    - Stand Age:        ${final_stand_data.iLand_stand_data.stand_age.toFixed(2)}`);
-
+   console.log(`    - absolute Age:        ${final_stand_data.iLand_stand_data.absolute_age_soco.toFixed(2)}`);
     console.log(`    - Age Class:        ${final_stand_data.classified.age_class}`);
     console.log(`    - Structure Class:  ${final_stand_data.classified.structure_class}`);
     console.log(`  Result:`);
     console.log(`    - Chosen Activity:  '${final_stand_data.activity.chosen_Activity}'`);
+    console.log(`    - Arguments:  '${final_stand_data.activity.parameters ? SoCo_Inspector._safeStringify(final_stand_data.activity.parameters) : '{}'}'`);
+    console.log(`    - target year:  '${final_stand_data.activity.target_year}'`);
     console.log("--------------------");
 };
 
@@ -422,4 +422,167 @@ Test_Scenarios.snapshot_stand_data = function(agent, current_year) {
     return false;
 };
 
-// ----- End of File: soco_src/test/scenarios/snapshot_stand_data.js -----
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Schedule Computation
+ * =================================================================================
+ * DESCRIPTION:
+ * This scenario verifies the entire planning pipeline, from activity and parameter
+ * selection through to schedule computation. It logs the complete `activity` object
+ * to show the final generated timeline.
+ * =================================================================================
+ */
+Test_Scenarios.inspect_schedule_computation = function(agent, current_year) {
+    
+    // --- CONFIGURATION ---
+    const YEARS_TO_INSPECT = [3, 4, 12, 16, 17];
+    
+    if (typeof this.stands_to_watch === 'undefined') {
+        this.stands_to_watch = {};
+        for (const owner_type in socoabe.institution.owners) {
+            const owner = socoabe.institution.owners[owner_type];
+            if (owner.agent_list.length > 0 && owner.agent_list[0].managed_stand_ids.length > 0) {
+                const agent_id = owner.agent_list[0].id;
+                const stand_id = owner.agent_list[0].managed_stand_ids[0];
+                this.stands_to_watch[agent_id] = stand_id;
+            }
+        }
+    }
+    // ---------------------
+
+    if (this.stands_to_watch[agent.id] === undefined || !YEARS_TO_INSPECT.includes(current_year)) {
+        return;
+    }
+
+    const stand_id_to_inspect = this.stands_to_watch[agent.id];
+    console.log(`\n[TEST] --- Inspecting Agent ${agent.id}, Stand ${stand_id_to_inspect} for Year ${current_year} ---`);
+
+    // --- 1. MANIPULATE (for Year 5) ---
+    if (current_year === 12) {
+        console.log(`[TEST] MANIPULATION: Setting 'abe_need_reassessment' flag to true.`);
+        fmengine.standId = stand_id_to_inspect;
+        stand.setFlag('abe_need_reassessment', true);
+    }
+
+    // --- 2. RUN THE AGENT'S P-C-A CYCLE ---
+    agent.observe();
+    const stands_to_plan = agent.check(current_year);
+    if (stands_to_plan.length > 0) {
+        agent.plan(stands_to_plan);
+    }
+
+    // --- 3. LOG THE RESULT ---
+    const final_stand_data = agent.managed_stands_data[stand_id_to_inspect];
+    
+    console.log("--- TEST RESULTS ---");
+    console.log(`  Context:`);
+    console.log(`    - Stand Age:       ${final_stand_data.iLand_stand_data.stand_age.toFixed(2)}`);
+    console.log(`    - absolute Age:        ${final_stand_data.iLand_stand_data.absolute_age_soco.toFixed(2)}`);
+    console.log(`    - Species Profile: ${final_stand_data.species_profile}`);
+    console.log(`  Result (Full Activity Object):`);
+    console.log(SoCo_Inspector._safeStringify(final_stand_data.activity));
+    console.log(SoCo_Inspector._safeStringify(final_stand_data.target_year));
+
+    console.log("--------------------");
+};
+
+
+Test_Scenarios.inspect_schedule_only = function(agent, current_year) {
+    
+    // This test runs only once, for any agent, in year 2.
+    if (current_year !== 2 || typeof this.test_has_run !== 'undefined') {
+        return;
+    }
+    this.test_has_run = true; // Ensure it only runs for the very first agent.
+
+    console.log(`\n[TEST] ==================== Inspecting compute_schedule Function Directly ====================`);
+
+    // --- TEST CASE 1: Finite Sequence (selectiveThinning) ---
+    let test_stand_1 = new stand_data(1, agent.id, "Production");
+    test_stand_1.activity.chosen_Activity = "selectiveThinning";
+    test_stand_1.activity.parameters = { execution_schedule: 40, times: 4, interval: 8 };
+    
+    console.log("\n--- Testing: selectiveThinning ---");
+    console.log("Input Parameters:", SoCo_Inspector._safeStringify(test_stand_1.activity.parameters));
+    test_stand_1 = Cognition.compute_schedule(test_stand_1);
+    console.log("Result:", SoCo_Inspector._safeStringify(test_stand_1.activity));
+
+    // --- TEST CASE 2: Continuous Sequence (plenter_thinning) ---
+    let test_stand_2 = new stand_data(2, agent.id, "Biodiversity");
+    test_stand_2.activity.chosen_Activity = "plenter_thinning";
+    test_stand_2.activity.parameters = { execution_schedule: 50, interval: 7 };
+
+    console.log("\n--- Testing: plenter_thinning ---");
+    console.log("Input Parameters:", SoCo_Inspector._safeStringify(test_stand_2.activity.parameters));
+    test_stand_2 = Cognition.compute_schedule(test_stand_2);
+    console.log("Result:", SoCo_Inspector._safeStringify(test_stand_2.activity));
+
+    // --- TEST CASE 3: Continuous Sequence (targetDBH) ---
+    let test_stand_3 = new stand_data(3, agent.id, "CO2");
+    test_stand_3.activity.chosen_Activity = "targetDBH";
+    test_stand_3.activity.parameters = { execution_schedule: 80, times: 6 }; // 'times' is the interval
+
+    console.log("\n--- Testing: targetDBH ---");
+    console.log("Input Parameters:", SoCo_Inspector._safeStringify(test_stand_3.activity.parameters));
+    test_stand_3 = Cognition.compute_schedule(test_stand_3);
+    console.log("Result:", SoCo_Inspector._safeStringify(test_stand_3.activity));
+
+    console.log(`\n[TEST] ==================== Inspection Complete ====================\n`);
+};
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Age Classification Logic
+ * =================================================================================
+ * DESCRIPTION:
+ * This is a simple, focused test to verify the age classification logic.
+ * It runs for a single stand in a single year. It loops through ages 1 to 200,
+ * artificially sets the stand_age, re-runs the classification logic, and logs
+ * the result. This allows for direct validation of the `age_class_lookup.json` table.
+ * =================================================================================
+ */
+Test_Scenarios.inspect_age_classification_logic = function(agent, current_year) {
+
+    // --- CONFIGURATION ---
+    const AGENT_ID_TO_INSPECT = "small_agent_51"; // We only need one agent to run this
+    const YEAR_TO_INSPECT = 2; // Run this test once, early in the simulation
+    // ---------------------
+
+    // Guard clause: only run this test for the specified agent and year.
+    if (agent.id !== AGENT_ID_TO_INSPECT || current_year !== YEAR_TO_INSPECT) {
+        return false; // Let other agents/years run normally
+    }
+
+    // Select the first stand managed by this agent for the test.
+    var stand_id_to_inspect = agent.managed_stand_ids[0];
+    if (typeof stand_id_to_inspect === 'undefined') {
+        console.warn("[TEST] Agent " + agent.id + " has no stands to test.");
+        return true; // Stop the test
+    }
+
+    var stand_data_obj = agent.managed_stands_data[stand_id_to_inspect];
+
+    console.log("\n[TEST] --- Verifying Age Classification Logic (Ages 1-200) ---");
+    console.log("stand_age,age_class"); // Print CSV header
+
+    // Loop from age 1 to 200
+    for (var test_age = 1; test_age <= 200; test_age++) {
+
+        // 1. Artificially set the stand_age in the data object.
+        stand_data_obj.iLand_stand_data.stand_age = test_age;
+
+        // 2. Re-run the perception step that performs the classification.
+        //    We pass the agent object because compute_derived_data needs it to access the age_class_table.
+        stand_data_obj = Perception.compute_derived_data(stand_data_obj, agent);
+
+        // 3. Log the result in a simple, comma-separated format.
+        var age_class_result = stand_data_obj.classified.age_class;
+        console.log(test_age + "," + age_class_result);
+    }
+
+    console.log("[TEST] --- Age Classification Test Complete ---");
+
+    // Return true to signify that we have taken over the agent's logic for this year.
+    // The agent will do nothing else.
+    return true;
+};
