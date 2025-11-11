@@ -1,5 +1,3 @@
-// ----- Start of File: soco_src/core/socoabe_agent.js -----
-
 class socoabe_agent {
     constructor(agent_id, owner, stand_ids) {
         this.id = agent_id;
@@ -82,9 +80,9 @@ class socoabe_agent {
     
     plan(stands_to_plan) {
         const planned_stands = [];
-        for (const stand_data_obj of stands_to_plan) {
-            let updated_stand_data = Cognition.select_activity(stand_data_obj, this);
-            updated_stand_data = Cognition.select_parameters(updated_stand_data, this);
+        for (var i = 0; i < stands_to_plan.length; i++) {
+            var stand_data_obj = stands_to_plan[i];
+            var updated_stand_data = Cognition.create_stand_plan(stand_data_obj, this);
             this.managed_stands_data[updated_stand_data.stand_id] = updated_stand_data;
             planned_stands.push(updated_stand_data);
         }
@@ -92,17 +90,14 @@ class socoabe_agent {
     }
 
     run_yearly_cycle(current_year) {
-        // Allow test scenarios to override the entire loop.
-        // Note: The snapshot scenario returns false, so it does NOT override.
+
         const test_overrode_cycle = Test_Runner.run_for_agent(this, current_year);
         if (test_overrode_cycle) {
             return;
         }
 
-        // --- Normal P-C-A Logic ---
         this.observe();
         
-        // In the very first year, after observing, assign the strategic profiles.
         if (current_year === 1) {
             this.assign_species_profiles();
         }
@@ -115,5 +110,3 @@ class socoabe_agent {
     }
 };
 this.socoabe_agent = socoabe_agent;
-
-// ----- End of File: soco_src/core/socoabe_agent.js -----
