@@ -55,6 +55,7 @@ class stand_data {
             target_year: -1,
             is_actionable: false,
             is_Sequence: false,
+            timeline: [],
             sequence_total_steps: 0,
             sequence_current_step: 0
         };
