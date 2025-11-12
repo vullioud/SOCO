@@ -61,6 +61,18 @@ class socoabe_agent {
         }
     }
 
+    act(scheduled_stands) {
+        // This function takes the final, scheduled list of stands and
+        // commits the actions by triggering the activities in iLand.
+        for (var i = 0; i < scheduled_stands.length; i++) {
+            var stand_data_obj = scheduled_stands[i];
+            // Only act if the stand is scheduled for the *current* year.
+            if (stand_data_obj.activity.target_year === Globals.year) {
+                Action.trigger_activity(stand_data_obj);
+            }
+        }
+    }
+
     observe() {
         for (const stand_id of this.managed_stand_ids) {
             this.managed_stands_data[stand_id] = Perception.observe_stand(this.managed_stands_data[stand_id], this);

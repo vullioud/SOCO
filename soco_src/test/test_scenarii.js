@@ -586,3 +586,224 @@ Test_Scenarios.inspect_age_classification_logic = function(agent, current_year) 
     // The agent will do nothing else.
     return true;
 };
+
+
+ /**
+ * =================================================================================
+ * TEST SCENARIO: Inspect 10-Year Plan Summary (Detailed)
+ * =================================================================================
+ * DESCRIPTION:
+ * This test provides a detailed summary of each agent and its managed stands,
+ * including their ages, planned activities, and target years.
+ * =================================================================================
+ */
+Test_Scenarios.inspect_10_year_plan_summary = function(agent, current_year) {
+    
+    // --- CONFIGURATION ---
+    const YEAR_TO_INSPECT = 5;
+    // ---------------------
+
+    if (current_year !== YEAR_TO_INSPECT) {
+        return false; // Do not override the agent's logic in other years.
+    }
+
+    console.log(`\n[TEST] --- Running Detailed 10-Year Plan Summary for Agent ${agent.id} (Owner: ${agent.owner.type}) ---`);
+    console.log(`  - Number of managed stands: ${agent.managed_stand_ids.length}`);
+
+    // 1. Force reassessment for all stands
+    for (const stand_id in agent.managed_stands_data) {
+        fmengine.standId = stand_id;
+        stand.setFlag('abe_need_reassessment', true);
+    }
+
+    // 2. Run the agent's P-C-A cycle
+    agent.observe();
+    const stands_to_plan = agent.check(current_year);
+    if (stands_to_plan.length > 0) {
+        agent.plan(stands_to_plan);
+    }
+
+    // 3. Log details for each stand
+    for (const stand_id in agent.managed_stands_data) {
+        const stand_data = agent.managed_stands_data[stand_id];
+        fmengine.standId = stand_id; // Set context for accessing stand properties
+
+        console.log(`\n  --- Stand ${stand_id} ---`);
+        console.log(`    - Age: ${stand.age}`);
+        console.log(`    - Absolute Age: ${stand.absoluteAge}`);
+        console.log(`    - Activity: ${stand_data.activity.chosen_Activity}`);
+        console.log(`    - AgeClass: ${stand_data.classified.age_class}`);
+        console.log(`    - Target Year: ${stand_data.activity.target_year}`);
+    }
+
+    console.log(`[TEST] ==================== Inspection Complete ====================\n`);
+
+    // Return true to override the agent's normal 'act' phase for this test run.
+    return true;
+};
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Flag Setting for a Single Clearcut Action
+ * =================================================================================
+ * DESCRIPTION:
+ * This test verifies the entire "plan -> act -> flag" pipeline for a single,
+ * hardcoded 'clearcut' activity. It checks if the agent's `act()` method
+ * correctly calls the Action module, which should then set the appropriate
+ * flags on the iLand stand object.
+ * =================================================================================
+ */
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Signal Triggering System for Multiple Activities
+ * =================================================================================
+ */
+Test_Scenarios.inspect_signal_trigger_system = function(agent, current_year) {
+    
+    // --- CONFIGURATION ---
+    const AGENT_ID_TO_INSPECT = "big_agent_1";
+    const TRIGGER_YEAR = 10;
+    const VERIFY_YEAR = 13;
+    // ---------------------
+
+    if (agent.id !== AGENT_ID_TO_INSPECT || (current_year !== TRIGGER_YEAR && current_year !== VERIFY_YEAR)) {
+        return false;
+    }
+
+    // --- TRIGGER PHASE ---
+    if (current_year === TRIGGER_YEAR) {
+        console.log(`\n[TEST] ==================== Triggering Activities via Signal ====================`);
+        
+        const stands_for_clearcut = agent.managed_stand_ids.slice(0, 5);
+        const stands_for_no_mgmt = agent.managed_stand_ids.slice(5, 10);
+
+        var plans = [];
+        // Create clearcut plans
+        for (var i = 0; i < stands_for_clearcut.length; i++) {
+            var stand_id = stands_for_clearcut[i];
+            var stand_plan = agent.managed_stands_data[stand_id];
+            stand_plan.activity.chosen_Activity = 'clearcut';
+            stand_plan.activity.target_year = TRIGGER_YEAR;
+            plans.push(stand_plan);
+        }
+        // Create noManagement plans
+        for (var i = 0; i < stands_for_no_mgmt.length; i++) {
+            var stand_id = stands_for_no_mgmt[i];
+            var stand_plan = agent.managed_stands_data[stand_id];
+            stand_plan.activity.chosen_Activity = 'noManagement';
+            stand_plan.activity.target_year = TRIGGER_YEAR;
+            plans.push(stand_plan);
+        }
+
+        console.log(`[TEST] Calling agent.act() for ${plans.length} stands...`);
+        agent.act(plans);
+        console.log(`[TEST] Signals fired. Execution expected in year ${TRIGGER_YEAR + 1}.`);
+    }
+
+    // --- VERIFICATION PHASE ---
+    if (current_year === VERIFY_YEAR) {
+        console.log(`\n[TEST] ==================== Verifying Activity Execution in Year ${VERIFY_YEAR} ====================`);
+        
+        const stands_to_verify = agent.managed_stand_ids.slice(0, 10);
+        
+        agent.observe(); // Run observation to update all stand_data objects
+
+        console.log("\n--- VERIFICATION RESULTS ---");
+        for (var i = 0; i < stands_to_verify.length; i++) {
+            var stand_id = stands_to_verify[i];
+            var stand_data = agent.managed_stands_data[stand_id];
+            var volume = stand_data.iLand_stand_data.volume;
+
+            console.log(`  - Stand ${stand_id}: Volume = ${volume.toFixed(2)} m3/ha`);
+            if (i < 5) { // First 5 should be clearcut
+                if (volume < 1.0) console.log("    - [SUCCESS] Stand was clearcut as planned.");
+                else console.error(`    - [FAILURE] Stand was NOT clearcut.`);
+            } else { // Next 5 should be noManagement
+                if (volume > 1.0) console.log("    - [SUCCESS] Stand was not harvested, as planned.");
+                else console.error(`    - [FAILURE] Stand volume is zero, which was not expected.`);
+            }
+        }
+
+        // Log full object for one stand of each type
+        console.log("\n--- Detailed Stand Data Object for a Clearcut Stand ---");
+        console.log(SoCo_Inspector._safeStringify(agent.managed_stands_data[stands_to_verify[0]]));
+        
+        console.log("\n--- Detailed Stand Data Object for a No-Management Stand ---");
+        console.log(SoCo_Inspector._safeStringify(agent.managed_stands_data[stands_to_verify[5]]));
+
+        console.log(`[TEST] ==================== Verification Complete ====================\n`);
+    }
+
+    return true;
+};
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Signal Triggering for Target DBH Harvest
+ * =================================================================================
+ */
+Test_Scenarios.inspect_signal_trigger_targetDBH = function(agent, current_year) {
+    
+    // --- CONFIGURATION ---
+    const AGENT_ID_TO_INSPECT = "big_agent_1";
+    const TRIGGER_YEAR = 15;
+    const VERIFY_YEAR = 17;
+    // ---------------------
+
+    if (agent.id !== AGENT_ID_TO_INSPECT || (current_year !== TRIGGER_YEAR && current_year !== VERIFY_YEAR)) {
+        return false;
+    }
+
+    // --- TRIGGER PHASE ---
+    if (current_year === TRIGGER_YEAR) {
+        console.log(`\n[TEST] ==================== Triggering TargetDBH via Signal ====================`);
+        
+        const stand_id_to_trigger = agent.managed_stand_ids[0];
+        if (typeof stand_id_to_trigger === 'undefined') return true;
+
+        var stand_plan = agent.managed_stands_data[stand_id_to_trigger];
+        stand_plan.activity.chosen_Activity = 'targetDBH';
+        stand_plan.activity.target_year = TRIGGER_YEAR;
+        stand_plan.activity.parameters = { dbhListProfile: 'default' }; 
+
+        console.log(`[TEST] Calling agent.act() for stand ${stand_id_to_trigger} with profile: '${stand_plan.activity.parameters.dbhListProfile}'`);
+        agent.act([stand_plan]);
+        console.log(`[TEST] Signal fired. Execution expected in year ${TRIGGER_YEAR + 1}.`);
+    }
+
+    // --- VERIFICATION PHASE ---
+    if (current_year === VERIFY_YEAR) {
+        console.log(`\n[TEST] ==================== Verifying TargetDBH Execution in Year ${VERIFY_YEAR} ====================`);
+        
+        const stand_id_to_verify = agent.managed_stand_ids[0];
+        
+        agent.observe();
+        
+        var stand_data = agent.managed_stands_data[stand_id_to_verify];
+        var volume_after = stand_data.iLand_stand_data.volume;
+
+        // Read the flag that was used by the MegaSTP in the execution year.
+        fmengine.standId = stand_id_to_verify;
+        var dbhList_used = stand.flag('abe_param_dbhList');
+
+        console.log("--- VERIFICATION RESULTS ---");
+        console.log(`  - Stand ${stand_id_to_verify}: Volume = ${volume_after.toFixed(2)} m3/ha`);
+        
+        if (volume_after > 1.0 && volume_after < 1000) { // A plausible range for partial harvest
+            console.log("    - [SUCCESS] Stand was partially harvested, as expected for targetDBH.");
+        } else {
+            console.error(`    - [FAILURE] Stand volume is unexpected (${volume_after}).`);
+        }
+
+        console.log("\n--- Detailed Stand Data Object ---");
+        console.log(SoCo_Inspector._safeStringify(stand_data));
+
+        console.log("\n--- Parameter Flag Verification ---");
+        console.log("  - The 'abe_param_dbhList' flag used by the MegaSTP was:");
+        console.log("    - " + JSON.stringify(dbhList_used));
+        
+        console.log(`[TEST] ==================== Verification Complete ====================\n`);
+    }
+
+    return true; 
+};

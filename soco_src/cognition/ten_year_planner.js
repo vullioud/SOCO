@@ -20,8 +20,7 @@ var ten_year_planner = {
         for (var stand_id in all_stands_data) {
             if (all_stands_data.hasOwnProperty(stand_id)) {
                 var stand_data = all_stands_data[stand_id];
-                // The 'is_actionable' flag is set by validate_activity for stands
-                // with a target_year within the 10-year planning window.
+                // The 'is_actionable' flag is set by Cognition.validate_activity.
                 if (stand_data.activity.is_actionable) {
                     actionable_stands.push(stand_data);
                 }
@@ -31,31 +30,25 @@ var ten_year_planner = {
     },
 
     /**
-     * Organizes a list of actionable stands into a year-by-year schedule.
-     * @param {Array} actionable_stands - An array of stand_data objects.
-     * @returns {object} An object where keys are years (simulation time) and
-     *                   values are arrays of stand_data objects planned for that year.
+     * Analyzes a list of actionable stands and returns a summary.
+     * @param {Array} actionable_stands - A filtered array of stand_data objects.
+     * @returns {object} An object summarizing the plan, e.g., { total: 5, by_class: { Harvesting: 2, Thinning: 3 } }.
      */
-    build_initial_plan: function(actionable_stands) {
-        var plan = {};
-        var current_year = Globals.year;
-        var planning_horizon = 9;
+    summarize_plan: function(actionable_stands) {
+        var summary = {
+            total: 0,
+            by_class: {}
+        };
 
-        // Initialize the plan object with empty arrays for each year in the window
-        for (var i = 0; i <= planning_horizon; i++) {
-            plan[current_year + i] = [];
-        }
-
-        // Populate the plan with the actionable stands
         for (var i = 0; i < actionable_stands.length; i++) {
             var stand_data = actionable_stands[i];
-            var target_year = stand_data.activity.target_year;
-
-            // Ensure the target year is within the planning window before adding
-            if (plan.hasOwnProperty(target_year)) {
-                plan[target_year].push(stand_data);
+            summary.total++;
+            var age_class = stand_data.classified.age_class;
+            if (!summary.by_class[age_class]) {
+                summary.by_class[age_class] = 0;
             }
+            summary.by_class[age_class]++;
         }
-        return plan;
+        return summary;
     }
 };

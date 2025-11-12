@@ -8,11 +8,16 @@ Perception.update_history = function(stand_data_obj) {
 
     const history = stand_data_obj.history;
     const activity = stand_data_obj.activity;
-    const last_activity_flag = getFlag('abe_last_activity', null);
-    const last_activity_year_flag = getFlag('abe_last_activity_year', -1);
+    
+    // --- THIS IS THE FIX ---
+    // Use the correct API call: stand.flag()
+    const last_activity_flag = stand.flag('abe_last_activity');
+    const last_activity_year_flag = stand.flag('abe_last_activity_year');
+    // -----------------------
 
     // 1. Update general history if a new activity was flagged.
-    if (last_activity_flag && last_activity_year_flag === (Globals.year - 1)) {
+    // We check for null/undefined because that's what clear_flags sets.
+    if (last_activity_flag !== null && typeof last_activity_flag !== 'undefined' && last_activity_year_flag === (Globals.year - 1)) {
         history.last_activity = last_activity_flag;
         history.last_activity_Year = last_activity_year_flag;
     }
@@ -21,7 +26,8 @@ Perception.update_history = function(stand_data_obj) {
     const was_sequence_step_completed = 
         activity.is_Sequence &&
         history.last_activity_Year === (Globals.year - 1) &&
-        activity.timeline[activity.sequence_current_step] === (Globals.year - 1);
+        activity.timeline.length > activity.sequence_current_step && // Safety check
+        activity.timeline[activity.sequence_current_step] === (history.last_activity_Year); // Compare against the year it happened
 
     if (was_sequence_step_completed) {
         console.log(`[OBSERVE] Stand ${stand_data_obj.stand_id}: Detected completion of step ${activity.sequence_current_step + 1}/${activity.sequence_total_steps} for '${activity.chosen_Activity}'.`);
@@ -55,8 +61,11 @@ Perception.get_reassessment_flags = function(stand_data_obj) {
     fmengine.standId = stand_data_obj.stand_id;
     if (!stand || stand.id <= 0) return stand_data_obj;
 
-    stand_data_obj.iLand_stand_data.needs_reassessment = getFlag('abe_need_reassessment', false);
+    // --- THIS IS THE FIX ---
+    // Use the correct API call: stand.flag() with a default value.
+    var needs_reassessment = stand.flag('abe_need_reassessment');
+    stand_data_obj.iLand_stand_data.needs_reassessment = (needs_reassessment === true); // Ensure it's a boolean
+    // -----------------------
 
     return stand_data_obj;
 };
-
