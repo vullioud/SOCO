@@ -38,17 +38,28 @@ Action.trigger_activity = function(stand_data_obj) {
 
     Action.prepare.clear_flags();
 
-    const activity_name = stand_data_obj.activity.chosen_Activity;
-    const prepare_function = Action.prepare[activity_name];
+    const cognitive_activity_name = stand_data_obj.activity.chosen_Activity;
+    
+    // --- NEW MAPPING LOGIC ---
+    // Map different cognitive activities to a single execution activity.
+    var execution_activity_name = cognitive_activity_name;
+    if (cognitive_activity_name === 'plenter_harvest' || cognitive_activity_name === 'plenter_thinning') {
+        execution_activity_name = 'plenter';
+    }
+    // Add other mappings here as needed, e.g.:
+    // if (cognitive_activity_name === 'shelterwood_seed' || cognitive_activity_name === 'shelterwood_removal') {
+    //     execution_activity_name = 'shelterwood';
+    // }
+    // -------------------------
+
+    const prepare_function = Action.prepare[execution_activity_name];
 
     if (typeof prepare_function === 'function') {
         prepare_function(stand_data_obj.activity.parameters, stand_data_obj);
     }
     
-    const signal_name = 'do_' + activity_name;
+    const signal_name = 'do_' + execution_activity_name;
     
-    // --- DIAGNOSTIC ---
-    // Check if the ABE engine found a listener for our signal.
     var was_signal_received = stand.stp.signal(signal_name);
     
     console.log(`ACTION: Stand ${stand_data_obj.stand_id}: Fired signal '${signal_name}'. Was received by ABE: ${was_signal_received}`);
