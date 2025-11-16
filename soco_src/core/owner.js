@@ -15,7 +15,7 @@ class owner {
         this.plenter_profiles_table = all_configs.plenter_profiles['all'];
         this.targetDBH_profiles_table = all_configs.targetDBH_profiles['all'];
         this.species_list_table = all_configs.species_list['all'];
-        this.species_species_profile_per_activity_table = all_configs.species_species_profile_per_activity;
+        this.species_profile_per_activity_table = all_configs.species_profile_per_activity_table;
 
         // Create the agents, which will inherit these properties.
         for (const agent_name in agent_stand_map) {

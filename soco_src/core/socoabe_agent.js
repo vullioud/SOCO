@@ -1,3 +1,5 @@
+// FILE: soco_src/core/socoabe_agent.js
+
 class socoabe_agent {
     constructor(agent_id, owner, stand_ids) {
         this.id = agent_id;
@@ -11,7 +13,17 @@ class socoabe_agent {
         this.parameter_table = helpers.deepCopy(this.owner.parameter_table);
         this.plenter_profiles_table = helpers.deepCopy(this.owner.plenter_profiles_table);
         this.targetDBH_profiles_table = helpers.deepCopy(this.owner.targetDBH_profiles_table);
+        
+        // --- DIAGNOSTIC ---
+        // Add a log to verify that the agent is receiving the table from its owner.
         this.species_profile_per_activity_table = helpers.deepCopy(this.owner.species_profile_per_activity_table);
+        if (this.species_profile_per_activity_table) {
+            console.log(`    -> [DIAGNOSTIC] Agent '${this.id}': Successfully received 'species_profile_per_activity_table'.`);
+        } else {
+            console.error(`    -> [DIAGNOSTIC-ERROR] Agent '${this.id}': FAILED to receive 'species_profile_per_activity_table' from owner.`);
+        }
+        // --- END DIAGNOSTIC ---
+
         this.preferences = {};
         this.resources = 0;
         this.risk_tolerance = 0;
@@ -33,10 +45,11 @@ class socoabe_agent {
         if (trait_configs.riskTolerance) this.risk_tolerance = Distributions.sample(trait_configs.riskTolerance);
     }
 
-    initialize_managed_stands() {
+   initialize_managed_stands() {
         this.managed_stand_ids.forEach(id => {
-            const stand_preference_focus = Distributions.weighted_random_choice(this.preferences);
-            this.managed_stands_data[id] = new stand_data(id, this.id, stand_preference_focus);
+            const stand_data_obj = new stand_data(id, this);
+            stand_data_obj.preference_focus = Distributions.weighted_random_choice(this.preferences);
+            this.managed_stands_data[id] = stand_data_obj;
         });
     }
 
