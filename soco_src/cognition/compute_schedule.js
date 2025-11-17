@@ -1,34 +1,18 @@
 /**
  * =================================================================================
- * FILE: compute_schedule.js (Final Bugfix Version)
- * =================================================================================
- * DESCRIPTION:
- * This version implements the simple, requested logic:
- * 1. It uses the correct "clock" (`absolute_age_soco` or `stand_age`) for each activity.
- * 2. If a future event exists, it calculates the `target_year`.
- * 3. If all events are in the past, it sets `target_year` to -1.
- * This resolves the `target_year: null` and `target_year: 0` bugs.
+ * FILE: compute_schedule.js (FINAL VERSION with Syntax Fix)
  * =================================================================================
  */
 
 // --- HELPER FUNCTIONS ---
 
-/**
- * [HELPER] Determines which "clock" (age metric) to use for an activity.
- * This is the core of the bugfix. It centralizes the logic for choosing
- * between the rotation-based age and the absolute stand age.
- * @param {object} stand_data_obj - The stand's data object.
- * @returns {number} The relevant current age for the activity.
- */
 function get_relevant_age(stand_data_obj) {
     var activity_name = stand_data_obj.activity.chosen_Activity;
     var rotation_based_activities = ['clearcut', 'shelterwood', 'selectiveThinning', 'fromBelow'];
 
     if (rotation_based_activities.indexOf(activity_name) > -1) {
-        // For these activities, use the age counter that resets after a final harvest.
         return stand_data_obj.iLand_stand_data.absolute_age_soco;
     } else {
-        // For all other activities (plenter, targetDBH, tending), use the continuous iLand stand age.
         return stand_data_obj.iLand_stand_data.stand_age;
     }
 }
@@ -46,37 +30,35 @@ function generate_timeline(activity_name, params) {
         case 'clearcut':
         case 'planting':
             timeline.push(start_age);
+            sequence_total_steps = 1;
+            is_Sequence = false;
             break;
 
         case 'shelterwood':
         case 'selectiveThinning':
         case 'fromBelow':
         case 'tending':
-            if (times > 0 && interval > 0) {
+            if (times > 1 && interval > 0) {
                 is_Sequence = true;
                 sequence_total_steps = times;
                 for (var i = 0; i < times; i++) {
                     timeline.push(start_age + (i * interval));
                 }
+            } else if (times === 1) {
+                // Handle it as a single, non-sequence event.
+                timeline.push(start_age);
+                sequence_total_steps = 1;
+                is_Sequence = false;
             }
             break;
 
         case 'targetDBH':
-            if (times > 0) {
-                is_Sequence = true;
-                sequence_total_steps = 12;
-                for (var i = 0; i < 12; i++) {
-                    timeline.push(start_age + (i * times));
-                }
-            }
-            break;
-
         case 'plenter_harvest':
         case 'plenter_thinning':
             if (interval > 0) {
                 is_Sequence = true;
-                sequence_total_steps = 12;
-                for (var i = 0; i < 12; i++) {
+                sequence_total_steps = 20;
+                for (var i = 0; i < 20; i++) {
                     timeline.push(start_age + (i * interval));
                 }
             }
@@ -98,15 +80,28 @@ function handle_overdue_harvest(stand_data_obj, original_start_age) {
     var age_thresholds = { "Production": 100, "Biodiversity": 140, "CO2": 120 };
     var age_limit = age_thresholds[preference] || 999;
 
-    if (current_age > age_limit && original_start_age > current_age) {
-        var random_offset = 1 + Math.floor(Math.random() * 10);
+    if (current_age > age_limit) {
+        var random_offset = 1 + Math.floor(Math.random() * 10); // Schedule it for 1-10 years in the future.
         var forced_age = Math.round(current_age + random_offset);
-        console.log(`[SCHEDULE] Stand ${stand_data_obj.stand_id}: Overdue harvest. Forcing execution from ideal age ${original_start_age} to new age ${forced_age}.`);
+        console.log(`[SCHEDULE] Stand ${stand_data_obj.stand_id}: Overdue harvest detected (Age: ${current_age}, Limit: ${age_limit}). Forcing execution from ideal age ${original_start_age} to new age ${forced_age}.`);
         return forced_age;
     }
+    // ----------------------
 
     return original_start_age;
 }
+
+Cognition.convert_age_timeline_to_calendar_years = function(stand_data_obj, age_timeline) {
+    const current_year = Globals.year;
+    const current_age = Math.floor(get_relevant_age(stand_data_obj));
+
+    const calendar_timeline = age_timeline.map(target_age => {
+        const years_until_due = target_age - current_age;
+        return current_year + years_until_due;
+    });
+
+    return calendar_timeline;
+};
 
 
 // --- MAIN COGNITION FUNCTION ---
@@ -125,49 +120,56 @@ Cognition.compute_schedule = function(stand_data_obj) {
         return stand_data_obj;
     }
 
+    // 1. Determine the effective START AGE.
     var ideal_start_age = Math.round(Number(params.execution_schedule));
     var effective_start_age = handle_overdue_harvest(stand_data_obj, ideal_start_age);
     
+    // --- THIS IS THE FIX ---
+    // Create a copy of the params object using a compatible for...in loop.
     var temp_params = {};
     for (var key in params) {
         if (params.hasOwnProperty(key)) {
             temp_params[key] = params[key];
         }
     }
+    // ----------------------
     temp_params.execution_schedule = effective_start_age;
 
+    // 2. Generate the AGE-BASED timeline.
     var timeline_data = generate_timeline(activity.chosen_Activity, temp_params);
-    activity.timeline = timeline_data.timeline;
+    
     activity.is_Sequence = timeline_data.is_Sequence;
     activity.sequence_total_steps = timeline_data.sequence_total_steps;
 
-    if (activity.timeline.length > 0) {
-        var current_year = Globals.year;
-        var current_age = Math.floor(get_relevant_age(stand_data_obj));
+    // 3. Convert the AGE timeline to a CALENDAR YEAR timeline.
+    if (timeline_data.timeline.length > 0) {
+        activity.timeline = Cognition.convert_age_timeline_to_calendar_years(stand_data_obj, timeline_data.timeline);
 
-        var next_target_age = -1;
-        var completed_steps = 0;
+        // 4. Synchronize the plan with the present to find the first actionable step.
+        let next_target_year = -1;
+        let next_step_index = -1;
+        const current_year = Globals.year;
 
-        for (var i = 0; i < activity.timeline.length; i++) {
-            var target_age = activity.timeline[i];
-            if (target_age < current_age) {
-                completed_steps++;
-            }
-            if (next_target_age === -1 && target_age >= current_age) {
-                next_target_age = target_age;
+        for (let i = 0; i < activity.timeline.length; i++) {
+            if (activity.timeline[i] >= current_year) {
+                next_target_year = activity.timeline[i];
+                next_step_index = i;
+                break;
             }
         }
-        
-        activity.sequence_current_step = completed_steps;
 
-        if (next_target_age !== -1) {
-            // Case 1: A future or current event was found. Calculate the target year.
-            var years_until_due = next_target_age - current_age;
-            activity.target_year = current_year + years_until_due;
+        if (next_target_year !== -1) {
+            activity.sequence_current_step = next_step_index;
+            activity.target_year = next_target_year;
         } else {
-            // Case 2: No future event was found. All events are in the past. Set target to -1.
+            activity.sequence_current_step = activity.sequence_total_steps;
             activity.target_year = -1;
         }
+
+    } else {
+        activity.timeline = [];
+        activity.target_year = -1;
+        activity.sequence_current_step = 0;
     }
 
     return stand_data_obj;

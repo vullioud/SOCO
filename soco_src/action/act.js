@@ -46,11 +46,6 @@ Action.trigger_activity = function(stand_data_obj) {
     if (cognitive_activity_name === 'plenter_harvest' || cognitive_activity_name === 'plenter_thinning') {
         execution_activity_name = 'plenter';
     }
-    // Add other mappings here as needed, e.g.:
-    // if (cognitive_activity_name === 'shelterwood_seed' || cognitive_activity_name === 'shelterwood_removal') {
-    //     execution_activity_name = 'shelterwood';
-    // }
-    // -------------------------
 
     const prepare_function = Action.prepare[execution_activity_name];
 
