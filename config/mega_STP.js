@@ -125,7 +125,6 @@ MEGA_STP_ACTIVITIES['targetDBH'] = {
 };
 
 // 4. Plenter Thinning
-// 4. Plenter Thinning
 MEGA_STP_ACTIVITIES['plenter'] = {
     id: 'MegaSTP_Plenter',
     type: 'scheduled',
@@ -136,7 +135,7 @@ MEGA_STP_ACTIVITIES['plenter'] = {
         return true; 
     },
 
-    onExecute: function() {
+onExecute: function() {
         console.log(`[MEGA-STP] Executing 'plenter' for stand ${stand.id}.`);
 
         var plenterCurve = stand.flag('abe_param_plenterCurve') || {};
@@ -145,54 +144,54 @@ MEGA_STP_ACTIVITIES['plenter'] = {
 
         console.log("[MEGA-STP] -> Received plenterCurve: " + JSON.stringify(plenterCurve));
         
-        var original_list = new TreeList();
-        original_list.loadAll();
         
         console.log("[MEGA-STP] -> Stand Inventory Before Harvest:");
+        stand.trees.loadAll(); // Load all trees FROM THE CURRENT STAND.
+        
+        // Diagnostic Logging (now correctly scoped)
         var species_ids = [];
-        for (var i = 0; i < original_list.count; i++) {
-            var species_id = original_list.tree(i).species;
+        for (var i = 0; i < stand.trees.count; i++) {
+            var species_id = stand.trees.tree(i).species;
             if (species_ids.indexOf(species_id) === -1) {
                 species_ids.push(species_id);
             }
         }
         for (var i = 0; i < species_ids.length; i++) {
             var species_id = species_ids[i];
-            var temp_list = new TreeList();
-            temp_list.loadFromList(original_list, 'species="' + species_id + '"');
-            if (temp_list.count > 0) {
-                temp_list.sort('dbh');
-                var min_dbh = temp_list.tree(0).dbh;
-                var max_dbh = temp_list.tree(temp_list.count - 1).dbh;
-                console.log(`  - Species: ${species_id}, Count: ${temp_list.count}, DBH Range: [${min_dbh.toFixed(1)} - ${max_dbh.toFixed(1)}] cm`);
+            var filter_string = 'species=' + species_id;
+            // Use sum() on the already loaded list for efficiency
+            var species_count = stand.trees.sum('1', filter_string);
+            if (species_count > 0) {
+                console.log(`  - Species: ${species_id}, Count: ${species_count}`);
             }
         }
 
-        var dbhClasses = Object.keys(plenterCurve).sort(function(a, b) { return a - b; });
+        var dbhClasses = Object.keys(plenterCurve).sort(function(a, b) { return parseInt(b) - parseInt(a); }); // Sort descending
 
-        for (var i = dbhClasses.length - 1; i >= 0; i--) {
+        for (var i = 0; i < dbhClasses.length; i++) {
             var dbh = parseInt(dbhClasses[i], 10);
             var targetCount = plenterCurve[dbh] * stand.area;
             
             var filter = 'dbh > ' + (dbh - dbhSteps) + ' and dbh <= ' + dbh;
             
-            // Use a temporary list to count and then harvest
-            var class_list = new TreeList();
-            var treesInClass = class_list.loadFromList(original_list, filter);
+            // Load only the trees for the current class into the list.
+            var treesInClass = stand.trees.load(filter);
 
             if (treesInClass > targetCount) {
                 var treesToHarvest = treesInClass - targetCount;
-                class_list.filterRandom(treesToHarvest); 
-                var harvested_this_class = class_list.harvest();
+                
+                var treesToKeepInListForHarvest = treesInClass - (treesInClass - treesToHarvest);
+                stand.trees.filterRandomExclude(treesToKeepInListForHarvest);
+                
+                var harvested_this_class = stand.trees.harvest();
                 total_harvested_count += harvested_this_class;
-                console.log(`  - DBH Class ${dbh}: In stand=${treesInClass}, Target=${targetCount.toFixed(0)}. Harvesting ${harvested_this_class} trees.`);
+                console.log(`  - DBH Class ${dbh}: In stand=${treesInClass}, Target=${targetCount.toFixed(0)}. Surplus=${treesToHarvest}. Marking ${harvested_this_class} trees for harvest.`);
             }
         }
         
         stand.trees.removeMarkedTrees();
         console.log(`[MEGA-STP] -> Total harvested trees: ${total_harvested_count}.`);
     },
-
     onExecuted: function() {
         console.log(`[MEGA-STP] onExecuted for plenter on stand ${stand.id}.`);
         stand.setFlag('abe_last_activity', 'MegaSTP_Plenter');
