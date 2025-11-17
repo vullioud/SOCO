@@ -1,7 +1,5 @@
 Action.prepare.plenter = function(params) {
-    // The 'params' object is 'stand_data_obj.activity.parameters'.
-    // Cognition has already resolved the profile and placed the full curve object
-    // into the 'plenterCurve' property.
+
 
     if (params && params.plenterCurve) {
         // We just pass the object directly to the flag.
