@@ -199,6 +199,72 @@ onExecute: function() {
         stand.setFlag('abe_need_reassessment', false);
     }
 };
+
+
+// 5. Selective Thinning - Phase 1: SELECTION (CORRECT LIBRARY PATTERN)
+MEGA_STP_ACTIVITIES['selectiveThinning_select'] = {
+    id: 'MegaSTP_SelectiveThinning_Select',
+    type: 'thinning',
+    thinning: 'selection',
+    schedule: { signal: 'do_selectiveThinning_select' },
+    
+    N: function() { return stand.flag('abe_param_nTrees'); },
+    NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
+  //  speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity') || {}; },
+    ranking: 'height',
+    
+    // This forces the signal-triggered execution path: evaluate() -> removeMarkedTrees()
+    // Since only 'markcompetitor' is set, no trees are actually removed.
+    onCreate: function(act) { 
+        act.scheduled = false;
+    },
+    
+    onExecuted: function() {
+        // This runs AFTER the C++ has marked the trees.
+        console.log(`[MEGA-STP - onExecuted] SELECT phase for stand ${stand.id}.`);
+        
+        var marked_crop = stand.trees.load('markcrop=true');
+        var marked_competitors = stand.trees.load('markcompetitor=true');
+        
+        console.log(`  -> RESULT: Found ${marked_crop} marked crop trees.`);
+        console.log(`  -> RESULT: Found ${marked_competitors} marked competitors.`);
+
+        // Set the initialization flag so the next agent call triggers the 'remove' phase.
+        stand.setFlag('abe_selective_thinning_initialized', true);
+        stand.setFlag('abe_last_activity', 'MegaSTP_SelectiveThinning_Select');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+    }
+};
+
+// 6. Selective Thinning - Phase 2: REMOVAL
+MEGA_STP_ACTIVITIES['selectiveThinning_remove'] = {
+    id: 'MegaSTP_SelectiveThinning_Remove',
+    type: 'general', // Use 'general' for custom removal logic
+    schedule: { signal: 'do_selectiveThinning_remove' },
+    
+    action: function() {
+        console.log(`\n[MEGA-STP - action] REMOVE phase for stand ${stand.id}.`);
+        
+        var fraction_to_remove = stand.flag('abe_param_fraction_to_remove') || 0;
+        var remaining_competitors = stand.trees.load('markcompetitor=true');
+        
+        console.log(`  -> Found ${remaining_competitors} remaining competitors.`);
+        console.log(`  -> Agent requested removal of fraction: ${fraction_to_remove.toFixed(2)}`);
+        
+        var trees_to_remove_this_step = Math.ceil(remaining_competitors * fraction_to_remove);
+        
+        stand.trees.filterRandomExclude(trees_to_remove_this_step);
+        var harvested_count = stand.trees.harvest();
+        stand.trees.removeMarkedTrees();
+        
+        console.log(`  -> Subsequent removal: Harvested ${harvested_count} trees this step.`);
+    },
+    onExecuted: function() {
+        console.log(`[MEGA-STP - onExecuted] REMOVE phase complete for stand ${stand.id}.`);
+        stand.setFlag('abe_last_activity', 'MegaSTP_SelectiveThinning_Remove');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+    }
+};
 // --- FINAL STP ASSEMBLY ---
 var MegaSTP = {
     U: [120, 150, 180],

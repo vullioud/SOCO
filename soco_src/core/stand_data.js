@@ -5,7 +5,7 @@ class stand_data {
         // --- I. IDENTIFIERS & FIXED TRAITS ---
         this.stand_id = stand_id;
         this.agent_id = agent.id; // Get the ID from the agent object
-        this.agent = agent;       // Store the direct reference
+      //  this.agent = agent;       // Store the direct reference
         this.preference_focus = "none"; // This will be set by the agent
         this.species_profile = "none";
 
@@ -45,7 +45,8 @@ class stand_data {
             is_Sequence: false,
             timeline: [],
             sequence_total_steps: 0,
-            sequence_current_step: 0
+            sequence_current_step: 0,
+            sequence_sub_activity: 'none' // <-- NEW PROPERTY ADDED HERE
         };
 
         // --- IV. MONITORING SNAPSHOT ---
