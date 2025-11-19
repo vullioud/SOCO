@@ -1,4 +1,4 @@
-// FILE: soco_src/core/socoabe_agent.js
+// FILE: soco_src/core/socoabe_agent.js (MODIFIED)
 
 class socoabe_agent {
     constructor(agent_id, owner, stand_ids) {
@@ -13,17 +13,7 @@ class socoabe_agent {
         this.parameter_table = helpers.deepCopy(this.owner.parameter_table);
         this.plenter_profiles_table = helpers.deepCopy(this.owner.plenter_profiles_table);
         this.targetDBH_profiles_table = helpers.deepCopy(this.owner.targetDBH_profiles_table);
-        
-        // --- DIAGNOSTIC ---
-        // Add a log to verify that the agent is receiving the table from its owner.
         this.species_profile_per_activity_table = helpers.deepCopy(this.owner.species_profile_per_activity_table);
-        if (this.species_profile_per_activity_table) {
-            console.log(`    -> [DIAGNOSTIC] Agent '${this.id}': Successfully received 'species_profile_per_activity_table'.`);
-        } else {
-            console.error(`    -> [DIAGNOSTIC-ERROR] Agent '${this.id}': FAILED to receive 'species_profile_per_activity_table' from owner.`);
-        }
-        // --- END DIAGNOSTIC ---
-
         this.preferences = {};
         this.resources = 0;
         this.risk_tolerance = 0;
@@ -75,11 +65,8 @@ class socoabe_agent {
     }
 
     act(scheduled_stands) {
-        // This function takes the final, scheduled list of stands and
-        // commits the actions by triggering the activities in iLand.
         for (var i = 0; i < scheduled_stands.length; i++) {
             var stand_data_obj = scheduled_stands[i];
-            // Only act if the stand is scheduled for the *current* year.
             if (stand_data_obj.activity.target_year === Globals.year) {
                 Action.trigger_activity(stand_data_obj);
             }
@@ -92,30 +79,29 @@ class socoabe_agent {
         }
     }
 
-    check(current_year) {
-        const stands_needing_plan = [];
+    cognitize(current_year) {
+        const actionable_stands = [];
         for (const stand_id in this.managed_stands_data) {
-            const stand_data_obj = this.managed_stands_data[stand_id];
-            if (Cognition.check_need(stand_data_obj, current_year, this)) {
-                stands_needing_plan.push(stand_data_obj);
+            // Run the entire cognitive pipeline for the stand.
+            let stand_data_obj = this.managed_stands_data[stand_id];
+            stand_data_obj = Cognition.think(stand_data_obj, this);
+            
+            // Store the updated state back into the agent's memory.
+            this.managed_stands_data[stand_id] = stand_data_obj;
+
+            // Check if the resulting plan is actionable for the current year.
+            if (stand_data_obj.activity.is_actionable && stand_data_obj.activity.target_year === current_year) {
+                actionable_stands.push(stand_data_obj);
             }
         }
-        return stands_needing_plan;
-    }
-    
-    plan(stands_to_plan) {
-        const planned_stands = [];
-        for (var i = 0; i < stands_to_plan.length; i++) {
-            var stand_data_obj = stands_to_plan[i];
-            var updated_stand_data = Cognition.create_stand_plan(stand_data_obj, this);
-            this.managed_stands_data[updated_stand_data.stand_id] = updated_stand_data;
-            planned_stands.push(updated_stand_data);
-        }
-        return planned_stands;
+        return actionable_stands;
     }
 
+    // ======================== CORE LOGIC CHANGE ========================
+    // The run_yearly_cycle is now the single orchestrator for the agent.
     run_yearly_cycle(current_year) {
 
+        // Allow test scenarios to override the cycle.
         const test_overrode_cycle = Test_Runner.run_for_agent(this, current_year);
         if (test_overrode_cycle) {
             return;
@@ -127,10 +113,10 @@ class socoabe_agent {
             this.assign_species_profiles();
         }
         
-        const stands_to_plan = this.check(current_year);
+        const actionable_stands = this.cognitize(current_year);
 
-        if (stands_to_plan.length > 0) {
-            this.plan(stands_to_plan);
+        if (actionable_stands.length > 0) {
+            this.act(actionable_stands);
         }
     }
 };
