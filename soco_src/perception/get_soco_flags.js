@@ -22,34 +22,6 @@ Perception.update_history = function(stand_data_obj) {
         history.last_activity_Year = last_activity_year_flag;
     }
     
-    // 2. Check if a planned sequence step was just completed.
-    const was_sequence_step_completed = 
-        activity.is_Sequence &&
-        history.last_activity_Year === (Globals.year - 1) &&
-        activity.timeline.length > activity.sequence_current_step && // Safety check
-        activity.timeline[activity.sequence_current_step] === (history.last_activity_Year); // Compare against the year it happened
-
-    if (was_sequence_step_completed) {
-        console.log(`[OBSERVE] Stand ${stand_data_obj.stand_id}: Detected completion of step ${activity.sequence_current_step + 1}/${activity.sequence_total_steps} for '${activity.chosen_Activity}'.`);
-        activity.sequence_current_step += 1;
-
-        // 3. Check if the entire sequence is now finished.
-        if (activity.sequence_current_step >= activity.sequence_total_steps) {
-            console.log(`[OBSERVE] Stand ${stand_data_obj.stand_id}: Sequence for '${activity.chosen_Activity}' is complete. Resetting plan.`);
-            
-            // Reset the entire activity plan to its default state.
-            activity.chosen_Activity = 'noManagement';
-            activity.parameters = {};
-            activity.timeline = [];
-            activity.is_Sequence = false;
-            activity.sequence_total_steps = 0;
-            activity.sequence_current_step = 0;
-            activity.target_year = -1;
-
-            // Flag that this stand doesn't need a new assessment until next cycle.
-            stand_data_obj.iLand_stand_data.needs_reassessment = false;
-        }
-    }
     
     return stand_data_obj;
 };
