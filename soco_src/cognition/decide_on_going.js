@@ -1,23 +1,79 @@
-Cognition.decide_on_going = function(stand_data_obj) {
-    const activity = stand_data_obj.activity;
+/**
+ * =================================================================================
+ * FILE: update_ongoing_sequence.js (FINAL VERSION - Time-Based Progression)
+ * =================================================================================
+ * DESCRIPTION:
+ * The FIRST step in the cognitive pipeline. It manages the state of an ongoing
+ * sequence based purely on the calendar. It finds the next scheduled event in
+ * the timeline relative to the current year and updates the plan. If all events
+ * are in the past, it marks the sequence as complete by resetting the plan.
+ * =================================================================================
+ */
+/**
+ * =================================================================================
+ * FILE: update_ongoing_sequence.js (INSTRUMENTED WITH LOGGING)
+ * =================================================================================
+ */
+Cognition.update_ongoing_sequence = function(stand_data_obj) {
+    var activity = stand_data_obj.activity;
+    var current_year = Globals.year;
 
-    // Check if there is an active, unfinished sequence.
-    const is_ongoing = activity.is_Sequence && (activity.sequence_current_step < activity.sequence_total_steps);
-
-    if (!is_ongoing) {
+    if (!activity.is_Sequence) {
         return stand_data_obj;
     }
 
-    // Calculate the probability of abandoning the sequence.
-    // It increases linearly from 5% at the start to 20% at the end.
-    const start_prob = 0.05; // 5% chance to abandon at the beginning
-    const end_prob = 0.20;   // 20% chance to abandon at the end
-    const progress = activity.sequence_current_step / (activity.sequence_total_steps - 1);
-    const probability_to_abandon = start_prob + (end_prob - start_prob) * progress;
+    // --- 1. PROBABILISTIC ABANDONMENT ---
+    var start_prob = 0.001;
+    var end_prob = 0.002;
+    var progress = activity.sequence_total_steps > 1 ? (activity.sequence_current_step / (activity.sequence_total_steps - 1)) : 0;
+    var probability_to_abandon = start_prob + (end_prob - start_prob) * progress;
+    var random_draw = Math.random();
 
-    if (Math.random() < probability_to_abandon) {
-        // Decision: Abandon the sequence.
-        console.log(`[COGNITION] Stand ${stand_data_obj.stand_id}: Abandoning ongoing sequence for '${activity.chosen_Activity}'.`);
+    if (random_draw < probability_to_abandon) {
+        // --- PATH 1: Abandon the sequence ---
+        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Abandoning sequence. (Random Draw: ${random_draw.toFixed(3)} < Probability: ${probability_to_abandon.toFixed(3)})`);
+        
+        if (activity.chosen_Activity === 'selectiveThinning') {
+            fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
+            Action.prepare.clear_selectiveThinning_flags();
+        }
+
+        activity.chosen_Activity = 'noManagement';
+        activity.parameters = {};
+        activity.timeline = [];
+        activity.is_Sequence = false;
+        activity.sequence_total_steps = 0;
+        activity.sequence_current_step = 0;
+        activity.target_year = -1;
+        return stand_data_obj;
+    } else {
+        // --- PATH 2: Continue the sequence ---
+        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Continuing sequence. (Random Draw: ${random_draw.toFixed(3)} >= Probability: ${probability_to_abandon.toFixed(3)})`);
+    }
+
+    // --- 2. SYNCHRONIZE WITH THE TIMELINE ---
+    var next_target_year = -1;
+    var next_step_index = -1;
+
+    for (var i = 0; i < activity.timeline.length; i++) {
+        if (activity.timeline[i] >= current_year) {
+            next_target_year = activity.timeline[i];
+            next_step_index = i;
+            break;
+        }
+    }
+
+    // clean stand marks
+    if (next_target_year !== -1) {
+        activity.target_year = next_target_year;
+        activity.sequence_current_step = next_step_index;
+    } else {
+        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: All events for sequence '${activity.chosen_Activity}' are in the past. Completing sequence.`);
+        
+        if (activity.chosen_Activity === 'selectiveThinning') {
+            fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
+            Action.prepare.clear_selectiveThinning_flags();
+        }
         
         activity.chosen_Activity = 'noManagement';
         activity.parameters = {};
@@ -26,11 +82,6 @@ Cognition.decide_on_going = function(stand_data_obj) {
         activity.sequence_total_steps = 0;
         activity.sequence_current_step = 0;
         activity.target_year = -1;
-        activity.is_actionable = false;
-        activity.scheduling_priority = 'none';
-        
-    } else {
-        
     }
     
     return stand_data_obj;
