@@ -24,4 +24,8 @@ Action.prepare.clear_flags = function() {
     stand.setFlag('abe_param_species_profile', null);
     stand.setFlag('abe_param_plenterCurve', null);
     stand.setFlag('abe_param_dbhList', null);
+    stand.setFlag('abe_param_nCompetitors', null);
+    stand.setFlag('abe_param_speciesSelectivity', null);
+    stand.setFlag('abe_param_fraction_to_remove', null);
+
 };
