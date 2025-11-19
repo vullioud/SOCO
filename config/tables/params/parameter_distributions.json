@@ -186,7 +186,7 @@
             }
           ]
         },
-        "times": {
+        "interval": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
@@ -222,7 +222,7 @@
             }
           ]
         },
-        "times": {
+        "interval": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
@@ -258,7 +258,7 @@
             }
           ]
         },
-        "times": {
+        "interval": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
