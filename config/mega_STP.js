@@ -265,6 +265,287 @@ MEGA_STP_ACTIVITIES['selectiveThinning_remove'] = {
         stand.setFlag('abe_last_activity_year', Globals.year);
     }
 };
+
+// 7. Thinning From Below
+MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
+    // id: 'MegaSTP_ThinningFromBelow', // Removed to fix validation error
+    type: 'thinning',
+    thinning: 'custom',
+    schedule: { signal: 'do_thinningFromBelow' },
+    
+    targetVariable: 'volume',
+    targetRelative: true,
+    minDbh: 0,
+    classes: [80, 15, 4, 0.9, 0.1],
+
+    targetValue: function() {
+        var share = stand.flag('abe_param_thinningShare');
+        if (share === undefined || share === null) share = 0;
+        return share * 100; 
+    },
+
+    onEvaluate: function() { return true; },
+
+    onExecute: function() {
+        console.log(`[MEGA-STP] Executing 'thinningFromBelow' for stand ${stand.id}.`);
+
+        var share = stand.flag('abe_param_thinningShare') || 0.0;
+        
+        // 1. Load all trees
+        var total_count = stand.trees.loadAll();
+        var total_volume = stand.trees.sum('volume');
+        var target_removal_volume = total_volume * share;
+
+        console.log(`  -> Stand Stats: Count=${total_count}, Vol=${total_volume.toFixed(1)}m3. Target Removal: ${target_removal_volume.toFixed(1)}m3 (${(share*100).toFixed(0)}%)`);
+
+        if (target_removal_volume <= 0) {
+            console.log("  -> Target volume is 0. Skipping.");
+            return;
+        }
+
+        // 2. Sort by DBH ascending (smallest trees first)
+        stand.trees.sort('dbh');
+
+        // 3. Filter: Keep trees in the list where cumulative volume <= target
+        var count_in_list = stand.trees.filter(`incsum(volume) <= ${target_removal_volume}`);
+        
+        // Calculate what is actually in the list now
+        var vol_in_list = stand.trees.sum('volume');
+
+        console.log(`  -> Selection: ${count_in_list} trees selected for removal (Vol: ${vol_in_list.toFixed(1)}m3).`);
+
+        // 4. Harvest
+        if (count_in_list > 0) {
+            var harvested_count = stand.trees.harvest();
+            stand.trees.removeMarkedTrees();
+            console.log(`  -> HARVEST EXECUTION: Removed ${harvested_count} trees.`);
+        } else {
+            console.log(`  -> No trees selected (smallest tree might be larger than target volume).`);
+        }
+    },
+
+    onExecuted: function() {
+        console.log(`[MEGA-STP] onExecuted for thinningFromBelow on stand ${stand.id}.`);
+        stand.setFlag('abe_last_activity', 'MegaSTP_ThinningFromBelow');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+// 8. Tending
+MEGA_STP_ACTIVITIES['tending'] = {
+    // id: 'MegaSTP_Tending', 
+    type: 'thinning',
+    thinning: 'tending',
+    schedule: { signal: 'do_tending' },
+
+    intensity: 10, // NEED TO BE STATIC
+
+    // DYNAMIC PARAMETER
+    speciesSelectivity: function() {
+        return stand.flag('abe_param_speciesSelectivity');
+    },
+
+    // --- CRITICAL FIX: Force Signal Path ---
+    // This ensures ActThinning::execute enters the (!isScheduled) block and runs evaluate().
+    onCreate: function(act) { 
+        act.scheduled = false; 
+    },
+
+    // --- REMOVED onExecute ---
+    // By removing onExecute, we let ActThinning::execute fall through to the 'else' block
+    // which calls removeMarkedTrees().
+
+    onExecuted: function() {
+        // Just logging. Trees should be gone by now.
+        console.log(`[MEGA-STP] onExecuted for Tending on stand ${stand.id}.`);
+        stand.setFlag('abe_last_activity', 'MegaSTP_Tending');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+MEGA_STP_ACTIVITIES['shelterwood_select'] = {
+    // id: 'MegaSTP_Shelterwood_Select',
+    type: 'thinning',
+    thinning: 'selection',
+    schedule: { signal: 'do_shelterwood_select' },
+
+    // Dynamic parameters from flags
+    N: function() { return stand.flag('abe_param_nTrees'); },
+    NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
+   // speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity'); },  // commented out in waiting for a good way to select species.
+    ranking: 'height', // Standard for shelterwood: keep dominant trees
+
+    // Force signal execution path
+    onCreate: function(act) { 
+        act.scheduled = false; 
+    },
+
+    // No onExecute: Let C++ mark trees automatically.
+
+    // Post-marking logic: Record stats and perform FIRST removal pass.
+    onExecuted: function() {
+        console.log(`[MEGA-STP] Shelterwood Select: Marking complete.`);
+        
+        // 1. Snapshot total competitors
+        var total_competitors = stand.trees.load('markcompetitor=true');
+        stand.setFlag('abe_param_totalCompetitors', total_competitors);
+        
+        // 2. Perform First Removal
+        // Fraction calculated by prepare_flags based on remaining steps
+        var fraction = stand.flag('abe_param_fraction_to_remove') || 0;
+        var to_remove = Math.ceil(total_competitors * fraction);
+
+        console.log(`  -> Marked ${total_competitors} competitors. Removing ${to_remove} (${(fraction*100).toFixed(1)}%).`);
+        
+        if (to_remove > 0) {
+            stand.trees.filterRandom(to_remove); // Keep 'to_remove' in list
+            var harvested = stand.trees.harvest(); // Remove them
+            // Do NOT call removeMarkedTrees() here; we need marks for next steps!
+            console.log(`  -> Harvested ${harvested} trees.`);
+        }
+
+        // 3. Set Initialization Flag
+        stand.setFlag('abe_shelterwood_initialized', true);
+        stand.setFlag('abe_last_activity', 'MegaSTP_Shelterwood_Select');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+// 10. Shelterwood - Phase 2: Removal (Subsequent Passes)
+MEGA_STP_ACTIVITIES['shelterwood_remove'] = {
+    type: 'general',
+    schedule: { signal: 'do_shelterwood_remove' },
+    
+    action: function() {
+        console.log(`[MEGA-STP] Shelterwood Remove: Executing phase.`);
+
+        // 1. Load remaining marked competitors
+        var remaining = stand.trees.load('markcompetitor=true');
+        
+        // 2. Calculate removal
+        var fraction = stand.flag('abe_param_fraction_to_remove') || 0;
+        var to_remove = Math.ceil(remaining * fraction);
+
+        console.log(`  -> Remaining competitors: ${remaining}. Target removal: ${to_remove} (${(fraction*100).toFixed(1)}%).`);
+
+        if (to_remove > 0) {
+            stand.trees.filterRandomExclude(to_remove);
+            var harvested = stand.trees.harvest();
+            console.log(`  -> Harvested ${harvested} trees.`);
+        }
+    },
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Shelterwood_Remove');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+
+    }
+};
+
+// 11. Shelterwood - Phase 3: Final Harvest (Clearcut)
+MEGA_STP_ACTIVITIES['shelterwood_final'] = {
+    type: 'scheduled',
+    schedule: { signal: 'do_shelterwood_final' },
+    finalHarvest: true,
+
+    // --- FIX: Force signal path for scheduled activity ---
+    onCreate: function(act) { 
+        act.scheduled = false; 
+    },
+
+    onEvaluate: function() { return true; },
+
+    onExecute: function() {
+        console.log(`[MEGA-STP] Shelterwood Final Harvest: Clearing overstory.`);
+        
+        // Load EVERYTHING marked (Crop trees + any leftover competitors)
+        stand.trees.load('markcompetitor=true or markcrop=true');
+        
+        var count = stand.trees.harvest();
+        
+        // Cleanup: Remove any stray marks on the stand
+        stand.trees.resetMarks(); 
+        
+        console.log(`  -> Removed ${count} seed trees and remnants.`);
+        
+        // Reset Rotation
+        stand.setAbsoluteAge(0);
+        
+        // Clear Logic Flags
+        stand.setFlag('abe_shelterwood_initialized', null);
+        stand.setFlag('abe_param_totalCompetitors', null);
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Shelterwood_Final');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', true);
+    }
+};
+
+MEGA_STP_ACTIVITIES['planting'] = {
+    type: 'scheduled',
+    schedule: { signal: 'do_planting' },
+
+    onCreate: function(act) { act.scheduled = false; },
+    onEvaluate: function() { return true; },
+
+    onExecute: function() {
+        console.log(`[MEGA-STP] Executing Planting on stand ${stand.id}.`);
+        
+        var species_val = stand.flag('abe_param_planting_species');
+        var fraction_val = stand.flag('abe_param_planting_fraction');
+
+        // --- Helper to force Arrays ---
+        // Handles: ["a","b"], "a,b", "a"
+        function toArray(val, isNumeric) {
+            if (val === undefined || val === null) return [];
+            if (Array.isArray(val)) return val;
+            if (typeof val === 'string' && val.indexOf(',') > -1) {
+                var parts = val.split(',');
+                if (isNumeric) return parts.map(Number);
+                return parts;
+            }
+            return [val];
+        }
+
+        var species_arr = toArray(species_val, false);
+        var fraction_arr = toArray(fraction_val, true);
+
+        // Defaults
+        if (species_arr.length === 0) species_arr = ['piab'];
+        if (fraction_arr.length === 0) fraction_arr = [1.0];
+
+        for (var i = 0; i < species_arr.length; i++) {
+            var sp = species_arr[i];
+            // Trim whitespace if it was a split string
+            if (typeof sp === 'string') sp = sp.trim();
+            
+            var fr = (i < fraction_arr.length) ? fraction_arr[i] : 1.0;
+
+            var item = {
+                species: sp,
+                fraction: fr,
+                height: 0.2,
+                age: 2,
+                clear: false 
+            };
+            
+            console.log(`  -> Planting ${sp} on ${(fr*100).toFixed(0)}% of area.`);
+            fmengine.runPlanting(stand.id, item);
+        }
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Planting');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
 // --- FINAL STP ASSEMBLY ---
 var MegaSTP = {
     U: [120, 150, 180],
