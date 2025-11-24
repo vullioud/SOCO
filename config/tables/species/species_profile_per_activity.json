@@ -1,314 +1,218 @@
 {
-  "P1": {
+  "prod_conifer_spruce": {
     "tending": {
-      "species": [
-        "fasy-quro-qupe"
-      ],
-      "intensity": [
-        "0.6-0.3-0.1"
-      ]
+      "species": ["piab-pisy-abal"],
+      "intensity": ["0.95-0.6-0.2"]
     },
     "thinning": {
-      "species": [
-        "fasy-quro-qupe"
-      ],
-      "intensity": [
-        "0.5-0.3-0.2"
-      ]
+      "species": ["piab-pisy-abal"],
+      "intensity": ["0.95-0.5-0.1"]
     },
     "shelterwood": {
-      "species": [
-        "fasy-quro-qupe"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["piab-pisy-abal"],
+      "intensity": ["1-0.5-0"]
+    },
+    "planting": {
+      "species": ["piab"],
+      "intensity": ["1"]
     }
   },
-  "P2": {
+  "prod_broadleaf_beech": {
     "tending": {
-      "species": [
-        "piab-pisy-abal"
-      ],
-      "intensity": [
-        "0.6-0.3-0.1"
-      ]
+      "species": ["fasy-acps-quro"],
+      "intensity": ["0.95-0.6-0.2"]
     },
     "thinning": {
-      "species": [
-        "piab-pisy-abal"
-      ],
-      "intensity": [
-        "0.5-0.3-0.2"
-      ]
+      "species": ["fasy-acps-quro"],
+      "intensity": ["0.95-0.5-0.1"]
     },
     "shelterwood": {
-      "species": [
-        "piab-pisy-abal"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["fasy-acps-quro"],
+      "intensity": ["1-0.5-0"]
+    },
+    "planting": {
+      "species": ["fasy"],
+      "intensity": ["1"]
     }
   },
-  "P3": {
+  "prod_mixed_fast": {
     "tending": {
-      "species": [
-        "fasy-piab-quro"
-      ],
-      "intensity": [
-        "0.6-0.3-0.1"
-      ]
+      "species": ["psme-piab-fasy"],
+      "intensity": ["0.95-0.6-0.2"]
     },
     "thinning": {
-      "species": [
-        "fasy-piab-quro"
-      ],
-      "intensity": [
-        "0.5-0.3-0.2"
-      ]
+      "species": ["psme-piab-fasy"],
+      "intensity": ["0.95-0.5-0.1"]
     },
     "shelterwood": {
-      "species": [
-        "fasy-piab-quro"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["psme-piab-fasy"],
+      "intensity": ["1-0.5-0"]
+    },
+    "planting": {
+      "species": ["psme"],
+      "intensity": ["1"]
     }
   },
-  "P4": {
+  "adapt_conifer_doug": {
     "tending": {
-      "species": [
-        "quro-fasy-cabe"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["psme-abal-pisy"],
+      "intensity": ["0.9-0.7-0.4"]
     },
     "thinning": {
-      "species": [
-        "quro-fasy-cabe"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["psme-abal-pisy"],
+      "intensity": ["0.8-0.6-0.3"]
     },
     "shelterwood": {
-      "species": [
-        "quro-fasy-cabe"
-      ],
-      "intensity": [
-        "0.3-0.3-0.4"
-      ]
+      "species": ["psme-abal-pisy"],
+      "intensity": ["0.9-0.8-0.2"]
+    },
+    "planting": {
+      "species": ["psme"],
+      "intensity": ["0.8"]
     }
   },
-  "P5": {
+  "adapt_broadleaf_oak": {
     "tending": {
-      "species": [
-        "psme-abal-pisy"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["quro-cabe-tico"],
+      "intensity": ["0.9-0.7-0.4"]
     },
     "thinning": {
-      "species": [
-        "psme-abal-pisy"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["quro-cabe-tico"],
+      "intensity": ["0.8-0.6-0.3"]
     },
     "shelterwood": {
-      "species": [
-        "psme-abal-pisy"
-      ],
-      "intensity": [
-        "0.3-0.3-0.4"
-      ]
+      "species": ["quro-cabe-tico"],
+      "intensity": ["0.9-0.8-0.2"]
+    },
+    "planting": {
+      "species": ["quro"],
+      "intensity": ["0.8"]
     }
   },
-  "P6": {
+  "adapt_mixed_res": {
     "tending": {
-      "species": [
-        "quro-piab-fasy"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["qupe-pini-fasy"],
+      "intensity": ["0.9-0.7-0.4"]
     },
     "thinning": {
-      "species": [
-        "quro-piab-fasy"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["qupe-pini-fasy"],
+      "intensity": ["0.8-0.6-0.3"]
     },
     "shelterwood": {
-      "species": [
-        "quro-piab-fasy"
-      ],
-      "intensity": [
-        "0.3-0.3-0.4"
-      ]
+      "species": ["qupe-pini-fasy"],
+      "intensity": ["0.9-0.8-0.2"]
+    },
+    "planting": {
+      "species": ["qupe"],
+      "intensity": ["0.8"]
     }
   },
-  "P7": {
+  "native_montane": {
     "tending": {
-      "species": [
-        "acpl-qupe-bepe"
-      ],
-      "intensity": [
-        "0.33-0.33-0.34"
-      ]
+      "species": ["fasy-abal-piab"],
+      "intensity": ["0.9-0.8-0.6"]
     },
     "thinning": {
-      "species": [
-        "acpl-qupe-bepe"
-      ],
-      "intensity": [
-        "0.34-0.33-0.33"
-      ]
+      "species": ["fasy-abal-piab"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "acpl-qupe-bepe"
-      ],
-      "intensity": [
-        "0.33-0.34-0.33"
-      ]
+      "species": ["fasy-abal-piab"],
+      "intensity": ["0.9-0.9-0.5"]
+    },
+    "planting": {
+      "species": ["abal"],
+      "intensity": ["0.3"]
     }
   },
-  "P8": {
+  "native_valley_oak": {
     "tending": {
-      "species": [
-        "psme-pisy-lade"
-      ],
-      "intensity": [
-        "0.33-0.33-0.34"
-      ]
+      "species": ["quro-cabe-acps"],
+      "intensity": ["0.9-0.8-0.6"]
     },
     "thinning": {
-      "species": [
-        "psme-pisy-lade"
-      ],
-      "intensity": [
-        "0.34-0.33-0.33"
-      ]
+      "species": ["quro-cabe-acps"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "psme-pisy-lade"
-      ],
-      "intensity": [
-        "0.33-0.34-0.33"
-      ]
+      "species": ["quro-cabe-acps"],
+      "intensity": ["0.9-0.9-0.5"]
+    },
+    "planting": {
+      "species": ["quro"],
+      "intensity": ["0.3"]
     }
   },
-  "P9": {
+  "native_pine_dry": {
     "tending": {
-      "species": [
-        "quro-psme-fasy"
-      ],
-      "intensity": [
-        "0.33-0.33-0.34"
-      ]
+      "species": ["pisy-quro-bepa"],
+      "intensity": ["0.9-0.8-0.6"]
     },
     "thinning": {
-      "species": [
-        "quro-psme-fasy"
-      ],
-      "intensity": [
-        "0.34-0.33-0.33"
-      ]
+      "species": ["pisy-quro-bepa"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "quro-psme-fasy"
-      ],
-      "intensity": [
-        "0.33-0.34-0.33"
-      ]
+      "species": ["pisy-quro-bepa"],
+      "intensity": ["0.9-0.9-0.5"]
+    },
+    "planting": {
+      "species": ["pisy"],
+      "intensity": ["0"]
     }
   },
-  "P10": {
+  "exp_cedar": {
     "tending": {
-      "species": [
-        "fasy-quro-acpl"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["cabe-abal-psme"],
+      "intensity": ["0.9-0.8-0.5"]
     },
     "thinning": {
-      "species": [
-        "fasy-quro-acpl"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["cabe-abal-psme"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "fasy-quro-acpl"
-      ],
-      "intensity": [
-        "0.3-0.4-0.3"
-      ]
+      "species": ["cabe-abal-psme"],
+      "intensity": ["0.8-0.8-0.4"]
+    },
+    "planting": {
+      "species": ["cabe"],
+      "intensity": ["0.5"]
     }
   },
-  "P11": {
+  "exp_walnut_mix": {
     "tending": {
-      "species": [
-        "abal-piab-pisy"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["juai-acps-frex"],
+      "intensity": ["0.9-0.8-0.5"]
     },
     "thinning": {
-      "species": [
-        "abal-piab-pisy"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["juai-acps-frex"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "abal-piab-pisy"
-      ],
-      "intensity": [
-        "0.3-0.4-0.3"
-      ]
+      "species": ["juai-acps-frex"],
+      "intensity": ["0.8-0.8-0.4"]
+    },
+    "planting": {
+      "species": ["juai"],
+      "intensity": ["0.5"]
     }
   },
-  "P12": {
+  "exp_diverse": {
     "tending": {
-      "species": [
-        "fasy-piab-abal"
-      ],
-      "intensity": [
-        "0.4-0.4-0.2"
-      ]
+      "species": ["psme-quru-abal"],
+      "intensity": ["0.9-0.8-0.5"]
     },
     "thinning": {
-      "species": [
-        "fasy-piab-abal"
-      ],
-      "intensity": [
-        "0.4-0.3-0.3"
-      ]
+      "species": ["psme-quru-abal"],
+      "intensity": ["0.8-0.7-0.5"]
     },
     "shelterwood": {
-      "species": [
-        "fasy-piab-abal"
-      ],
-      "intensity": [
-        "0.3-0.4-0.3"
-      ]
+      "species": ["psme-quru-abal"],
+      "intensity": ["0.8-0.8-0.4"]
+    },
+    "planting": {
+      "species": ["quru"],
+      "intensity": ["0.5"]
     }
   }
 }
