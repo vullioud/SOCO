@@ -4,22 +4,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [7.5, 2.5, 2.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [2.5, 7.5, 2.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 3.5, 3.5, 8.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [2.5, 2.5, 7.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 8.5, 3.5, 3.5, 0.5, 0.5, 5.5]
         }
       }
     },
@@ -27,22 +27,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [7.5, 2.5, 2.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [2.5, 7.5, 2.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 0.5, 0.5, 5.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [2.5, 2.5, 7.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 5.5, 0.5, 0.5, 0.5, 0.5, 5.5]
         }
       }
     },
@@ -50,22 +50,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [10.5, 5.5, 5.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 10.5, 5.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 0.5, 0.5, 5.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 5.5, 10.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 5.5, 0.5, 0.5, 0.5, 0.5, 5.5]
         }
       }
     }
@@ -75,22 +75,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 8.5, 3.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 1.5, 6.5, 1.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 3.5, 8.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 3.5, 3.5, 8.5, 6.5, 1.5, 1.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 3.5, 3.5, 8.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 8.5, 3.5, 3.5, 1.5, 1.5, 6.5]
         }
       }
     },
@@ -98,22 +98,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 1.5, 6.5, 1.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 0.5, 0.5, 5.5, 6.5, 1.5, 1.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 5.5, 0.5, 0.5, 1.5, 1.5, 6.5]
         }
       }
     },
@@ -121,22 +121,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 7.5, 2.5, 2.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 1.5, 6.5, 1.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 0.5, 0.5, 5.5, 6.5, 1.5, 1.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 2.5, 2.5, 7.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 5.5, 0.5, 0.5, 1.5, 1.5, 6.5]
         }
       }
     }
@@ -146,22 +146,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 8.5, 3.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 5.5, 10.5, 5.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 3.5, 8.5, 3.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 5.5, 10.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 3.5, 3.5, 8.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 10.5, 5.5, 5.5, 0.5, 0.5, 5.5]
         }
       }
     },
@@ -169,22 +169,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 5.5, 0.5, 3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [5.5, 0.5, 0.5, 8.5, 3.5, 3.5, 2.5, 2.5, 7.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [0.5, 0.5, 5.5, 3.5, 3.5, 8.5, 7.5, 2.5, 2.5, 0.5, 0.5, 5.5]
         }
       }
     },
@@ -192,22 +192,22 @@
       "broadleaf": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 2.5, 7.5, 2.5, 0.5, 5.5, 0.5]
         }
       },
       "conifer": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [3.5, 8.5, 3.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [8.5, 3.5, 3.5, 5.5, 0.5, 0.5, 2.5, 2.5, 7.5, 5.5, 0.5, 0.5]
         }
       },
       "mixed": {
         "distribution_function": "dirichlet",
         "distribution_params": {
-          "options": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12"],
-          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5, 0.5, 0.5, 5.5]
+          "options": ["prod_conifer_spruce", "prod_broadleaf_beech", "prod_mixed_fast", "adapt_conifer_doug", "adapt_broadleaf_oak", "adapt_mixed_res", "native_montane", "native_valley_oak", "native_pine_dry", "exp_cedar", "exp_walnut_mix", "exp_diverse"],
+          "alpha": [3.5, 3.5, 8.5, 0.5, 0.5, 5.5, 7.5, 2.5, 2.5, 0.5, 0.5, 5.5]
         }
       }
     }
