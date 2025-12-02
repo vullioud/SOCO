@@ -118,6 +118,12 @@ class socoabe_agent {
         if (actionable_stands.length > 0) {
             this.act(actionable_stands);
         }
+
+        // --- NEW MONITORING CALL ---
+        // Snapshot every stand managed by this agent at the end of the turn
+        for (const stand_id in this.managed_stands_data) {
+            Monitoring.snapshot(this, this.managed_stands_data[stand_id]);
+        }
     }
 };
 this.socoabe_agent = socoabe_agent;

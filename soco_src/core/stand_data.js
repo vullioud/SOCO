@@ -51,6 +51,12 @@ class stand_data {
 
         // --- IV. MONITORING SNAPSHOT ---
         this.monitoringSnapshot = null;
+        this.is_monitoring_candidate = false; // Default to false
+        
+        // --- V. DATA LOGS --- 
+        // These were missing and are required by Monitoring.snapshot
+        this.detailed_history = []; 
+        this.activity_history = [];
     }
 }
 this.stand_data = stand_data;

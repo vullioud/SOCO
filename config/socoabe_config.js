@@ -8,10 +8,22 @@
 
 if (typeof SoCoABE_CONFIG === 'undefined') {
     var SoCoABE_CONFIG = {
-        csv_path: "./abe/stand_files/agent_table_low_shuffled-true.csv", // Default path, can be overridden in the main script
+        csv_path: "./abe/stand_files/agent_table_high_shuffled-false.csv", // Default path, can be overridden in the main script
         core_abe_agent_type: 'socoabe_controller', 
         warmupPeriod: 0,
-        
+
+         MONITORING: {
+            ENABLED: true,
+            
+            // Options: 
+            // "all"        -> Logs every single stand (Heavy!)
+            // "random"     -> Logs 'sample_size' stands randomly selected across the whole landscape
+            // "stratified" -> Logs 'sample_size' stands PER OWNER TYPE (e.g., 10 for big, 10 for small...)
+            mode: "stratified", 
+            
+            sample_size: 10 // Interpretation depends on mode (Total count OR Count per Owner)
+        },
+
         TESTING: {
        // active_scenario: "inspect_classification_step"  //     
        // active_scenario: "inspect_raw_data_step"  // 
@@ -21,8 +33,15 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
        // active_scenario: "inspect_planning_trigger"
        // active_scenario: "inspect_initialization"
        // active_scenario: "inspect_full_initialization_flow"  
-          active_scenario: "snapshot_stand_data"
-
+        //  active_scenario: "snapshot_stand_data"
+       // active_scenario: 'inspect_sequence_progression'
+       // activiy_scenario: 'inspect_signal_trigger_targetDBH'
+     //  active_scenario: "inspect_selectiveThinning_flags"
+        //  active_scenario: "inspect_selectiveThinning_execution"  
+     // active_scenario: "verify_mark_and_remove"
+       // active_scenario: 'verify_phased_removal'
+    //   active_scenario: 'verify_thinningFromBelow_sequence'
+     active_scenario: 'test_memory_logic'
     }
     };
 }
