@@ -1,3 +1,5 @@
+// FILE: soco_src/core/owner.js (MODIFIED)
+
 class owner {
     constructor(institution, owner_type, agent_stand_map, all_configs) {
         this.institution = institution;
@@ -16,6 +18,14 @@ class owner {
         this.targetDBH_profiles_table = all_configs.targetDBH_profiles['all'];
         this.species_list_table = all_configs.species_list['all'];
         this.species_profile_per_activity_table = all_configs.species_profile_per_activity_table;
+        
+
+        if (typeof REGIME_MATRIX !== 'undefined') {
+            this.regime_matrix = helpers.deepCopy(REGIME_MATRIX);
+        } else {
+            console.error("CRITICAL: REGIME_MATRIX not defined. Check load_all_files.js");
+            this.regime_matrix = {};
+        }
 
         // Create the agents, which will inherit these properties.
         for (const agent_name in agent_stand_map) {
