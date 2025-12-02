@@ -28,7 +28,10 @@ class stand_data {
         this.classified = {
             age_class: 'unknown',
             structure_class: 'unknown',
-            species_dominance: 'unknown'
+            species_dominance: 'unknown', 
+            activity_class: 'unknown',
+            dom_top_height: 0,
+            dominant_species: [] // Vector of {id, share}
         };
         this.history = {
             last_activity: 'none',
