@@ -14,6 +14,12 @@ Perception.get_iLand_data = function(stand_data_obj) {
     data.absolute_age_iLand = stand.absoluteAge;
     data.volume = stand.volume;
     data.basal_area = stand.basalArea;
+    
+    // --- FIX: Manual Stem Count Calculation ---
+    stand.trees.loadAll(); // Load trees to get accurate count
+    data.stems_per_ha = (stand.area > 0) ? (stand.trees.count / stand.area) : 0;
+    // -----------------------------------------
+
     data.top_height = stand.topHeight;
     data.species_count = stand.nspecies;
     data.year_of_observation = Globals.year;
@@ -24,4 +30,3 @@ Perception.get_iLand_data = function(stand_data_obj) {
 
     return stand_data_obj;
 };
-
