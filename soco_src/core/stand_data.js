@@ -9,6 +9,10 @@ class stand_data {
         this.preference_focus = "none"; // This will be set by the agent
         this.species_profile = "none";
 
+        this.regime = {
+            name: "unassigned", 
+            activities: {} 
+        };
         // --- II. PERCEPTION DATA ---
         this.iLand_stand_data = {
             absolute_age_soco: 0,
@@ -18,6 +22,7 @@ class stand_data {
             volume: 0,
             top_height: 0,
             species_count: 0,
+            stems_per_ha: 0,
             U: 0,
             thinning_intensity: 'unknown',
             time_since_last_activity_iLand: -1,
