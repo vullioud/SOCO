@@ -807,3 +807,143 @@ Test_Scenarios.inspect_signal_trigger_targetDBH = function(agent, current_year) 
 
     return true; 
 };
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Unit Aggregation
+ * =================================================================================
+ */
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Unit Aggregation (Full Table)
+ * =================================================================================
+ */
+
+Test_Scenarios.test_unit_aggregation = function(agent, current_year) {
+    
+    // --- SETUP: Pick 1 agent per owner type ---
+    if (typeof Test_Scenarios._unit_test_agents === 'undefined') {
+        Test_Scenarios._unit_test_agents = [];
+        console.log("\n[TEST SETUP] Selecting agents...");
+        for (var owner_type in socoabe.institution.owners) {
+            var owner = socoabe.institution.owners[owner_type];
+            if (owner.agent_list.length > 0) {
+                Test_Scenarios._unit_test_agents.push(owner.agent_list[0].id);
+            }
+        }
+    }
+
+    if (current_year > 12) return false; 
+    if (Test_Scenarios._unit_test_agents.indexOf(agent.id) === -1) return false;
+
+    // --- LOGIC ---
+    var unit = agent.unit_data;
+
+    console.log(`\n=============================================================`);
+    console.log(`[TEST] Unit Data for Agent ${agent.id} (Year ${current_year})`);
+    console.log(`=============================================================`);
+    
+    // 1. METRICS
+    console.log(`METRICS SUMMARY:`);
+    console.log(`  Total Area:   ${unit.metrics.total_area} ha`);
+    console.log(`  Mean Vol:     ${unit.metrics.mean_volume.toFixed(1)} m3/ha`);
+    console.log(`  Activity Dist: ` + JSON.stringify(unit.metrics.activity_class_dist));
+    console.log(`  Struct Dist:   ` + JSON.stringify(unit.metrics.structure_dist));
+    
+    // 2. STAND TABLE (The "Full Object")
+    console.log(`\nSTAND INVENTORY TABLE (${unit.stands.length} rows):`);
+    console.log(`ID   | ActClass   | Struct | Vol | Dens | H_dom | Spp | DomSp (Share) | Time | Ongoing`);
+    console.log(`-----|------------|--------|-----|------|-------|-----|---------------|------|--------`);
+    
+    unit.stands.forEach(s => {
+        // Simple formatting for the log
+        var d_sp_str = `${s.dom_species} (${(s.dom_share*100).toFixed(0)}%)`;
+        var line = `${s.stand_id}`.padEnd(5) + 
+                   `| ${s.activity_class.substring(0,10)}`.padEnd(11) +
+                   `| ${s.structure_class.substring(0,6)}`.padEnd(7) +
+                   `| ${s.volume.toFixed(0)}`.padEnd(4) +
+                   `| ${s.density.toFixed(0)}`.padEnd(5) + 
+                   `| ${s.dom_top_height.toFixed(1)}`.padEnd(6) +
+                   `| ${s.species_count}`.padEnd(4) +
+                   `| ${d_sp_str}`.padEnd(14) + 
+                   `| ${s.time_since_last}`.padEnd(5) + 
+                   `| ${s.is_ongoing}`;
+        console.log(line);
+        
+        // Log Full Species Vector for the first stand to verify deeply
+        if (s === unit.stands[0]) {
+             console.log(`     [DEBUG] Full Species Vector for Stand ${s.stand_id}: ` + JSON.stringify(s.species_composition));
+        }
+    });
+    console.log(`=============================================================\n`);
+
+    return false; 
+};
+
+
+
+
+Test_Scenarios.test_regime_assignment = function(agent, current_year) {
+    // Run only in Year 1
+    if (current_year !== 1) return false;
+    
+    // Filter: Test on 'big_agent_1'
+    if (agent.id !== "big_agent_1") return false;
+
+    console.log(`\n[TEST] Manually triggering Initialization for Agent ${agent.id}...`);
+    
+    // 1. OBSERVE (Populates classified data like structure_class)
+    agent.observe(); 
+
+    // 2. INIT LOGIC (Species & Regime)
+    agent.assign_species_profiles();
+    agent.assign_regimes();
+    
+    // 3. AGGREGATE (Check if data flows to unit_data)
+    Perception.aggregate_unit(agent);
+
+    console.log(`[TEST] Verifying Regime Assignment...`);
+    
+    let count_assigned = 0;
+    let count_total = 0;
+    let sample_logged = 0;
+    
+    for (let stand_id in agent.managed_stands_data) {
+        let s = agent.managed_stands_data[stand_id];
+        count_total++;
+        
+        // Check if a valid regime was assigned (not unassigned, not fallback)
+        if (s.regime && s.regime.name && s.regime.name !== "unassigned" && s.regime.name !== "Fallback_NoMgmt") {
+            count_assigned++;
+            
+            // Log first few successes
+            if (sample_logged < 3) {
+                console.log(`  Stand ${stand_id}:`);
+                console.log(`    > Inputs: ${s.preference_focus} | ${s.classified.species_dominance} | ${s.classified.structure_class}`);
+                console.log(`    > Output: '${s.regime.name}'`);
+                sample_logged++;
+            }
+        } else {
+             // Log failure details
+             console.warn(`  Stand ${stand_id} FALLBACK. Inputs: ${s.preference_focus} | ${s.classified.species_dominance} | ${s.classified.structure_class}`);
+        }
+    }
+    
+    console.log(`Result: ${count_assigned} / ${count_total} stands assigned valid regime.`);
+
+    // 4. TRACE AGGREGATION
+    console.log(`[TEST] Tracing Aggregation Table (Sample row)...`);
+    if (agent.unit_data.stands.length > 0) {
+        let first = agent.unit_data.stands[0];
+        console.log(`  ID: ${first.stand_id}`); 
+        console.log(`  Regime: ${first.regime_name}`);
+        console.log(`  Density: ${first.density ? first.density.toFixed(1) : 0} stems/ha`);
+        console.log(`  Structure: ${first.structure_class}`);
+        console.log(`  Activity Class: ${first.activity_class}`);
+    } else {
+        console.warn("  Unit Data Stands table is empty!");
+    }
+    console.log("--------------------------------------------------\n");
+
+    return true; // STOP the normal cycle for this agent to avoid double execution
+};
