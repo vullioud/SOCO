@@ -106,4 +106,3 @@ Action.trigger_activity = function(stand_data_obj) {
     }
 };
 
-// ----- End of File: soco_src/action/act.js -----
