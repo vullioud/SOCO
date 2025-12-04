@@ -3,6 +3,26 @@
  * FILE: mega_STP.js
  * =================================================================================
  */
+function logSpeciesStats(stand, label) {
+    // Species relevant to WET 1 + Spruce/Pine for reference
+    var species_to_check = ['fasy', 'quro', 'acps', 'piab']; 
+    var output = "[STATS] " + label + " | ";
+    
+    for (var i = 0; i < species_to_check.length; i++) {
+        var sp = species_to_check[i];
+        // Load ALL living trees of this species to calculate stats
+        var count = stand.trees.load('species=' + sp);
+        if (count > 0) {
+            var mean_dbh = stand.trees.mean('dbh');
+            output += sp + ": N=" + count + " D=" + mean_dbh.toFixed(1) + "cm | ";
+        } else {
+            output += sp + ": - | ";
+        }
+    }
+    console.log(output);
+    // Reset selection
+    stand.trees.loadAll(); 
+}
 
 if (typeof lib === 'undefined') {
     fmengine.abort("ABE Library ('lib') is not defined. MegaSTP cannot be built.");
@@ -62,62 +82,66 @@ MEGA_STP_ACTIVITIES['clearcut'] = {
 };
 
 // 3. Target DBH Harvest
+// 3. Target DBH Harvest
 MEGA_STP_ACTIVITIES['targetDBH'] = {
     id: 'MegaSTP_TargetDBH',
     type: 'scheduled',
     schedule: { signal: 'do_targetDBH' },
     finalHarvest: false,
 
-    onEvaluate: function() {
-        return true; 
-    },
+    onEvaluate: function() { return true; },
 
     onExecute: function() {
         console.log(`[MEGA-STP] Executing 'targetDBH' for stand ${stand.id}.`);
-
-        var dbhList = stand.flag('abe_param_dbhList') || {};
-        var total_harvested_count = 0;
-
-        console.log("[MEGA-STP] -> Received dbhList: " + JSON.stringify(dbhList));
-
-        // --- DETAILED STAND INVENTORY LOGGING ---
-        console.log("[MEGA-STP] -> Stand Inventory Before Harvest:");
-        stand.trees.loadAll();
         
-        // Get a list of unique species IDs present in the stand
-        var species_ids = [];
-        for (var i = 0; i < stand.nspecies; i++) {
-            species_ids.push(stand.speciesId(i));
+        // 1. Log Before
+        logSpeciesStats(stand, "PRE-HARVEST");
+
+        var dbhList = stand.flag('abe_param_dbhList');
+        var total_harvested = 0;
+
+        if (!dbhList || typeof dbhList !== 'object') {
+            console.warn("[MEGA-STP] targetDBH: No valid dbhList found. Skipping.");
+            return;
         }
 
-        for (var i = 0; i < species_ids.length; i++) {
-            var species_id = species_ids[i];
-            var filter = 'species=' + species_id;
-            var species_count = stand.trees.sum('1', filter);
-            
-            if (species_count > 0) {
-                var min_dbh = stand.trees.mean('dbh', filter, 'min'); // Using mean with a filter to get min
-                var max_dbh = stand.trees.mean('dbh', filter, 'max'); // Using mean with a filter to get max
-                console.log(`  - Species: ${species_id}, Count: ${species_count}, DBH Range: [${min_dbh.toFixed(1)} - ${max_dbh.toFixed(1)}] cm`);
-            }
-        }
-        // --- END DIAGNOSTIC LOGGING ---
-
-        // Manually implement the harvest logic
+        // ... (Existing Iteration Logic for Species) ...
         for (var species in dbhList) {
-            if (dbhList.hasOwnProperty(species)) {
-                var dbh = dbhList[species];
-                var filter = 'species = ' + species + ' and dbh > ' + dbh;
-                stand.trees.load(filter);
-                total_harvested_count += stand.trees.harvest();
+            if (dbhList.hasOwnProperty(species) && species !== 'rest') {
+                var limit = dbhList[species];
+                var n = stand.trees.load('species=' + species + ' and dbh>=' + limit);
+                if (n > 0) {
+                    var h = stand.trees.harvest();
+                    total_harvested += h;
+                    console.log(`  -> Species ${species}: harvested ${h} trees >= ${limit}cm.`);
+                }
             }
         }
+
+        // ... (Existing Rest Logic) ...
+        if (dbhList.hasOwnProperty('rest')) {
+            var restLimit = dbhList['rest'];
+            var filter = 'dbh >= ' + restLimit;
+            for (var sp in dbhList) {
+                if (dbhList.hasOwnProperty(sp) && sp !== 'rest') {
+                    filter += ' and species <> ' + sp;
+                }
+            }
+            var n_rest = stand.trees.load(filter);
+            if (n_rest > 0) {
+                var h_rest = stand.trees.harvest();
+                total_harvested += h_rest;
+                console.log(`  -> Rest (Limit ${restLimit}cm): harvested ${h_rest} trees.`);
+            }
+        }
+    logSpeciesStats(stand, "POST-HARVEST");
         stand.trees.removeMarkedTrees();
-        console.log(`[MEGA-STP] -> Total harvested trees: ${total_harvested_count}.`);
+        
+        // 2. Log After
+        logSpeciesStats(stand, "POST-HARVEST");
     },
 
     onExecuted: function() {
-        console.log(`[MEGA-STP] onExecuted for targetDBH on stand ${stand.id}.`);
         stand.setFlag('abe_last_activity', 'MegaSTP_TargetDBH');
         stand.setFlag('abe_last_activity_year', Globals.year);
         stand.setFlag('abe_need_reassessment', false);
@@ -202,6 +226,7 @@ onExecute: function() {
 
 
 // 5. Selective Thinning - Phase 1: SELECTION (CORRECT LIBRARY PATTERN)
+// 5. Selective Thinning - Phase 1: SELECTION
 MEGA_STP_ACTIVITIES['selectiveThinning_select'] = {
     id: 'MegaSTP_SelectiveThinning_Select',
     type: 'thinning',
@@ -210,26 +235,32 @@ MEGA_STP_ACTIVITIES['selectiveThinning_select'] = {
     
     N: function() { return stand.flag('abe_param_nTrees'); },
     NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
-  //  speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity') || {}; },
+    
+    // Pass the flag to C++ to guide selection
+    speciesSelectivity: function() { 
+        return stand.flag('abe_param_speciesSelectivity'); 
+    },
+    
     ranking: 'height',
     
-    // This forces the signal-triggered execution path: evaluate() -> removeMarkedTrees()
-    // Since only 'markcompetitor' is set, no trees are actually removed.
     onCreate: function(act) { 
         act.scheduled = false;
     },
     
-    onExecuted: function() {
-        // This runs AFTER the C++ has marked the trees.
-        console.log(`[MEGA-STP - onExecuted] SELECT phase for stand ${stand.id}.`);
+   onExecuted: function() {
+        console.log(`[MEGA-STP] SELECT phase for stand ${stand.id}.`);
         
-        var marked_crop = stand.trees.load('markcrop=true');
-        var marked_competitors = stand.trees.load('markcompetitor=true');
-        
-        console.log(`  -> RESULT: Found ${marked_crop} marked crop trees.`);
-        console.log(`  -> RESULT: Found ${marked_competitors} marked competitors.`);
+        // LOG STATS BEFORE REMOVAL
+        logSpeciesStats(stand, "PRE-THIN SELECTION");
 
-        // Set the initialization flag so the next agent call triggers the 'remove' phase.
+        // Analyze Marks
+        stand.trees.load('markcrop=true');
+        var crop_count = stand.trees.count;
+        console.log(`  -> CROP TREES Marked: ${crop_count}`);
+
+        stand.trees.load('markcompetitor=true');
+        console.log(`  -> COMPETITORS Marked: ${stand.trees.count}`);
+
         stand.setFlag('abe_selective_thinning_initialized', true);
         stand.setFlag('abe_last_activity', 'MegaSTP_SelectiveThinning_Select');
         stand.setFlag('abe_last_activity_year', Globals.year);
@@ -267,8 +298,8 @@ MEGA_STP_ACTIVITIES['selectiveThinning_remove'] = {
 };
 
 // 7. Thinning From Below
+// 7. Thinning From Below
 MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
-    // id: 'MegaSTP_ThinningFromBelow', // Removed to fix validation error
     type: 'thinning',
     thinning: 'custom',
     schedule: { signal: 'do_thinningFromBelow' },
@@ -284,24 +315,49 @@ MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
         return share * 100; 
     },
 
-    onEvaluate: function() { return true; },
+    // --- FIX: Pass species selectivity map here ---
+    onEvaluate: function() { 
+        // If we return the map object, iLand uses it for selectivity.
+        // If the flag is missing/empty, we return true (default behavior).
+        var map = stand.flag('abe_param_speciesSelectivity');
+        if (map) return map;
+        return true; 
+    },
 
+    // NOTE: You have a custom onExecute in your file for this activity.
+    // Ideally, if you use 'thinning: custom', you should let C++ handle it 
+    // (remove your custom onExecute).
+    // However, if you want to keep your custom JS logic (sorting/filtering manually),
+    // you must update your JS logic to read 'abe_param_speciesSelectivity' manually.
+    // Since your file currently has a manual JS implementation:
+    
     onExecute: function() {
-        console.log(`[MEGA-STP] Executing 'thinningFromBelow' for stand ${stand.id}.`);
+        console.log(`[MEGA-STP] Executing 'thinningFromBelow' (JS Implementation) for stand ${stand.id}.`);
 
         var share = stand.flag('abe_param_thinningShare') || 0.0;
         
+        // *** NEW: Load Species Selectivity ***
+        var selectivity = stand.flag('abe_param_speciesSelectivity') || {};
+        
         // 1. Load all trees
         var total_count = stand.trees.loadAll();
+        
+        // *** NEW: Filter out protected species BEFORE sorting ***
+        // If a species has value 1.0 (or high) in selectivity, we might want to EXCLUDE it from 
+        // thinning from below (protect it). 
+        // Or, if you follow standard thinning logic: thinning from below usually ignores species 
+        // and just takes the small ones. 
+        // IF you want to use the profile:
+        // Iterate selectivity map. If value > 0.9, DO NOT harvest this species?
+        // (This depends on your definition. Usually thinning from below is species neutral).
+        
+        // For now, keeping your existing logic which ignores species is safer 
+        // unless you specifically want to spare certain species from being cut even if small.
+        
         var total_volume = stand.trees.sum('volume');
         var target_removal_volume = total_volume * share;
 
-        console.log(`  -> Stand Stats: Count=${total_count}, Vol=${total_volume.toFixed(1)}m3. Target Removal: ${target_removal_volume.toFixed(1)}m3 (${(share*100).toFixed(0)}%)`);
-
-        if (target_removal_volume <= 0) {
-            console.log("  -> Target volume is 0. Skipping.");
-            return;
-        }
+        if (target_removal_volume <= 0) return;
 
         // 2. Sort by DBH ascending (smallest trees first)
         stand.trees.sort('dbh');
@@ -309,23 +365,14 @@ MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
         // 3. Filter: Keep trees in the list where cumulative volume <= target
         var count_in_list = stand.trees.filter(`incsum(volume) <= ${target_removal_volume}`);
         
-        // Calculate what is actually in the list now
-        var vol_in_list = stand.trees.sum('volume');
-
-        console.log(`  -> Selection: ${count_in_list} trees selected for removal (Vol: ${vol_in_list.toFixed(1)}m3).`);
-
-        // 4. Harvest
         if (count_in_list > 0) {
             var harvested_count = stand.trees.harvest();
             stand.trees.removeMarkedTrees();
-            console.log(`  -> HARVEST EXECUTION: Removed ${harvested_count} trees.`);
-        } else {
-            console.log(`  -> No trees selected (smallest tree might be larger than target volume).`);
+            console.log(`  -> Removed ${harvested_count} trees.`);
         }
     },
 
     onExecuted: function() {
-        console.log(`[MEGA-STP] onExecuted for thinningFromBelow on stand ${stand.id}.`);
         stand.setFlag('abe_last_activity', 'MegaSTP_ThinningFromBelow');
         stand.setFlag('abe_last_activity_year', Globals.year);
         stand.setFlag('abe_need_reassessment', false);
@@ -374,7 +421,7 @@ MEGA_STP_ACTIVITIES['shelterwood_select'] = {
     // Dynamic parameters from flags
     N: function() { return stand.flag('abe_param_nTrees'); },
     NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
-   // speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity'); },  // commented out in waiting for a good way to select species.
+    speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity'); },  // commented out in waiting for a good way to select species.
     ranking: 'height', // Standard for shelterwood: keep dominant trees
 
     // Force signal execution path
@@ -487,6 +534,7 @@ MEGA_STP_ACTIVITIES['shelterwood_final'] = {
 };
 
 MEGA_STP_ACTIVITIES['planting'] = {
+    id: 'MegaSTP_Planting',
     type: 'scheduled',
     schedule: { signal: 'do_planting' },
 
@@ -496,46 +544,31 @@ MEGA_STP_ACTIVITIES['planting'] = {
     onExecute: function() {
         console.log(`[MEGA-STP] Executing Planting on stand ${stand.id}.`);
         
-        var species_val = stand.flag('abe_param_planting_species');
-        var fraction_val = stand.flag('abe_param_planting_fraction');
+        var species_arr = stand.flag('abe_param_planting_species');
+        var fraction_arr = stand.flag('abe_param_planting_fraction');
 
-        // --- Helper to force Arrays ---
-        // Handles: ["a","b"], "a,b", "a"
-        function toArray(val, isNumeric) {
-            if (val === undefined || val === null) return [];
-            if (Array.isArray(val)) return val;
-            if (typeof val === 'string' && val.indexOf(',') > -1) {
-                var parts = val.split(',');
-                if (isNumeric) return parts.map(Number);
-                return parts;
-            }
-            return [val];
+        // Basic Validation
+        if (!species_arr || !Array.isArray(species_arr) || species_arr.length === 0) {
+            console.warn("[MEGA-STP] Planting: Invalid or empty species array. Using Fallback.");
+            species_arr = ['piab']; 
+            fraction_arr = [1.0];
         }
-
-        var species_arr = toArray(species_val, false);
-        var fraction_arr = toArray(fraction_val, true);
-
-        // Defaults
-        if (species_arr.length === 0) species_arr = ['piab'];
-        if (fraction_arr.length === 0) fraction_arr = [1.0];
 
         for (var i = 0; i < species_arr.length; i++) {
             var sp = species_arr[i];
-            // Trim whitespace if it was a split string
-            if (typeof sp === 'string') sp = sp.trim();
-            
-            var fr = (i < fraction_arr.length) ? fraction_arr[i] : 1.0;
+            var fr = (fraction_arr && i < fraction_arr.length) ? fraction_arr[i] : 0;
 
-            var item = {
-                species: sp,
-                fraction: fr,
-                height: 0.2,
-                age: 2,
-                clear: false 
-            };
-            
-            console.log(`  -> Planting ${sp} on ${(fr*100).toFixed(0)}% of area.`);
-            fmengine.runPlanting(stand.id, item);
+            if (fr > 0) {
+                var item = {
+                    species: sp,
+                    fraction: fr, 
+                    height: 0.2,
+                    age: 2,
+                    clear: false 
+                };
+                console.log(`  -> Planting ${sp} on ${(fr*100).toFixed(0)}% of area.`);
+                fmengine.runPlanting(stand.id, item);
+            }
         }
     },
 

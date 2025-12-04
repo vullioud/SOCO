@@ -1,186 +1,250 @@
-// ----- Start of File: soco_src/config/regime_matrix.js -----
-
-/**
- * =================================================================================
- * FILE: regime_matrix.js
- * =================================================================================
- * THE STRATEGY MATRIX
- * 
- * Dimensions:
- * 1. Agent Preference: "Production", "Biodiversity", "CO2"
- * 2. Stand Structure:  "low", "medium", "high"
- * 3. Species Type:     "conifer", "broadleaf", "mixed"
- * 
- * Priorities: 1 (Critical), 2 (High), 3 (Medium), 4 (Low)
- * =================================================================================
- */
+// ----- Start of File: config/regime_matrix.js -----
 
 if (typeof REGIME_MATRIX === 'undefined') {
-    var REGIME_MATRIX = {
+    var REGIME_MATRIX = {};
+
+    // =========================================================================
+    // 1. REGIME DEFINITIONS (The "Menu")
+    // =========================================================================
+    const REGIME_DEFS = {
         
-        // =================================================================================
-        // 1. PRODUCTION AGENT (Goal: Efficiency, Volume, Financial Return)
-        // =================================================================================
-        "Production": {
-            // --- LOW STRUCTURE (Monocultures/Even-aged) ---
-            "low": {
-                "conifer": { 
-                    name: "Industrial_Rotation",
-                    description: "Maximize softwood output. Efficient thinning, clearcut/shelterwood at optimal age.",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 1, params: { species_profile: "production_conifer" } },
-                        "Tending":    { act: "tending",  priority: 3, params: { species_profile: "dynamic_auto" } },
-                        "Thinning":   { act: "thinningFromBelow", priority: 2, params: { thinningShare: 0.25 } }, 
-                        "Harvesting": { act: "clearcut", priority: 1 } 
-                    }
-                },
-                "broadleaf": {
-                    name: "Quality_Rotation",
-                    description: "Focus on valuable hardwood logs. Z-tree thinning.",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 2 },
-                        "Tending":    { act: "tending",  priority: 1, params: { species_profile: "dynamic_auto" } },
-                        "Thinning":   { act: "selectiveThinning", priority: 2, params: { nTrees: 80, nCompetitors: 2 } },
-                        "Harvesting": { act: "targetDBH", priority: 1, params: { dbhListProfile: "value_broadleaf" } }
-                    }
-                },
-                "mixed": {
-                    name: "Mixed_Production",
-                    description: "Standard management for mixed stands.",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 3 },
-                        "Tending":    { act: "tending", priority: 2 },
-                        "Thinning":   { act: "thinningFromBelow", priority: 2 },
-                        "Harvesting": { act: "shelterwood", priority: 1 }
-                    }
-                }
-            },
-            
-            // --- MEDIUM STRUCTURE (Transitioning/Irregular) ---
-            "medium": {
-                "conifer": { name: "Industrial_Rotation", activities: { "Planting": {act:"planting", priority:2}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"thinningFromBelow", priority:2}, "Harvesting":{act:"clearcut", priority:1} } },
-                "broadleaf": { name: "Quality_Rotation", activities: { "Planting": {act:"planting", priority:2}, "Tending":{act:"tending", priority:1}, "Thinning":{act:"selectiveThinning", priority:2}, "Harvesting":{act:"targetDBH", priority:1} } },
-                "mixed": {
-                    name: "Mixed_Production_Structure",
-                    activities: {
-                        "Planting":   { act: "noManagement", priority: 4 },
-                        "Tending":    { act: "tending", priority: 3 },
-                        "Thinning":   { act: "selectiveThinning", priority: 2 },
-                        "Harvesting": { act: "targetDBH", priority: 1 }
-                    }
-                }
-            },
+        // --- STANDARD AGE-CLASS (Conversion/Production) ---
+        "WET_Conifer_Standard": [
+            { type: "planting",           min_h: 0,  max_h: 2 },
+            { type: "tending",            min_h: 2,  max_h: 13 }, 
+            { type: "thinningFromBelow",  min_h: 13, max_h: 28 },
+            { type: "clearcut",           min_h: 28, max_h: 99 }
+        ],
+        "WET_Douglas_Standard": [
+            { type: "planting",           min_h: 0,  max_h: 2 },
+            { type: "tending",            min_h: 2,  max_h: 13 }, 
+            { type: "selectiveThinning",  min_h: 13, max_h: 35 }, 
+            { type: "targetDBH",          min_h: 35, max_h: 99 }
+        ],
+        "WET_Broadleaf_Quality": [
+            { type: "planting",           min_h: 0,  max_h: 2 },
+            { type: "tending",            min_h: 2,  max_h: 16 },
+            { type: "selectiveThinning",  min_h: 16, max_h: 30 },
+            { type: "targetDBH",          min_h: 30, max_h: 99 }
+        ],
+        "WET_Mixed_Standard": [
+            { type: "planting",           min_h: 0,  max_h: 2 },
+            { type: "tending",            min_h: 2,  max_h: 15 },
+            { type: "thinningFromBelow",  min_h: 15, max_h: 29 },
+            { type: "shelterwood",        min_h: 29, max_h: 99 }
+        ],
 
-            // --- HIGH STRUCTURE (Plenter/Complex) ---
-            "high": {
-                // For Production agents, high structure is just a resource to be tapped efficiently
-                "conifer":   { name: "Extract_Value", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"thinningFromBelow", priority:2}, "Harvesting":{act:"targetDBH", priority:1} } },
-                "broadleaf": { name: "Extract_Value", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"selectiveThinning", priority:2}, "Harvesting":{act:"targetDBH", priority:1} } },
-                "mixed":     { name: "Extract_Value", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"plenter", priority:2}, "Harvesting":{act:"targetDBH", priority:1} } }
+        // --- SHORT ROTATION / BIOMASS ---
+        "Conifer_Biomass": [
+            { type: "planting",           min_h: 0,  max_h: 2 },
+            { type: "tending",            min_h: 2,  max_h: 12 },
+            { type: "thinningFromBelow",  min_h: 12, max_h: 25 }, // Early cut
+            { type: "clearcut",           min_h: 25, max_h: 99 }
+        ],
+        "Broadleaf_Firewood": [
+             { type: "planting",          min_h: 0,  max_h: 2 },
+             { type: "tending",           min_h: 2,  max_h: 15 },
+             { type: "clearcut",          min_h: 15, max_h: 99 }
+        ],
+
+        // --- CONTINUOUS COVER / BIODIVERSITY ---
+        "Plenter_Conifer": [
+            { type: "plenter",            min_h: 0,  max_h: 99 }
+        ],
+        "Plenter_Mixed": [
+            { type: "plenter",            min_h: 0,  max_h: 99 }
+        ],
+        "Habitat_Retention": [
+            { type: "tending",            min_h: 0,  max_h: 15 },
+            { type: "targetDBH",          min_h: 15, max_h: 99 }
+        ],
+
+        // --- TRANSITION / CONVERSION ---
+        "Conversion_Spruce_To_Mixed": [
+            { type: "planting",           min_h: 0,  max_h: 99 }, // Underplanting
+            { type: "selectiveThinning",  min_h: 15, max_h: 30 },
+            { type: "shelterwood",        min_h: 30, max_h: 99 }
+        ],
+
+        // --- PASSIVE ---
+        "Natural_Succession": [
+            { type: "noManagement",       min_h: 0,  max_h: 99, duration: 10 }
+        ]
+    };
+
+    // =========================================================================
+    // 2. PROBABILITY HELPER SETS
+    // =========================================================================
+    
+    // --- STATE PROFILES ---
+    const STATE_PROD_LOW = {
+        conifer:   [{ id: "WET_Conifer_Standard", p: 1.0 }],
+        douglas:   [{ id: "WET_Douglas_Standard", p: 1.0 }],
+        broadleaf: [{ id: "WET_Broadleaf_Quality", p: 1.0 }],
+        mixed:     [{ id: "WET_Mixed_Standard", p: 1.0 }]
+    };
+    const STATE_ANY_HIGH_STRUCT = {
+        conifer:   [{ id: "Plenter_Conifer", p: 1.0 }],
+        douglas:   [{ id: "Plenter_Conifer", p: 1.0 }],
+        broadleaf: [{ id: "Plenter_Mixed", p: 1.0 }],
+        mixed:     [{ id: "Plenter_Mixed", p: 1.0 }]
+    };
+    const STATE_BIO = {
+        conifer:   [{ id: "Conversion_Spruce_To_Mixed", p: 0.8 }, { id: "Plenter_Conifer", p: 0.2 }],
+        douglas:   [{ id: "Plenter_Conifer", p: 1.0 }],
+        broadleaf: [{ id: "Habitat_Retention", p: 0.8 }, { id: "Natural_Succession", p: 0.2 }],
+        mixed:     [{ id: "Plenter_Mixed", p: 0.8 }, { id: "Natural_Succession", p: 0.2 }]
+    };
+
+    // --- BIG PRIVATE PROFILES ---
+    const BIG_PROD_LOW = {
+        conifer:   [{ id: "WET_Conifer_Standard", p: 0.6 }, { id: "Conifer_Biomass", p: 0.4 }],
+        douglas:   [{ id: "WET_Douglas_Standard", p: 1.0 }],
+        broadleaf: [{ id: "WET_Broadleaf_Quality", p: 0.8 }, { id: "Broadleaf_Firewood", p: 0.2 }],
+        mixed:     [{ id: "WET_Mixed_Standard", p: 1.0 }]
+    };
+
+    // --- SMALL PRIVATE PROFILES ---
+    const SMALL_PROD_LOW = {
+        conifer:   [{ id: "WET_Conifer_Standard", p: 0.4 }, { id: "Conifer_Biomass", p: 0.2 }, { id: "Natural_Succession", p: 0.4 }],
+        douglas:   [{ id: "WET_Douglas_Standard", p: 0.6 }, { id: "Natural_Succession", p: 0.4 }],
+        broadleaf: [{ id: "Broadleaf_Firewood", p: 0.5 }, { id: "Natural_Succession", p: 0.5 }],
+        mixed:     [{ id: "Plenter_Mixed", p: 0.3 }, { id: "Natural_Succession", p: 0.7 }]
+    };
+    const SMALL_PASSIVE = {
+        conifer:   [{ id: "Natural_Succession", p: 1.0 }],
+        douglas:   [{ id: "Natural_Succession", p: 1.0 }],
+        broadleaf: [{ id: "Natural_Succession", p: 1.0 }],
+        mixed:     [{ id: "Natural_Succession", p: 1.0 }]
+    };
+
+
+    // =========================================================================
+    // 3. OWNER MATRICES (The "Orders")
+    // Keys matched to data: "state", "big", "small"
+    // =========================================================================
+    const OWNER_MATRICES = {
+        
+        "state": {
+            "Production": {
+                "low":    STATE_PROD_LOW,
+                "medium": STATE_ANY_HIGH_STRUCT, 
+                "high":   STATE_ANY_HIGH_STRUCT
+            },
+            "Biodiversity": {
+                "low":    STATE_BIO,
+                "medium": STATE_BIO,
+                "high":   STATE_BIO
+            },
+            "CO2": {
+                // State CO2: High Stock -> Standard WET or Plenter
+                "low":    STATE_PROD_LOW,
+                "medium": STATE_ANY_HIGH_STRUCT,
+                "high":   STATE_ANY_HIGH_STRUCT
             }
         },
 
-        // =================================================================================
-        // 2. BIODIVERSITY AGENT (Goal: Complexity, Mixtures, Habitat)
-        // =================================================================================
-        "Biodiversity": {
-            // --- LOW STRUCTURE (The "Bad" case - needs fixing) ---
-            "low": {
-                "conifer": {
-                    name: "Transformation_Ecological",
-                    description: "Converting monoculture to mixed forest.",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 1, params: { species_profile: "biodiversity_mix" } },
-                        "Tending":    { act: "tending", priority: 1, params: { species_profile: "favor_rare" } },
-                        "Thinning":   { act: "selectiveThinning", priority: 2, params: { nTrees: 50, nCompetitors: 3 } }, 
-                        "Harvesting": { act: "femel", priority: 2 } // Create gaps
-                    }
-                },
-                "broadleaf": {
-                    name: "Habitat_Development",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 2 },
-                        "Tending":    { act: "tending", priority: 1, params: { species_profile: "favor_rare" } },
-                        "Thinning":   { act: "selectiveThinning", priority: 3 }, 
-                        "Harvesting": { act: "targetDBH", priority: 3, params: { dbhListProfile: "habitat_retention" } } // Keep big trees
-                    }
-                },
-                "mixed": {
-                    name: "Structure_Promotion",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 3 },
-                        "Tending":    { act: "tending", priority: 2 },
-                        "Thinning":   { act: "selectiveThinning", priority: 2 },
-                        "Harvesting": { act: "shelterwood", priority: 2 }
-                    }
-                }
+        "big": { // Matches "big" in CSV
+            "Production": {
+                "low":    BIG_PROD_LOW,
+                "medium": BIG_PROD_LOW, 
+                "high":   BIG_PROD_LOW // Force conversion (no Plenter trap)
             },
-
-            // --- MEDIUM STRUCTURE ---
-            "medium": {
-                "conifer": { name: "Transformation_Ecological", activities: { "Planting": {act:"planting", priority:1}, "Tending":{act:"tending", priority:1}, "Thinning":{act:"selectiveThinning", priority:2}, "Harvesting":{act:"femel", priority:2} } },
-                "broadleaf": { name: "Habitat_Development", activities: { "Planting": {act:"planting", priority:3}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"selectiveThinning", priority:3}, "Harvesting":{act:"targetDBH", priority:3} } },
-                "mixed": { name: "Structure_Promotion", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"selectiveThinning", priority:2}, "Harvesting":{act:"femel", priority:3} } }
+            "Biodiversity": {
+                "low":    STATE_BIO, 
+                "medium": STATE_ANY_HIGH_STRUCT,
+                "high":   STATE_ANY_HIGH_STRUCT
             },
-
-            // --- HIGH STRUCTURE (The "Good" case - maintain) ---
-            "high": {
-                "conifer":   { name: "Continuous_Cover_Bio", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"plenter", priority:3}, "Harvesting":{act:"plenter", priority:3} } },
-                "broadleaf": { name: "Continuous_Cover_Bio", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"plenter", priority:3}, "Harvesting":{act:"targetDBH", priority:3} } },
-                "mixed":     { name: "Continuous_Cover_Bio", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"plenter", priority:3}, "Harvesting":{act:"targetDBH", priority:3} } }
+            "CO2": {
+                // Big Private CO2: Efficiency/Biomass
+                "low":    BIG_PROD_LOW,
+                "medium": BIG_PROD_LOW,
+                "high":   BIG_PROD_LOW
             }
         },
 
-        // =================================================================================
-        // 3. CO2 AGENT (Goal: Biomass, Stability, Resilience)
-        // =================================================================================
-        "CO2": {
-            // --- LOW STRUCTURE ---
-            "low": {
-                "conifer": {
-                    name: "Stability_Management",
-                    description: "Thin heavily to stabilize stands against windthrow.",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 1 },
-                        "Tending":    { act: "tending", priority: 2 },
-                        "Thinning":   { act: "thinningFromBelow", priority: 1, params: { thinningShare: 0.3 } }, // Heavy thinning
-                        "Harvesting": { act: "clearcut", priority: 2 }
-                    }
-                },
-                "broadleaf": {
-                    name: "Biomass_Max",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 2 },
-                        "Tending":    { act: "tending", priority: 3 },
-                        "Thinning":   { act: "thinningFromBelow", priority: 3 }, // Keep density high
-                        "Harvesting": { act: "targetDBH", priority: 1, params: { dbhListProfile: "high_volume" } }
-                    }
-                },
-                "mixed": {
-                    name: "Resilience_Builder",
-                    activities: {
-                        "Planting":   { act: "planting", priority: 2 },
-                        "Tending":    { act: "tending", priority: 2 },
-                        "Thinning":   { act: "selectiveThinning", priority: 2 },
-                        "Harvesting": { act: "shelterwood", priority: 1 }
-                    }
-                }
+        "small": { // Matches "small" in CSV
+            "Production": {
+                "low":    SMALL_PROD_LOW,
+                "medium": SMALL_PROD_LOW,
+                "high":   SMALL_PROD_LOW
             },
-
-            // --- MEDIUM & HIGH STRUCTURE (Treat similarly: Maintain high stock) ---
-            "medium": {
-                "conifer": { name: "Stability_Management", activities: { "Planting": {act:"planting", priority:2}, "Tending":{act:"tending", priority:2}, "Thinning":{act:"thinningFromBelow", priority:1}, "Harvesting":{act:"femel", priority:2} } },
-                "broadleaf": { name: "Biomass_Max", activities: { "Planting": {act:"planting", priority:3}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"thinningFromBelow", priority:3}, "Harvesting":{act:"targetDBH", priority:1} } },
-                "mixed": { name: "High_Stock_CCF", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"plenter", priority:2}, "Harvesting":{act:"targetDBH", priority:2} } }
+            "Biodiversity": {
+                "low":    SMALL_PASSIVE,
+                "medium": SMALL_PASSIVE,
+                "high":   SMALL_PASSIVE
             },
-            "high": {
-                "conifer":   { name: "High_Stock_CCF", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"plenter", priority:2}, "Harvesting":{act:"targetDBH", priority:2} } },
-                "broadleaf": { name: "High_Stock_CCF", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"plenter", priority:2}, "Harvesting":{act:"targetDBH", priority:2} } },
-                "mixed":     { name: "High_Stock_CCF", activities: { "Planting": {act:"noManagement", priority:4}, "Tending":{act:"tending", priority:3}, "Thinning":{act:"plenter", priority:2}, "Harvesting":{act:"targetDBH", priority:2} } }
+            "CO2": {
+                "low":    SMALL_PASSIVE,
+                "medium": SMALL_PASSIVE,
+                "high":   SMALL_PASSIVE
             }
         }
+    };
+
+    // =========================================================================
+    // 4. RESOLVER LOGIC
+    // =========================================================================
+    
+    REGIME_MATRIX.resolve = function(pref, struct, spec, owner_type) {
+        
+        // 1. Select Matrix based on Owner Type
+        let matrix = OWNER_MATRICES[owner_type];
+        
+        if (!matrix) {
+            // Fallback logic if owner type is completely unknown (e.g., empty string)
+            matrix = OWNER_MATRICES["state"];
+        }
+
+        // 2. Navigate Preference
+        if (!matrix[pref]) return null;
+        let pref_node = matrix[pref];
+
+        // 3. Navigate Structure
+        let struct_node = pref_node[struct];
+        if (!struct_node) struct_node = pref_node["low"]; // Fallback to 'low' (restart logic)
+        
+        if (!struct_node) return null;
+
+        // 4. Navigate Species
+        var candidates = null;
+        
+        if (spec === 'psme' && struct_node['douglas']) {
+            candidates = struct_node['douglas'];
+        } else if (struct_node[spec]) {
+            candidates = struct_node[spec];
+        } else if (struct_node["mixed"]) {
+            candidates = struct_node["mixed"];
+        } else {
+            // Fallback: Use first available key
+            var keys = Object.keys(struct_node);
+            if (keys.length > 0) candidates = struct_node[keys[0]];
+        }
+
+        // 5. Stochastic Selection
+        if (candidates && Array.isArray(candidates)) {
+            let total_p = 0;
+            candidates.forEach(c => total_p += c.p);
+            
+            let r = Math.random() * total_p;
+            let cumulative = 0;
+            
+            for (let i = 0; i < candidates.length; i++) {
+                cumulative += candidates[i].p;
+                if (r <= cumulative) {
+                    return {
+                        id: candidates[i].id,
+                        activities: REGIME_DEFS[candidates[i].id]
+                    };
+                }
+            }
+            let last = candidates[candidates.length - 1];
+            return { id: last.id, activities: REGIME_DEFS[last.id] };
+        }
+
+        return null;
     };
 }
 this.REGIME_MATRIX = REGIME_MATRIX;
 
-// ----- End of File: soco_src/config/regime_matrix.js -----
+// ----- End of File: config/regime_matrix.js -----
