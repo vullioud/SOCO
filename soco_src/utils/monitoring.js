@@ -1,10 +1,12 @@
+// ----- Start of File: soco_src/utils/monitoring.js -----
+
 /**
  * =================================================================================
  * FILE: soco_src/utils/monitoring.js
  * =================================================================================
  * DESCRIPTION:
  * Handles data logging for Stands (Detailed & Activity) and Units.
- * Includes safety checks for undefined values to prevent crashes.
+ * Captures biological state, management history, and cognitive decision rationale.
  * =================================================================================
  */
 
@@ -19,7 +21,7 @@ var Monitoring = {
     },
 
     // --- HELPER: Safety Float Fixer ---
-    // Prevents "toFixed is not a function" crashes if value is null/undefined/string
+    // Prevents crashes if a value is null/undefined
     _safeFixed: function(val, digits) {
         if (typeof val === 'number' && !isNaN(val)) {
             return val.toFixed(digits);
@@ -27,11 +29,22 @@ var Monitoring = {
         return "0";
     },
 
+    // --- HELPER: Serialize Species Vector ---
+    // Converts [{id:'piab', share:0.8}, {id:'fasy', share:0.2}] -> "piab:0.80|fasy:0.20"
+    _serializeSpecies: function(species_vector) {
+        if (!species_vector || species_vector.length === 0) return "none";
+        // Sort by share descending to put dominant species first
+        let sorted = species_vector.slice().sort((a, b) => b.share - a.share);
+        // Format: "id:share|id:share"
+        return sorted.map(s => `${s.id}:${s.share.toFixed(2)}`).join('|');
+    },
+
     // --- 1. STAND SNAPSHOT (Detailed & Activity) ---
+    // Called every year for every managed stand
     snapshot: function(agent, stand_data) {
         if (!this.isEnabled()) return;
 
-        // Force iLand to recalculate statistics for the stand context
+        // Force iLand to recalculate statistics for the specific stand context
         fmengine.standId = stand_data.stand_id;
         stand.reload(); 
 
@@ -45,9 +58,9 @@ var Monitoring = {
         var owner_type = "unknown";
         if (agent && agent.owner) owner_type = agent.owner.type;
         
-        var d = stand_data.iLand_stand_data; // Shorthand for metrics
+        var d = stand_data.iLand_stand_data; 
 
-        // Create the record
+        // Create the data record
         var record = {
             year: Globals.year,
             agent_id: agent.id,
@@ -55,7 +68,14 @@ var Monitoring = {
             stand_id: stand_data.stand_id,
             preference: stand_data.preference_focus,
             
-            // Biological State
+            // --- STRATEGY & COGNITION ---
+            regime: stand_data.regime.name || "unassigned",
+            regime_idx: (stand_data.state && stand_data.state.regime_index !== undefined) ? stand_data.state.regime_index : -1,
+            species_profile: stand_data.species_profile || "none",
+            species_composition: this._serializeSpecies(stand_data.classified.dominant_species),
+            decision: stand_data.last_decision_reason || "n/a", // The "Why"
+            
+            // --- BIOLOGICAL STATE ---
             age: stand.age,
             absolute_age: stand.absoluteAge,
             volume: stand.volume,
@@ -64,91 +84,104 @@ var Monitoring = {
             top_height: stand.topHeight,
             stems: stand.stems,
 
-            // Increment Metrics
-            mai_decade: d.mai_decade,
-            mai_total: d.mai_total,
-
-            // Harvest Metrics (Cumulative)
+            // --- HARVEST METRICS (Cumulative) ---
             harv_tot: d.harvest_total,
-            harv_thin: d.harvest_thinning,
-            harv_salv: d.harvest_salvage,
             harv_final: d.harvest_final,
 
-            // Deadwood Metrics (Stock)
+            // --- DEADWOOD METRICS ---
             dw_tot: d.dw_total,
-            dw_nat: d.dw_natural,
-            dw_beetle: d.dw_beetle,
-            dw_storm: d.dw_storm,
             
-            // Action State
+            // --- ACTION STATE ---
             activity_name: stand_data.activity.chosen_Activity,
+            target_year: stand_data.activity.target_year,
             is_active: activity_happened ? 1 : 0,
             
-            // Classification
+            // --- CLASSIFICATION ---
             age_class: stand_data.classified.age_class || "N/A",
             structure_class: stand_data.classified.structure_class || "N/A",
             activity_class: stand_data.classified.activity_class || "N/A",
 
-            // Parameters
+            // --- PARAMETERS ---
             removed_fraction: stand.flag('abe_param_fraction_to_remove') || 0,
             thinning_share: stand.flag('abe_param_thinningShare') || 0
         };
 
-        // Log to Detailed History (if selected)
+        // Push to Detailed History (if selected for monitoring)
         if (stand_data.is_monitoring_candidate) {
             stand_data.detailed_history.push(record);
         }
 
-        // Log to Activity History (if action occurred)
+        // Push to Activity History (if an action actually occurred)
         if (activity_happened && stand_data.activity.chosen_Activity !== 'noManagement') {
             stand_data.activity_history.push(record);
         }
     },
 
     // --- 2. UNIT SNAPSHOT ---
-    snapshot_unit: function(unit_obj, year) {
+    // Called once per year per agent
+snapshot_unit: function(unit_obj, year) {
         if (!this.isEnabled()) return;
         
-        var i = unit_obj.iland_metrics;
-        var a = unit_obj.aggregated_metrics;
+        var m = unit_obj.metrics;
 
         var record = {
             year: year,
-            unit_id: unit_obj.unit_id,
+            unit_id: unit_obj.agent_id,
+            owner_type: unit_obj.owner_type || "unknown", // <--- USE IT
             
-            // iLand Metrics
-            area: i.area,
-            vol_mean: i.volume,
-            mai_unit: i.mai,
-            plan_annual: i.annual_plan,
-            harvest_realized: i.realized_harvest,
+            area: m.total_area,
+            vol_mean: m.mean_volume,
             
-            // SoCoABE Aggregates
-            total_vol_m3: a.total_standing_volume_m3,
-            total_harv_m3: a.total_harvest_m3,
-            dw_stock_mean: a.mean_deadwood_ha, // m3/ha
-            age_mean: a.mean_stand_age
+            pref_dist: JSON.stringify(m.preference_dist),
+            struct_dist: JSON.stringify(m.structure_dist),
+            act_dist: JSON.stringify(m.activity_class_dist)
         };
         
+        if (!unit_obj.history) unit_obj.history = [];
         unit_obj.history.push(record);
     },
+    
+    save_unit_csv: function(units_map, filename) {
+        console.log(`--- Monitoring: Saving Unit Log to ${filename} ---`);
+        
+        // Added 'owner_type' to header
+        var header = "year,unit_id,owner_type,area,vol_mean,pref_dist,struct_dist,act_dist";
+        var lines = [header];
 
+        for (var uid in units_map) {
+            var u = units_map[uid];
+            if (u && u.history) {
+                for (var i = 0; i < u.history.length; i++) {
+                    var r = u.history[i];
+                    var line = `${r.year},${r.unit_id},${r.owner_type},` +
+                               `${this._safeFixed(r.area, 1)},` +
+                               `${this._safeFixed(r.vol_mean, 2)},` +
+                               `"${r.pref_dist.replace(/"/g, "'")}",` +
+                               `"${r.struct_dist.replace(/"/g, "'")}",` +
+                               `"${r.act_dist.replace(/"/g, "'")}"`;
+                    lines.push(line);
+                }
+            }
+        }
+        
+        Globals.saveTextFile(filename, lines.join("\n"));
+    },
     // --- 3. CSV SAVERS ---
 
     save_detailed_csv: function(all_agents, filename) {
         console.log(`--- Monitoring: Saving Detailed Log to ${filename} ---`);
-        this._write_csv(all_agents, filename, "detailed_history");
+        this._write_stand_csv(all_agents, filename, "detailed_history");
     },
 
     save_activity_csv: function(all_agents, filename) {
         console.log(`--- Monitoring: Saving Activity Log to ${filename} ---`);
-        this._write_csv(all_agents, filename, "activity_history");
+        this._write_stand_csv(all_agents, filename, "activity_history");
     },
 
     save_unit_csv: function(units_map, filename) {
         console.log(`--- Monitoring: Saving Unit Log to ${filename} ---`);
         
-        var header = "year,unit_id,area,vol_mean,mai_unit,plan_annual,harvest_realized,total_vol_m3,total_harv_m3,dw_stock_mean,age_mean";
+        var header = "year,unit_id,area,vol_mean,pref_dist,struct_dist,act_dist";
         var lines = [header];
         var count = 0;
 
@@ -157,16 +190,13 @@ var Monitoring = {
             if (u && u.history) {
                 for (var i = 0; i < u.history.length; i++) {
                     var r = u.history[i];
+                    // Replace double quotes in JSON strings with single quotes to keep CSV valid
                     var line = `${r.year},${r.unit_id},` +
                                `${this._safeFixed(r.area, 1)},` +
                                `${this._safeFixed(r.vol_mean, 2)},` +
-                               `${this._safeFixed(r.mai_unit, 2)},` +
-                               `${this._safeFixed(r.plan_annual, 2)},` +
-                               `${this._safeFixed(r.harvest_realized, 2)},` +
-                               `${this._safeFixed(r.total_vol_m3, 0)},` +
-                               `${this._safeFixed(r.total_harv_m3, 0)},` +
-                               `${this._safeFixed(r.dw_stock_mean, 2)},` +
-                               `${this._safeFixed(r.age_mean, 1)}`;
+                               `"${r.pref_dist.replace(/"/g, "'")}",` +
+                               `"${r.struct_dist.replace(/"/g, "'")}",` +
+                               `"${r.act_dist.replace(/"/g, "'")}"`;
                     lines.push(line);
                     count++;
                 }
@@ -176,80 +206,19 @@ var Monitoring = {
         Globals.saveTextFile(filename, lines.join("\n"));
         console.log(`      -> Saved ${count} unit records.`);
     },
-    // ... inside monitoring.js ...
 
-    snapshot_unit: function(unit_obj, year) {
-        if (!this.isEnabled()) return;
+    // --- INTERNAL HELPER: Write Stand CSV ---
+    // Shared logic for both Detailed and Activity logs to ensure consistency
+    _write_stand_csv: function(all_agents, filename, array_key) {
         
-        const m = unit_obj.metrics;
-
-        var record = {
-            year: year,
-            unit_id: unit_obj.unit_id,
-            
-            area: m.total_area,
-            vol_mean: m.mean_volume_ha,
-            mai_mean: m.mean_mai_ha, // This is your baseline for planning!
-            
-            harv_tot_m3: m.total_harvest_vol,
-            harv_final_m3: m.harvest_by_type.final,
-            
-            age_mean: m.mean_age,
-            dw_mean: m.mean_deadwood_ha,
-
-            // Distributions (Saved as JSON string)
-            age_dist: JSON.stringify(m.age_classes),
-            struct_dist: JSON.stringify(m.structure_classes),
-            spec_dist: JSON.stringify(m.species_shares)
-        };
-        
-        unit_obj.history.push(record);
-    },
-    
-    save_unit_csv: function(units_map, filename) {
-        console.log(`--- Monitoring: Saving Unit Log to ${filename} ---`);
-        
-        var header = "year,unit_id,area,vol_mean,mai_mean,harv_tot_m3,harv_final_m3,age_mean,dw_mean,age_dist_json,struct_dist_json,spec_dist_json";
-        var lines = [header];
-
-        for (var uid in units_map) {
-            var u = units_map[uid];
-            if (u && u.history) {
-                for (var i = 0; i < u.history.length; i++) {
-                    var r = u.history[i];
-                    // Use a regex to escape quotes in JSON for CSV validity if needed, 
-                    // but standard JSON string usually works if we wrap the whole field in quotes.
-                    // Simple approach: replace " with '
-                    
-                    var line = `${r.year},${r.unit_id},` +
-                               `${this._safeFixed(r.area, 1)},` +
-                               `${this._safeFixed(r.vol_mean, 2)},` +
-                               `${this._safeFixed(r.mai_mean, 2)},` +
-                               `${this._safeFixed(r.harv_tot_m3, 0)},` +
-                               `${this._safeFixed(r.harv_final_m3, 0)},` +
-                               `${this._safeFixed(r.age_mean, 1)},` +
-                               `${this._safeFixed(r.dw_mean, 2)},` +
-                               `"${r.age_dist.replace(/"/g, "'")}",` +
-                               `"${r.struct_dist.replace(/"/g, "'")}",` +
-                               `"${r.spec_dist.replace(/"/g, "'")}"`;
-                    lines.push(line);
-                }
-            }
-        }
-        
-        Globals.saveTextFile(filename, lines.join("\n"));
-    },
-    
-
-    // Internal helper for Stand CSVs
-    _write_csv: function(all_agents, filename, array_key) {
+        // Comprehensive Header
         var header = "year,agent_id,owner_type,stand_id,preference," + 
-                     "age,absolute_age,volume,basal_area,height,top_height,stems," +
-                     "mai_decade,mai_total," +
-                     "harv_tot,harv_thin,harv_salv,harv_final," +
-                     "dw_tot,dw_nat,dw_beetle,dw_storm," +
-                     "activity_name,is_active,age_class,structure_class,activity_class," +
-                     "removed_fraction,thinning_share";
+                     "regime,regime_idx,species_profile,species_composition,decision," + // Logic Fields
+                     "age,absolute_age,volume,basal_area,height,top_height,stems," + // Bio Fields
+                     "harv_tot,harv_final,dw_tot," + // Harvest/Deadwood
+                     "activity_name,target_year,is_active," + // Activity Status
+                     "age_class,structure_class,activity_class," + // Classification
+                     "removed_fraction,thinning_share"; // Parameters
 
         var lines = [header];
         var total_records = 0;
@@ -264,7 +233,14 @@ var Monitoring = {
                     for (var h = 0; h < history_arr.length; h++) {
                         var r = history_arr[h];
                         
+                        // Sanitize decision string (remove commas to prevent CSV breakage)
+                        var clean_decision = r.decision.replace(/,/g, ";");
+
                         var line = `${r.year},${r.agent_id},${r.owner_type},${r.stand_id},${r.preference},` +
+                                   // Logic
+                                   `${r.regime},${r.regime_idx},${r.species_profile},"${r.species_composition}","${clean_decision}",` +
+                                   
+                                   // Bio
                                    `${this._safeFixed(r.age, 1)},` +
                                    `${this._safeFixed(r.absolute_age, 1)},` +
                                    `${this._safeFixed(r.volume, 2)},` +
@@ -273,24 +249,18 @@ var Monitoring = {
                                    `${this._safeFixed(r.top_height, 2)},` +
                                    `${this._safeFixed(r.stems, 0)},` +
                                    
-                                   // Increment
-                                   `${this._safeFixed(r.mai_decade, 2)},` +
-                                   `${this._safeFixed(r.mai_total, 2)},` +
-                                   
-                                   // Harvest
+                                   // Harvest/Deadwood
                                    `${this._safeFixed(r.harv_tot, 2)},` +
-                                   `${this._safeFixed(r.harv_thin, 2)},` +
-                                   `${this._safeFixed(r.harv_salv, 2)},` +
                                    `${this._safeFixed(r.harv_final, 2)},` +
-
-                                   // Deadwood
                                    `${this._safeFixed(r.dw_tot, 2)},` +
-                                   `${this._safeFixed(r.dw_nat, 2)},` +
-                                   `${this._safeFixed(r.dw_beetle, 2)},` +
-                                   `${this._safeFixed(r.dw_storm, 2)},` +
 
-                                   `${r.activity_name},${r.is_active},` +
+                                   // Activity
+                                   `${r.activity_name},${r.target_year},${r.is_active},` +
+                                   
+                                   // Classification
                                    `${r.age_class},${r.structure_class},${r.activity_class},` +
+                                   
+                                   // Params
                                    `${this._safeFixed(r.removed_fraction, 2)},${this._safeFixed(r.thinning_share, 2)}`;
                         
                         lines.push(line);
@@ -302,7 +272,7 @@ var Monitoring = {
 
         var content = lines.join("\n");
         Globals.saveTextFile(filename, content);
-        console.log(`      -> Saved ${total_records} records.`);
+        console.log(`      -> Saved ${total_records} records to ${filename}.`);
     }
 };
 
