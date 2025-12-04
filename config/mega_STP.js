@@ -533,6 +533,94 @@ MEGA_STP_ACTIVITIES['shelterwood_final'] = {
     }
 };
 
+MEGA_STP_ACTIVITIES['femel_select'] = {
+    id: 'MegaSTP_Femel_Select',
+    type: 'general',
+    schedule: { signal: 'do_femel_select' },
+
+    action: function() {
+        console.log(`[MEGA-STP] Femel Select: Initializing gap for stand ${stand.id}.`);
+        
+        // 1. Initialize Patches
+        // We use random placement for the first gap(s).
+        // Parameter 'initial_size' determines how many patches/size.
+        // For simplicity, we interpret initial_size as 'number of starting gaps' for now,
+        // or we could assume it's the size. Let's assume size=1 patch, and we make 1 hole.
+        stand.patches.clear();
+        stand.patches.createRandomPatches(1); 
+        stand.patches.updateGrid();
+
+        // 2. Determine Patch ID
+        // createRandomPatches assigns IDs starting from 1.
+        var initial_patch_id = 1;
+        
+        // 3. Harvest the Patch
+        stand.trees.load('patch=' + initial_patch_id);
+        var harvested = stand.trees.harvest();
+        console.log(`  -> Created initial gap (ID ${initial_patch_id}). Harvested ${harvested} trees.`);
+
+        // 4. Update Flags
+        stand.setFlag('abe_femel_initialized', true);
+        stand.setFlag('abe_femel_current_ring', initial_patch_id);
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Femel_Select');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+// 13. Femel - Phase 2: Expansion (Step)
+MEGA_STP_ACTIVITIES['femel_step'] = {
+    id: 'MegaSTP_Femel_Step',
+    type: 'general',
+    schedule: { signal: 'do_femel_step' },
+
+    action: function() {
+        console.log(`[MEGA-STP] Femel Step: Expanding gap for stand ${stand.id}.`);
+
+        // 1. Read State
+        var current_ring = stand.flag('abe_femel_current_ring');
+        var grow_width = stand.flag('abe_param_femel_growth_width') || 1;
+        
+        if (!current_ring) {
+            console.warn("  -> Error: Femel step called but current ring is undefined. Aborting.");
+            return;
+        }
+
+        var next_ring = current_ring + 1;
+
+        // 2. Expand Patch
+        // createExtendedPatch(sourceId, targetId, growth)
+        // This expands 'current_ring' geometry and assigns the NEW area to 'next_ring'
+        var cells_added = stand.patches.createExtendedPatch(current_ring, next_ring, grow_width);
+        
+        // IMPORTANT: We must update the grid for iLand to recognize the new patch IDs on the map
+        stand.patches.updateGrid();
+
+        console.log(`  -> Expanded Ring ${current_ring} to ${next_ring}. Added ${cells_added} cells.`);
+
+        if (cells_added > 0) {
+            // 3. Harvest the New Ring
+            stand.trees.load('patch=' + next_ring);
+            var harvested = stand.trees.harvest();
+            console.log(`  -> Harvested ${harvested} trees from Ring ${next_ring}.`);
+            
+            // 4. Update State
+            stand.setFlag('abe_femel_current_ring', next_ring);
+        } else {
+            console.log(`  -> No expansion possible (stand boundary reached?).`);
+        }
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Femel_Step');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
 MEGA_STP_ACTIVITIES['planting'] = {
     id: 'MegaSTP_Planting',
     type: 'scheduled',
