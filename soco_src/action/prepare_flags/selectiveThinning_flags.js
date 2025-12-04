@@ -1,3 +1,5 @@
+// ----- Start of File: soco_src/action/prepare_flags/selectiveThinning_flags.js -----
+
 Action.prepare.selectiveThinning = function(params, stand_data_obj) {
     
     // 1. Numeric Params
@@ -38,3 +40,18 @@ Action.prepare.selectiveThinning = function(params, stand_data_obj) {
     }
     stand.setFlag('abe_param_speciesSelectivity', speciesSelectivity);
 };
+
+// *** NEW: Cleanup Function ***
+Action.prepare.clear_selectiveThinning_flags = function() {
+    stand.setFlag('abe_selective_thinning_initialized', null);
+    // Note: We don't necessarily need to clear nTrees/nCompetitors here as they are reset by clear_flags()
+    // but clearing the initialization state is crucial.
+    
+    // Reset the physical marks on the trees in iLand
+    if (stand && stand.id > 0) {
+        stand.trees.loadAll();
+        stand.trees.resetMarks();
+    }
+    console.log(`[Action] Cleared selective thinning state for stand ${stand.id}`);
+};
+

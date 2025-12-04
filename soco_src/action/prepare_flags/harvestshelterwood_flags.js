@@ -1,3 +1,5 @@
+// ----- Start of File: soco_src/action/prepare_flags/harvestshelterwood_flags.js -----
+
 Action.prepare.shelterwood = function(params, stand_data_obj) {
     
     // 1. Standard Numeric Parameters
@@ -18,7 +20,7 @@ Action.prepare.shelterwood = function(params, stand_data_obj) {
     
     stand.setFlag('abe_param_fraction_to_remove', fraction);
 
-    // 3. Species Selectivity (UPDATED for new JSON Profile)
+    // 3. Species Selectivity
     var speciesSelectivity = {};
     var agent = socoabe.institution.all_agents.find(function(a) { return a.id === stand_data_obj.agent_id; });
     var profileKey = stand_data_obj.species_profile;
@@ -28,7 +30,6 @@ Action.prepare.shelterwood = function(params, stand_data_obj) {
         
         if (profile && profile.shelterwood) {
             var actData = profile.shelterwood;
-            // Parse ["fasy-quro"], ["1.0-1.0"]
             if (actData.species && actData.intensity) {
                 var species_arr = actData.species[0].split('-');
                 var intensity_arr = actData.intensity[0].split('-').map(Number);
@@ -52,11 +53,18 @@ Action.prepare.shelterwood = function(params, stand_data_obj) {
     console.log(`[Action] Prepared Shelterwood for ${profileKey}. Fraction: ${fraction.toFixed(2)}`);
 };
 
+// *** NEW: Cleanup Function ***
 Action.prepare.clear_shelterwood_flags = function() {
+    // 1. Clear Logic Flags
     stand.setFlag('abe_shelterwood_initialized', null);
     stand.setFlag('abe_param_totalCompetitors', null);
+    
+    // 2. Clear Tree Marks (Crucial for aborted sequences)
     if (stand && stand.id > 0) {
         stand.trees.loadAll();
         stand.trees.resetMarks(); 
     }
+    console.log(`[Action] Cleared shelterwood state for stand ${stand.id}`);
 };
+
+// ----- End of File: soco_src/action/prepare_flags/harvestshelterwood_flags.js -----
