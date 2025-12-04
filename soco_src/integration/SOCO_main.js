@@ -11,13 +11,20 @@ class socoabe_main {
         console.log("--- SoCoABE Main: Initializing Cognitive Layer... ---");
         const configs = this.load_all_configs();
         this.institution = new institution(configs);
-        this.select_monitoring_stands(10);
+        
+        // --- FIX: Use the Config value, not hardcoded 10 ---
+        let sample_n = 10; // Default
+        if (typeof SoCoABE_CONFIG !== 'undefined' && SoCoABE_CONFIG.MONITORING) {
+            sample_n = SoCoABE_CONFIG.MONITORING.sample_size || 10;
+        }
+        this.select_monitoring_stands(sample_n);
+        // ---------------------------------------------------
+
         this.initialized = true;
-        console.log("--- SoCoABE Main: Initialization Complete. ---");
+        console.log(`--- SoCoABE Main: Initialization Complete. Monitoring ${sample_n} stands. ---`);
     }
 
     load_all_configs() {
-         // ... (Same as previous) ...
          return {
             traits:             JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/traits/agent_traits.json'))),
             activities:         JSON.parse(Globals.loadTextFile(Globals.path('./abe/SOCO/config/tables/activities/activity_distributions.json'))),
@@ -38,10 +45,13 @@ class socoabe_main {
                 all_stands.push(agent.managed_stands_data[stand_id]);
             }
         });
+        
+        // Fisher-Yates Shuffle
         for (let i = all_stands.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [all_stands[i], all_stands[j]] = [all_stands[j], all_stands[i]];
         }
+        
         let selected = all_stands.slice(0, count);
         selected.forEach(sd => sd.is_monitoring_candidate = true);
     }
@@ -63,11 +73,10 @@ class socoabe_main {
         var path_activity = Globals.path("soco_log_activities.csv");
         Monitoring.save_activity_csv(this.institution.all_agents, path_activity);
 
-        // Collect units from agents
         let all_units_map = {};
         this.institution.all_agents.forEach(agent => {
-            if (agent.my_unit) {
-                all_units_map[agent.my_unit.unit_id] = agent.my_unit;
+            if (agent.unit_data) {
+                all_units_map[agent.unit_data.agent_id] = agent.unit_data;
             }
         });
 
@@ -76,4 +85,5 @@ class socoabe_main {
     }
 }
 this.socoabe_main = socoabe_main;
+
 // ----- End of File: soco_src/integration/SOCO_main.js -----
