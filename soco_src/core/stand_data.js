@@ -13,6 +13,10 @@ class stand_data {
             name: "unassigned", 
             activities: {} 
         };
+        this.last_decision_reason = "Init"; 
+        this.state = {
+         regime_index: 0 
+        };
         // --- II. PERCEPTION DATA ---
         this.iLand_stand_data = {
             absolute_age_soco: 0,
@@ -35,7 +39,6 @@ class stand_data {
             structure_class: 'unknown',
             species_dominance: 'unknown', 
             activity_class: 'unknown',
-            dom_top_height: 0,
             dominant_species: [] // Vector of {id, share}
         };
         this.history = {
