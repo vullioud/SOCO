@@ -1,218 +1,97 @@
 {
-  "prod_conifer_spruce": {
+  "wet_01_buchen_mischwald": {
+    "description": "WET 1: Beech-Broadleaf-Mix. Goal: Quality B. Fasy dominant but rare maples/oaks protected.",
+    "planting": { "species": ["fasy-quro-acps"], "intensity": ["0.6-0.3-0.1"] },
     "tending": {
-      "species": ["piab-pisy-abal"],
-      "intensity": ["0.95-0.6-0.2"]
+      "description": "Minderheitenschutz: Rare broadleaves (acps, quro) favored over dominant Beech.",
+      "species": ["acps-quro-fasy-rest"], "intensity": ["1.05-1.05-1.0-0.05"]
     },
-    "thinning": {
-      "species": ["piab-pisy-abal"],
-      "intensity": ["0.95-0.5-0.1"]
-    },
-    "shelterwood": {
-      "species": ["piab-pisy-abal"],
-      "intensity": ["1-0.5-0"]
-    },
-    "planting": {
-      "species": ["piab"],
-      "intensity": ["1"]
-    }
+    "thinning": { "species": ["acps-quro-fasy-piab-rest"], "intensity": ["1.0-1.0-1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["fasy-quro-acps"], "intensity": ["1.0-1.0-1.0"] },
+    "targetDBH": { "species": ["fasy-quro-acps-piab-rest"], "limit": ["60-70-60-50-45"] }
   },
-  "prod_broadleaf_beech": {
+
+  "wet_02_buchen_nadelwald": {
+    "description": "WET 2: Beech-Conifer-Mix. Goal: Mixed stand. Conifers allowed to co-dominate.",
+    "planting": { "species": ["fasy-piab-abal"], "intensity": ["0.5-0.3-0.2"] },
     "tending": {
-      "species": ["fasy-acps-quro"],
-      "intensity": ["0.95-0.6-0.2"]
+      "description": "Active help for Conifers against Beech pressure.",
+      "species": ["piab-abal-fasy-rest"], "intensity": ["1.05-1.05-1.0-0.1"]
     },
-    "thinning": {
-      "species": ["fasy-acps-quro"],
-      "intensity": ["0.95-0.5-0.1"]
-    },
-    "shelterwood": {
-      "species": ["fasy-acps-quro"],
-      "intensity": ["1-0.5-0"]
-    },
-    "planting": {
-      "species": ["fasy"],
-      "intensity": ["1"]
-    }
+    "thinning": { "species": ["piab-abal-fasy-rest"], "intensity": ["1.0-1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["fasy-piab-abal"], "intensity": ["1.0-1.0-1.0"] },
+    "targetDBH": { "species": ["fasy-piab-abal-rest"], "limit": ["60-50-55-45"] }
   },
-  "prod_mixed_fast": {
+
+  "wet_03_traubeneichen": {
+    "description": "WET 3: Sessile Oak Mix. Goal: High value Oak (Veneer).",
+    "planting": { "species": ["qupe-cabe-tico"], "intensity": ["0.7-0.2-0.1"] },
     "tending": {
-      "species": ["psme-piab-fasy"],
-      "intensity": ["0.95-0.6-0.2"]
+      "description": "Strict Oak favor. Hornbeam (cabe) kept as service tree (low int) but removed if competing.",
+      "species": ["qupe-cabe-fasy-rest"], "intensity": ["1.1-0.8-0.5-0.1"]
     },
-    "thinning": {
-      "species": ["psme-piab-fasy"],
-      "intensity": ["0.95-0.5-0.1"]
-    },
-    "shelterwood": {
-      "species": ["psme-piab-fasy"],
-      "intensity": ["1-0.5-0"]
-    },
-    "planting": {
-      "species": ["psme"],
-      "intensity": ["1"]
-    }
+    "thinning": { "species": ["qupe-cabe-rest"], "intensity": ["1.0-0.5-0.0"] },
+    "shelterwood": { "species": ["qupe-cabe"], "intensity": ["1.0-0.5"] },
+    "targetDBH": { "species": ["qupe-cabe-fasy-rest"], "limit": ["70-40-50-40"] }
   },
-  "adapt_conifer_doug": {
-    "tending": {
-      "species": ["psme-abal-pisy"],
-      "intensity": ["0.9-0.7-0.4"]
-    },
-    "thinning": {
-      "species": ["psme-abal-pisy"],
-      "intensity": ["0.8-0.6-0.3"]
-    },
-    "shelterwood": {
-      "species": ["psme-abal-pisy"],
-      "intensity": ["0.9-0.8-0.2"]
-    },
-    "planting": {
-      "species": ["psme"],
-      "intensity": ["0.8"]
-    }
+
+  "wet_04_stieleichen": {
+    "description": "WET 4: Pedunculate Oak Mix. Goal: Valuable Oak.",
+    "planting": { "species": ["quro-cabe-frex"], "intensity": ["0.7-0.2-0.1"] },
+    "tending": { "species": ["quro-frex-cabe-rest"], "intensity": ["1.1-1.0-0.8-0.1"] },
+    "thinning": { "species": ["quro-frex-rest"], "intensity": ["1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["quro-frex"], "intensity": ["1.0-1.0"] },
+    "targetDBH": { "species": ["quro-frex-cabe-rest"], "limit": ["70-60-40-40"] }
   },
-  "adapt_broadleaf_oak": {
+
+  "wet_05_fichten_mischwald": {
+    "description": "WET 5: Spruce Mix. Goal: Construction timber, stable mix.",
+    "planting": { "species": ["piab-fasy-abal"], "intensity": ["0.7-0.2-0.1"] },
     "tending": {
-      "species": ["quro-cabe-tico"],
-      "intensity": ["0.9-0.7-0.4"]
+      "description": "Favor Spruce Z-Trees.",
+      "species": ["piab-abal-fasy-rest"], "intensity": ["1.0-1.0-0.9-0.1"]
     },
-    "thinning": {
-      "species": ["quro-cabe-tico"],
-      "intensity": ["0.8-0.6-0.3"]
-    },
-    "shelterwood": {
-      "species": ["quro-cabe-tico"],
-      "intensity": ["0.9-0.8-0.2"]
-    },
-    "planting": {
-      "species": ["quro"],
-      "intensity": ["0.8"]
-    }
+    "thinning": { "species": ["piab-abal-fasy-rest"], "intensity": ["1.0-1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["piab-fasy"], "intensity": ["1.0-1.0"] },
+    "targetDBH": { "species": ["piab-fasy-abal-rest"], "limit": ["50-55-55-45"] }
   },
-  "adapt_mixed_res": {
-    "tending": {
-      "species": ["qupe-pini-fasy"],
-      "intensity": ["0.9-0.7-0.4"]
-    },
-    "thinning": {
-      "species": ["qupe-pini-fasy"],
-      "intensity": ["0.8-0.6-0.3"]
-    },
-    "shelterwood": {
-      "species": ["qupe-pini-fasy"],
-      "intensity": ["0.9-0.8-0.2"]
-    },
-    "planting": {
-      "species": ["qupe"],
-      "intensity": ["0.8"]
-    }
+
+  "wet_00_tannen_mischwald": {
+    "description": "WET 0 (formerly 17): Silver Fir Mix (Plenterwald). Goal: Complex structure.",
+    "planting": { "species": ["abal-piab-fasy"], "intensity": ["0.5-0.3-0.2"] },
+    "tending": { "species": ["abal-piab-fasy-rest"], "intensity": ["1.1-1.0-1.0-0.1"] },
+    "thinning": { "species": ["abal-piab-fasy-rest"], "intensity": ["1.0-1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["abal-piab-fasy"], "intensity": ["1.0-1.0-1.0"] },
+    "targetDBH": { "species": ["abal-piab-fasy-rest"], "limit": ["70-55-60-45"] }
   },
-  "native_montane": {
-    "tending": {
-      "species": ["fasy-abal-piab"],
-      "intensity": ["0.9-0.8-0.6"]
-    },
-    "thinning": {
-      "species": ["fasy-abal-piab"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["fasy-abal-piab"],
-      "intensity": ["0.9-0.9-0.5"]
-    },
-    "planting": {
-      "species": ["abal"],
-      "intensity": ["0.3"]
-    }
+  
+  "wet_11_douglasien": {
+    "description": "WET 11: Douglas Fir Mix. Goal: High volume production.",
+    "planting": { "species": ["psme-fasy"], "intensity": ["0.7-0.3"] },
+    "tending": { "species": ["psme-fasy-rest"], "intensity": ["1.1-0.9-0.1"] },
+    "thinning": { "species": ["psme-fasy-rest"], "intensity": ["1.0-1.0-0.1"] },
+    "shelterwood": { "species": ["psme-fasy"], "intensity": ["1.0-0.8"] },
+    "targetDBH": { "species": ["psme-fasy-piab-rest"], "limit": ["65-50-50-40"] }
   },
-  "native_valley_oak": {
+
+  "production_conifer_spruce": {
+    "description": "INDUSTRIAL: Pure Spruce Rotation. Goal: Efficiency.",
+    "planting": { "species": ["piab"], "intensity": ["1.0"] },
     "tending": {
-      "species": ["quro-cabe-acps"],
-      "intensity": ["0.9-0.8-0.6"]
+      "description": "Pure Spruce favor. Remove everything else.",
+      "species": ["piab-rest"], "intensity": ["1.0-0.01"]
     },
-    "thinning": {
-      "species": ["quro-cabe-acps"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["quro-cabe-acps"],
-      "intensity": ["0.9-0.9-0.5"]
-    },
-    "planting": {
-      "species": ["quro"],
-      "intensity": ["0.3"]
-    }
+    "thinning": { "species": ["piab-rest"], "intensity": ["1.0-0.0"] },
+    "shelterwood": { "species": ["piab"], "intensity": ["1.0"] },
+    "targetDBH": { "species": ["piab-rest"], "limit": ["40-35"] }
   },
-  "native_pine_dry": {
-    "tending": {
-      "species": ["pisy-quro-bepa"],
-      "intensity": ["0.9-0.8-0.6"]
-    },
-    "thinning": {
-      "species": ["pisy-quro-bepa"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["pisy-quro-bepa"],
-      "intensity": ["0.9-0.9-0.5"]
-    },
-    "planting": {
-      "species": ["pisy"],
-      "intensity": ["0"]
-    }
-  },
-  "exp_cedar": {
-    "tending": {
-      "species": ["cabe-abal-psme"],
-      "intensity": ["0.9-0.8-0.5"]
-    },
-    "thinning": {
-      "species": ["cabe-abal-psme"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["cabe-abal-psme"],
-      "intensity": ["0.8-0.8-0.4"]
-    },
-    "planting": {
-      "species": ["cabe"],
-      "intensity": ["0.5"]
-    }
-  },
-  "exp_walnut_mix": {
-    "tending": {
-      "species": ["juai-acps-frex"],
-      "intensity": ["0.9-0.8-0.5"]
-    },
-    "thinning": {
-      "species": ["juai-acps-frex"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["juai-acps-frex"],
-      "intensity": ["0.8-0.8-0.4"]
-    },
-    "planting": {
-      "species": ["juai"],
-      "intensity": ["0.5"]
-    }
-  },
-  "exp_diverse": {
-    "tending": {
-      "species": ["psme-quru-abal"],
-      "intensity": ["0.9-0.8-0.5"]
-    },
-    "thinning": {
-      "species": ["psme-quru-abal"],
-      "intensity": ["0.8-0.7-0.5"]
-    },
-    "shelterwood": {
-      "species": ["psme-quru-abal"],
-      "intensity": ["0.8-0.8-0.4"]
-    },
-    "planting": {
-      "species": ["quru"],
-      "intensity": ["0.5"]
-    }
+
+  "production_conifer_douglas": {
+    "description": "INDUSTRIAL: Pure Douglas Fir. Goal: Max Biomass.",
+    "planting": { "species": ["psme"], "intensity": ["1.0"] },
+    "tending": { "species": ["psme-rest"], "intensity": ["1.0-0.01"] },
+    "thinning": { "species": ["psme-rest"], "intensity": ["1.0-0.0"] },
+    "shelterwood": { "species": ["psme"], "intensity": ["1.0"] },
+    "targetDBH": { "species": ["psme-rest"], "limit": ["50-40"] }
   }
 }
