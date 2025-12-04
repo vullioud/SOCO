@@ -359,6 +359,137 @@
         }
       }
     },
+    "femel": {
+      "Biodiversity": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 120,
+              "sd": 15
+            }
+          ]
+        },
+        "times": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 4
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 10
+            }
+          ]
+        },
+        "initial_size": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "growth_width": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        }
+      },
+      "CO2": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 100,
+              "sd": 12
+            }
+          ]
+        },
+        "times": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 3
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 8
+            }
+          ]
+        },
+        "initial_size": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "growth_width": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        }
+      },
+      "Production": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 90,
+              "sd": 10
+            }
+          ]
+        },
+        "times": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 2
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 5
+            }
+          ]
+        },
+        "initial_size": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "growth_width": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        }
+      }
+    },
     "selectiveThinning": {
       "Biodiversity": {
         "execution_schedule": {

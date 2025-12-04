@@ -8,7 +8,8 @@
 
 function get_relevant_age(stand_data_obj) {
     var activity_name = stand_data_obj.activity.chosen_Activity;
-    var rotation_based_activities = ['clearcut', 'shelterwood', 'selectiveThinning', 'fromBelow'];
+    // *** UPDATED: Added 'femel' ***
+    var rotation_based_activities = ['clearcut', 'shelterwood', 'selectiveThinning', 'fromBelow', 'femel'];
 
     if (rotation_based_activities.indexOf(activity_name) > -1) {
         return stand_data_obj.iLand_stand_data.absolute_age_soco;
@@ -34,10 +35,12 @@ function generate_timeline(activity_name, params) {
             is_Sequence = false;
             break;
 
+        // *** UPDATED: Added 'femel' ***
         case 'shelterwood':
         case 'selectiveThinning':
         case 'fromBelow':
         case 'tending':
+        case 'femel':
             if (times > 1 && interval > 0) {
                 is_Sequence = true;
                 sequence_total_steps = times;
@@ -45,7 +48,6 @@ function generate_timeline(activity_name, params) {
                     timeline.push(start_age + (i * interval));
                 }
             } else if (times === 1) {
-                // Handle it as a single, non-sequence event.
                 timeline.push(start_age);
                 sequence_total_steps = 1;
                 is_Sequence = false;
@@ -72,7 +74,8 @@ function handle_overdue_harvest(stand_data_obj, original_start_age) {
     var preference = stand_data_obj.preference_focus;
     var current_age = stand_data_obj.iLand_stand_data.absolute_age_soco;
 
-    var is_harvest = ['clearcut', 'shelterwood', 'plenter_harvest'].indexOf(activity_name) > -1;
+    // *** UPDATED: Added 'femel' ***
+    var is_harvest = ['clearcut', 'shelterwood', 'plenter_harvest', 'femel'].indexOf(activity_name) > -1;
     if (!is_harvest) {
         return original_start_age;
     }
@@ -81,13 +84,10 @@ function handle_overdue_harvest(stand_data_obj, original_start_age) {
     var age_limit = age_thresholds[preference] || 999;
 
     if (current_age > age_limit) {
-        var random_offset = 1 + Math.floor(Math.random() * 10); // Schedule it for 1-10 years in the future.
+        var random_offset = 1 + Math.floor(Math.random() * 10); 
         var forced_age = Math.round(current_age + random_offset);
-        console.log(`[SCHEDULE] Stand ${stand_data_obj.stand_id}: Overdue harvest detected (Age: ${current_age}, Limit: ${age_limit}). Forcing execution from ideal age ${original_start_age} to new age ${forced_age}.`);
         return forced_age;
     }
-    // ----------------------
-
     return original_start_age;
 }
 
