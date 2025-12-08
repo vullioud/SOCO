@@ -807,3 +807,82 @@ Test_Scenarios.inspect_signal_trigger_targetDBH = function(agent, current_year) 
 
     return true; 
 };
+
+// ----- Start of File: soco_src/test/scenarios/inspect_age_classification_flow.js -----
+
+Test_Scenarios.inspect_age_classification_flow = function(agent, current_year) {
+
+    // --- CONFIGURATION ---
+    const YEARS_TO_INSPECT = [1, 2, 5, 10, 45]; 
+    // ---------------------
+
+    // 1. Guard: Check Year
+    if (!YEARS_TO_INSPECT.includes(current_year)) {
+        return false;
+    }
+
+    // 2. Guard: Run only for the FIRST agent encountered in that year to avoid log floods
+    if (typeof this._logged_agents === 'undefined') this._logged_agents = {};
+    if (this._logged_agents[current_year]) return false; // Already ran for this year
+    this._logged_agents[current_year] = true;
+
+    console.log(`\n[TEST] === Age Classification Inspection | Agent: ${agent.id} | Year: ${current_year} ===`);
+
+    // 3. Inspect the Lookup Table structure (Year 1 only)
+    if (current_year === 1) {
+        console.log("[TEST] Dumping Agent's Age Class Table Structure:");
+        console.log(JSON.stringify(agent.age_class_table, null, 2));
+    }
+
+    // 4. Inspect first 3 stands
+    const stands_to_inspect = agent.managed_stand_ids.slice(0, 3); 
+
+    stands_to_inspect.forEach(stand_id => {
+        let stand_data = agent.managed_stands_data[stand_id];
+        
+        // Force observation
+        stand_data = Perception.observe_stand(stand_data, agent);
+        const soco_age = stand_data.iLand_stand_data.absolute_age_soco;
+        const iland_age = stand_data.iLand_stand_data.stand_age;
+        const current_class = stand_data.classified.age_class;
+
+        console.log(`\n  --- Stand ${stand_id} ---`);
+        console.log(`    iLand Age: ${iland_age.toFixed(2)}`);
+        console.log(`    SoCo Age:  ${soco_age} (Type: ${typeof soco_age})`);
+        console.log(`    Resulting Class: '${current_class}'`);
+
+        // Manual Verification Logic
+        let match_found = null;
+        let log_check = [];
+
+        if (agent.age_class_table) {
+            for (let cls in agent.age_class_table) {
+                if (agent.age_class_table.hasOwnProperty(cls)) {
+                    let range = agent.age_class_table[cls];
+                    let is_match = (soco_age >= range[0] && soco_age <= range[1]);
+                    
+                    if (is_match) {
+                        match_found = cls;
+                    }
+                    if (soco_age >= range[0] - 5 && soco_age <= range[1] + 5) {
+                        log_check.push(`Checked '${cls}' [${range[0]}, ${range[1]}]: ${is_match}`);
+                    }
+                }
+            }
+        }
+
+        if (match_found) {
+            console.log(`    [VERIFY] Table Match Found: '${match_found}'`);
+            if (match_found !== current_class) {
+                console.error(`    [ERROR] Mismatch! Logic calculated '${current_class}', but table says '${match_found}'`);
+            }
+        } else {
+            console.warn(`    [VERIFY] No match found in table for Age ${soco_age}.`);
+            console.log(`    [DEBUG] Checked nearby ranges: ${log_check.join(' | ')}`);
+        }
+    });
+
+    console.log(`[TEST] === End Inspection ===\n`);
+    
+    return false; 
+};
