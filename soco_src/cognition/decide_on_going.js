@@ -1,16 +1,5 @@
 /**
  * =================================================================================
- * FILE: update_ongoing_sequence.js (FINAL VERSION - Time-Based Progression)
- * =================================================================================
- * DESCRIPTION:
- * The FIRST step in the cognitive pipeline. It manages the state of an ongoing
- * sequence based purely on the calendar. It finds the next scheduled event in
- * the timeline relative to the current year and updates the plan. If all events
- * are in the past, it marks the sequence as complete by resetting the plan.
- * =================================================================================
- */
-/**
- * =================================================================================
  * FILE: update_ongoing_sequence.js (INSTRUMENTED WITH LOGGING)
  * =================================================================================
  */
@@ -36,6 +25,9 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         if (activity.chosen_Activity === 'selectiveThinning') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
             Action.prepare.clear_selectiveThinning_flags();
+        } else if (activity.chosen_Activity === 'shelterwood') {
+            fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
+            Action.prepare.clear_shelterwood_flags();
         }
 
         activity.chosen_Activity = 'noManagement';
@@ -73,6 +65,9 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         if (activity.chosen_Activity === 'selectiveThinning') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
             Action.prepare.clear_selectiveThinning_flags();
+        } else if (activity.chosen_Activity === 'shelterwood') {
+            fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
+            Action.prepare.clear_shelterwood_flags();
         }
         
         activity.chosen_Activity = 'noManagement';
