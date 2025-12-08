@@ -33,7 +33,8 @@ class stand_data {
         this.history = {
             last_activity: 'none',
             last_activity_Year: -1, 
-            time_since_last_activity: -1
+            time_since_last_activity: -1, 
+            last_satisfied_phase: 'none'
         };
 
         // --- III. AGENT'S PLAN ---
