@@ -1,3 +1,5 @@
+// ----- Start of File: soco_src/cognition/compute_schedule.js -----
+
 /**
  * =================================================================================
  * FILE: compute_schedule.js (FINAL VERSION with Syntax Fix)
@@ -124,7 +126,6 @@ Cognition.compute_schedule = function(stand_data_obj) {
     var ideal_start_age = Math.round(Number(params.execution_schedule));
     var effective_start_age = handle_overdue_harvest(stand_data_obj, ideal_start_age);
     
-    // --- THIS IS THE FIX ---
     // Create a copy of the params object using a compatible for...in loop.
     var temp_params = {};
     for (var key in params) {
@@ -159,6 +160,24 @@ Cognition.compute_schedule = function(stand_data_obj) {
         }
 
         if (next_target_year !== -1) {
+            
+            if (activity.is_Sequence) {
+                var steps_remaining = activity.sequence_total_steps - next_step_index;
+                if (steps_remaining < 2) {
+                    
+                    // Reset to noManagement state
+                    activity.chosen_Activity = 'noManagement';
+                    activity.parameters = {};
+                    activity.timeline = [];
+                    activity.is_Sequence = false;
+                    activity.sequence_total_steps = 0;
+                    activity.sequence_current_step = 0;
+                    activity.target_year = -1;
+                    return stand_data_obj;
+                }
+            }
+            // ------------------------------------------------
+
             activity.sequence_current_step = next_step_index;
             activity.target_year = next_target_year;
         } else {
@@ -174,3 +193,4 @@ Cognition.compute_schedule = function(stand_data_obj) {
 
     return stand_data_obj;
 };
+
