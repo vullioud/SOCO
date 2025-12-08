@@ -11,9 +11,15 @@ class socoabe_main {
         console.log("--- SoCoABE Main: Initializing Cognitive Layer... ---");
         const configs = this.load_all_configs();
         this.institution = new institution(configs);
-        this.select_monitoring_stands(10);
+        
+        // --- FIX: Use Configured Sample Size ---
+        const sample_size = (typeof SoCoABE_CONFIG !== 'undefined' && SoCoABE_CONFIG.MONITORING) 
+                            ? SoCoABE_CONFIG.MONITORING.sample_size 
+                            : 10;
+
+        this.select_monitoring_stands(sample_size);
         this.initialized = true;
-        console.log("--- SoCoABE Main: Initialization Complete. ---");
+        console.log(`--- SoCoABE Main: Initialization Complete. Monitoring ${sample_size} stands. ---`);
     }
 
     load_all_configs() {
