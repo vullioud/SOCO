@@ -1,16 +1,32 @@
-
-/**
- * Selects a new activity for a stand based on its state and the agent's profile.
- * MODIFIED: Now uses 'activity_class' (Height/Development Phase) instead of 'age_class'.
- */
 Cognition.select_activity = function(stand_data_obj, agent) {
-    // --- CHANGE 1: Destructure activity_class instead of age_class ---
+    // Destructure needed data
     const { activity_class, structure_class } = stand_data_obj.classified; 
+    const { last_satisfied_phase, last_activity } = stand_data_obj.history;
     const { preference_focus } = stand_data_obj;
    
+    // --- GATEKEEPER: Phase Memory Check ---
+    // Rule: If the stand is still in the same phase that was just satisfied by a "Package" activity,
+    // prevent re-scheduling. Only "Continuous" activities (Plenter, TargetDBH) are allowed to repeat 
+    // within the same phase.
+    
+    // List of MegaSTP IDs that are allowed to repeat within a phase.
+    // These correspond to the IDs defined in mega_STP.js
+    const continuous_activities = [
+        'MegaSTP_Plenter',
+        'MegaSTP_TargetDBH'
+    ];
+    
+    // Logic:
+    // 1. Is the current biological phase the same as the one we just finished?
+    // 2. Was the last activity NOT a continuous one?
+    if (activity_class === last_satisfied_phase && !continuous_activities.includes(last_activity)) {
+        // console.log(`[Cognition] Stand ${stand_data_obj.stand_id}: Gatekeeper active. Phase '${activity_class}' satisfied by '${last_activity}'. Skipping.`);
+        stand_data_obj.activity.chosen_Activity = 'noManagement';
+        return stand_data_obj;
+    }
+
     let context_params_array = null;
 
-    // --- CHANGE 2: Use activity_class for lookup ---
     // Ensure we handle casing (e.g., "Thinning" -> "thinning") to match JSON keys
     const phase_key = activity_class ? activity_class.toLowerCase() : "unknown";
 
