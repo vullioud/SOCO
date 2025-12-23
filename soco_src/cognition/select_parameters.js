@@ -44,8 +44,13 @@ Cognition.select_parameters = function(stand_data_obj, agent) {
         
         final_params[param_name] = (sampled_value !== null && typeof sampled_value !== 'undefined') ? sampled_value : 0;
     }
-    
     stand_data_obj.activity.parameters = final_params;
+    
+    if (activity_name === 'planting' && typeof stand_data_obj.activity.parameters.execution_schedule === 'undefined') {
+        // console.log(`[Cognition] Defaulting execution_schedule to 1 for planting (Stand ${stand_data_obj.stand_id})`);
+        stand_data_obj.activity.parameters.execution_schedule = 2;
+    }
+    
     return stand_data_obj;
 };
 
