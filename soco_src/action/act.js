@@ -48,6 +48,10 @@ Action.trigger_activity = function(stand_data_obj) {
     else if (cognitive_activity_name === 'planting') {
         execution_activity_name = 'planting';
     }
+        // Femel Mapping
+    else if (cognitive_activity_name === 'femel') {
+        execution_activity_name = 'femel';
+    }
 
     // --- 4. PREPARE FLAGS ---
     var prepare_function = Action.prepare[execution_activity_name];
@@ -89,6 +93,26 @@ Action.trigger_activity = function(stand_data_obj) {
         }
         
         console.log(`[Action] Shelterwood Signal Logic: Step=${current_step}/${total_steps}, Init=${is_initialized} -> Signal='${signal_name}'`);
+    }
+
+    else if (execution_activity_name === 'femel') {
+        var current_step = stand_data_obj.activity.sequence_current_step;
+        var total_steps = stand_data_obj.activity.sequence_total_steps;
+        var is_initialized = stand.flag('abe_femel_initialized');
+
+        // 1. Check for Final Harvest (Last Step)
+        if (current_step >= total_steps - 1) {
+            signal_name = 'do_femel_final';
+        }
+        // 2. Check for Initialization (Step 0 or Late Entry)
+        else if (!is_initialized) {
+            signal_name = 'do_femel_select';
+        }
+        // 3. Expansion Step
+        else {
+            signal_name = 'do_femel_step';
+        }
+        // console.log(`[Action] Femel Signal Logic: Step=${current_step}/${total_steps}, Init=${is_initialized} -> Signal='${signal_name}'`);
     }
     // Logic C: Standard Activities (plenter, tending, thinningFromBelow, etc.)
     else {
