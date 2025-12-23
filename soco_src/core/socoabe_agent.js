@@ -1,4 +1,6 @@
-// FILE: soco_src/core/socoabe_agent.js (MODIFIED)
+// ----- Start of File: soco_src/core/socoabe_agent.js -----
+
+// FILE: soco_src/core/socoabe_agent.js (FIXED)
 
 class socoabe_agent {
     constructor(agent_id, owner, stand_ids) {
@@ -6,6 +8,8 @@ class socoabe_agent {
         this.owner = owner;
         this.managed_stand_ids = stand_ids;
         this.managed_stands_data = {};
+        
+        // Load tables (Deep copies)
         this.trait_table = helpers.deepCopy(this.owner.trait_table);
         this.activity_table = helpers.deepCopy(this.owner.activity_table);
         this.species_config_table = helpers.deepCopy(this.owner.species_config_table);
@@ -13,12 +17,22 @@ class socoabe_agent {
         this.parameter_table = helpers.deepCopy(this.owner.parameter_table);
         this.plenter_profiles_table = helpers.deepCopy(this.owner.plenter_profiles_table);
         this.targetDBH_profiles_table = helpers.deepCopy(this.owner.targetDBH_profiles_table);
-        this.species_profile_per_activity_table = helpers.deepCopy(this.owner.species_profile_per_activity_table);
+
+        // Agent Traits
         this.preferences = {};
         this.resources = 0;
         this.risk_tolerance = 0;
+        
         this.planning_offset = Math.floor(Math.random() * 10) + 5;
         this.is_initialized = false;
+        
+        // Unit Data
+        this.unit_data = []; 
+        this.my_unit = { 
+            unit_id: this.id + "_unit",
+            history: [] 
+        };
+
         this.init();
     }
 
@@ -30,6 +44,7 @@ class socoabe_agent {
     sample_my_traits() {
         const trait_configs = this.trait_table;
         if (!trait_configs) throw new Error(`Agent '${this.id}' has no trait_table.`);
+        
         if (trait_configs.preferences) this.preferences = Distributions.sample(trait_configs.preferences);
         if (trait_configs.resources) this.resources = Distributions.sample(trait_configs.resources);
         if (trait_configs.riskTolerance) this.risk_tolerance = Distributions.sample(trait_configs.riskTolerance);
@@ -44,22 +59,19 @@ class socoabe_agent {
     }
 
     assign_species_profiles() {
-        console.log(`[AGENT DEBUG] Agent ${this.id}: Assigning species profiles...`);
+        if (!this.species_config_table) {
+            console.warn(`[Agent ${this.id}] No species_config_table found.`);
+            return;
+        }
+
         for (const stand_id in this.managed_stands_data) {
             const stand_data_obj = this.managed_stands_data[stand_id];
+            
             if (stand_data_obj.species_profile === "none") {
-                const dominance = stand_data_obj.classified.species_dominance;
-                const preference = stand_data_obj.preference_focus;
-                console.log(`[AGENT DEBUG] Stand ${stand_id}: Looking up with pref='${preference}', dom='${dominance}'`);
-                const species_dist_config = this.species_config_table?.[preference]?.[dominance];
-                if (species_dist_config) {
-                    console.log(`[AGENT DEBUG] Stand ${stand_id}: Found distribution config. Sampling...`);
-                    const profile_weights = Distributions.sample(species_dist_config);
-                    stand_data_obj.species_profile = Distributions.weighted_random_choice(profile_weights);
-                } else {
-                    console.warn(`[AGENT DEBUG] Stand ${stand_id}: No species distribution found.`);
-                    stand_data_obj.species_profile = "default";
-                }
+                const strategy_weights = Distributions.sample(this.species_config_table);
+                const chosen_strategy = Distributions.weighted_random_choice(strategy_weights);
+                
+                stand_data_obj.species_profile = chosen_strategy;
             }
         }
     }
@@ -79,17 +91,34 @@ class socoabe_agent {
         }
     }
 
+    perceive_unit() {
+        this.unit_data = [];
+        for (const stand_id in this.managed_stands_data) {
+            const s = this.managed_stands_data[stand_id];
+            
+            this.unit_data.push({
+                stand_id: s.stand_id,
+                is_active: s.activity.is_Sequence, 
+                needs_reassessment: s.iLand_stand_data.needs_reassessment,
+                preference: s.preference_focus,
+                age: s.iLand_stand_data.stand_age,
+                soco_age: s.iLand_stand_data.absolute_age_soco,
+                volume: s.iLand_stand_data.volume,
+                basal_area: s.iLand_stand_data.basal_area,
+                structure_class: s.classified.structure_class,
+                age_class: s.classified.age_class
+            });
+        }
+    }
+
     cognitize(current_year) {
         const actionable_stands = [];
         for (const stand_id in this.managed_stands_data) {
-            // Run the entire cognitive pipeline for the stand.
             let stand_data_obj = this.managed_stands_data[stand_id];
             stand_data_obj = Cognition.think(stand_data_obj, this);
             
-            // Store the updated state back into the agent's memory.
             this.managed_stands_data[stand_id] = stand_data_obj;
 
-            // Check if the resulting plan is actionable for the current year.
             if (stand_data_obj.activity.is_actionable && stand_data_obj.activity.target_year === current_year) {
                 actionable_stands.push(stand_data_obj);
             }
@@ -97,33 +126,51 @@ class socoabe_agent {
         return actionable_stands;
     }
 
-    // ======================== CORE LOGIC CHANGE ========================
-    // The run_yearly_cycle is now the single orchestrator for the agent.
     run_yearly_cycle(current_year) {
-
-        // Allow test scenarios to override the cycle.
         const test_overrode_cycle = Test_Runner.run_for_agent(this, current_year);
         if (test_overrode_cycle) {
             return;
         }
 
         this.observe();
+        this.perceive_unit();
         
-        if (current_year === 1) {
+        // --- FIX: Correct initialization logic ---
+        var needs_init = (current_year === 1);
+        if (!needs_init) {
+             var first_id = this.managed_stand_ids[0];
+             // Check if stands are uninitialized (e.g. added later or init failed)
+             if (first_id && this.managed_stands_data[first_id].species_profile === "none") {
+                 needs_init = true;
+             }
+        }
+        
+        if (needs_init) {
             this.assign_species_profiles();
         }
         
-        const actionable_stands = this.cognitize(current_year);
+        let actionable_stands = this.cognitize(current_year);
+
+        if (current_year % 10 === 0) {
+            ten_year_planner.report_plan(this);
+        }
+
+        if (actionable_stands.length > 1) {
+            actionable_stands.sort((a, b) => b.activity.utility_score - a.activity.utility_score);
+        }
 
         if (actionable_stands.length > 0) {
             this.act(actionable_stands);
         }
 
-        // --- NEW MONITORING CALL ---
-        // Snapshot every stand managed by this agent at the end of the turn
         for (const stand_id in this.managed_stands_data) {
             Monitoring.snapshot(this, this.managed_stands_data[stand_id]);
+        }
+        
+        if (current_year % 10 === 0) {
+            Monitoring.snapshot_unit(this, current_year);
         }
     }
 };
 this.socoabe_agent = socoabe_agent;
+
