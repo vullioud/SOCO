@@ -20,7 +20,8 @@ Perception.compute_derived_data = function(stand_data_obj, agent) {
     }
     
     const is_final_harvest = (history.last_activity === 'MegaSTP_Clearcut' || 
-                              history.last_activity === 'MegaSTP_Shelterwood_Final');
+                              history.last_activity === 'MegaSTP_Shelterwood_Final' ||
+                             history.last_activity === 'MegaSTP_Femel_Final');
     
     if (data.absolute_age_soco === 0 && Globals.year > 1) {
         data.absolute_age_soco = Math.floor(data.stand_age);
