@@ -1,19 +1,20 @@
-rm(list = ls())
+setwd("C:/Users/cv1055/Documents/SOCO/abe/SOCO/CONTROL_TOWER")
+
 # 1. Load Modules (Logic)
-source("ODDSTUFF/helpers_func/activity_helper.R")
-source("ODDSTUFF/helpers_func/params_helper.R")
-source("ODDSTUFF/helpers_func/age_helper.R")
-source("ODDSTUFF/helpers_func/traits_helper.R")
-source("ODDSTUFF/helpers_func/species_helper.R")
-source("ODDSTUFF/helpers_func/profiles_helper.R")
+source("helpers_func/activity_helper.R")
+source("helpers_func/params_helper.R")
+source("helpers_func/age_helper.R")
+source("helpers_func/traits_helper.R")
+source("helpers_func/species_helper.R")
+source("helpers_func/profiles_helper.R")
 
 # 3. Load the RAW Data for that Scenario
-source(file.path("ODDSTUFF/raw_tables", "activities", "activities_guess.R")) # Loads 'raw_data'
-source(file.path("ODDSTUFF/raw_tables", "parameters", "parameters_guess.R"))     # Loads 'raw_params'
-source(file.path("ODDSTUFF/raw_tables", "age", "age_basic.R"))     # Loads 'raw_params'
-source(file.path("ODDSTUFF/raw_tables", "traits", "traits.R"))     # Loads 'raw_params'
-source(file.path("ODDSTUFF/raw_tables", "species", "species_strategies.R"))     # Loads 'raw_params'
-source(file.path("ODDSTUFF/raw_tables", "profiles", "profiles.R"))     # Loads 'raw_params'
+source(file.path("raw_tables", "activities", "activities_guess.R")) # Loads 'raw_data'
+source(file.path("raw_tables", "parameters", "parameters_guess.R"))     # Loads 'raw_params'
+source(file.path("raw_tables", "age", "age_basic.R"))     # Loads 'raw_params'
+source(file.path("raw_tables", "traits", "traits.R"))     # Loads 'raw_params'
+source(file.path("raw_tables", "species", "species_strategies.R"))     # Loads 'raw_params'
+source(file.path("raw_tables", "profiles", "profiles.R"))     # Loads 'raw_params'
 
 # 4. coompute what need to be computed
 age_lookup_table <- calculate_age_probabilities(age_params, age_max = 250)
@@ -22,16 +23,16 @@ age_lookup_table <- calculate_age_probabilities(age_params, age_max = 250)
 
 
 # Export to ODD folder
-export_activity_json(raw_activity, path = "ODDSTUFF/created_json_tables/activity_distributions.json")
-export_params_json(raw_params, path = "ODDSTUFF/created_json_tables/parameter_distributions.json")
-export_age_json(age_lookup_table, path = "ODDSTUFF/created_json_tables/age_class_lookup.json")
-export_trait_json(trait_data, path = "ODDSTUFF/created_json_tables/agent_traits.json")
-export_species_json(species_data, path = "ODDSTUFF/created_json_tables/species_config.json")
-export_profile_json(target_dbh_raw, key_col = "species", value_col = "dbh_threshold", path = "ODDSTUFF/created_json_tables/targetDBH_profiles.json")
-export_profile_json(plenter_raw,  key_col = "dbh_class",  value_col = "stem_count",  path = "ODDSTUFF/created_json_tables/plenter_profiles.json")
+export_activity_json(raw_activity, path = "created_json_tables/activity_distributions.json")
+export_params_json(raw_params, path = "created_json_tables/parameter_distributions.json")
+export_age_json(age_lookup_table, path = "created_json_tables/age_class_lookup.json")
+export_trait_json(trait_data, path = "created_json_tables/agent_traits.json")
+export_species_json(species_data, path = "created_json_tables/species_config.json")
+export_profile_json(target_dbh_raw, key_col = "species", value_col = "dbh_threshold", path = "created_json_tables/targetDBH_profiles.json")
+export_profile_json(plenter_raw,  key_col = "dbh_class",  value_col = "stem_count",  path = "created_json_tables/plenter_profiles.json")
 
 # Export to Model folder
-model_base <- "../abe/SOCO/config/tables"
+model_base <- "../config/tables"
 export_activity_json(raw_activity, path = file.path(model_base, "activities", "activity_distributions.json"))
 export_params_json(raw_params, path = file.path(model_base, "params", "parameter_distributions.json"))
 export_age_json(age_lookup_table, path = file.path(model_base, "age_class", "age_class_lookup.json"))
@@ -44,16 +45,16 @@ export_profile_json(plenter_raw, key_col = "dbh_class",  value_col = "stem_count
 # ==============================================================================
 # 7. GRID & LANDSCAPE GENERATION
 # ==============================================================================
-source("ODDSTUFF/helpers_func/init_grid_helper.R")
-source("ODDSTUFF/helpers_func/grid_helper.R")
-source("ODDSTUFF/raw_tables/grid/grid.R")
+source("helpers_func/init_grid_helper.R")
+source("helpers_func/grid_helper.R")
+source("raw_tables/grid/grid.R")
 
 # Define Input Paths (Adjust if your init folder is elsewhere)
-base_grid_in <- "../init/env_grid_CLUSTER10_REPL1.asc"
-env_csv_in   <- "../init/env_file_CLUSTER10_REPL1_ICHEC-EC-EARTH_historical.csv"
-tree_csv_in  <- "../init/trees_CLUSTER10.csv"
-sap_csv_in   <- "../init/saplings_CLUSTER10.csv"
-init_out_dir <- "../init" 
+base_grid_in <- "../../../init/env_grid_CLUSTER10_REPL1.asc"
+env_csv_in   <- "../../../init/env_file_CLUSTER10_REPL1_ICHEC-EC-EARTH_historical.csv"
+tree_csv_in  <- "../../../init/trees_CLUSTER10.csv"
+sap_csv_in   <- "../../../init/saplings_CLUSTER10.csv"
+init_out_dir <- "../../../init" 
 
 # --- Step 3.1: Pre-process Full Landscape ---
 # Generates the 11km x 11km raster (stand_blocks_10x10.asc) and Full CSVs (tree2.csv)
@@ -134,7 +135,7 @@ if(file.exists(full_raster_path)) {
                       out_dir = "created_json_tables/grid")
   
   # 2. To Model
-  model_stand_dir <- file.path("..", "abe", "stand_files")
+  model_stand_dir <- file.path("../../", "abe", "stand_files")
   export_agent_tables(landscape_owner_list, 
                       owner_params = agent_size_params, 
                       shuffled = FALSE, 
@@ -145,15 +146,13 @@ if(file.exists(full_raster_path)) {
 } else {
   warning("Raster generation failed. Agents not updated.")
 }
-t <- read.csv("../init/tree2_active.csv")
-s <- read.csv("../init/sapling2.csv")
+t <- read.csv("../../../init/tree2_active.csv")
+s <- read.csv("../../../init/sapling2.csv")
 x <- read.csv("../abe/stand_files/agent_table_high_shuffled-false.csv")
-x
 
 
+length(x)
 length(unique(s$stand_id))
 length(unique(t$stand_id))
 s$bwi_plot_id
-s_ref <- read.csv("../../../Documents/small_landscape/init/saplings_CLUSTER10.csv")
-head(s_ref)
-head(s)
+s_ref <- read.csv("../../../../small_landscape/init/saplings_CLUSTER10.csv")
