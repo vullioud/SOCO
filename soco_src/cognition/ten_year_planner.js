@@ -1,3 +1,5 @@
+// ----- Start of File: soco_src/cognition/ten_year_planner.js -----
+
 /**
  * =================================================================================
  * FILE: ten_year_planner.js
@@ -50,5 +52,54 @@ var ten_year_planner = {
             summary.by_class[age_class]++;
         }
         return summary;
+    },
+
+    /**
+     * Prints a detailed 10-year plan table to the console.
+     * @param {object} agent - The agent object.
+     */
+    report_plan: function(agent) {
+        const actionable = this.collect_actionable_stands(agent.managed_stands_data);
+        
+        if (actionable.length === 0) {
+            console.log(`[PLANNER] Agent ${agent.id}: No activities planned for the next 10 years.`);
+            return;
+        }
+
+        // Sort by Target Year then by Priority
+        actionable.sort((a, b) => {
+            if (a.activity.target_year !== b.activity.target_year) {
+                return a.activity.target_year - b.activity.target_year;
+            }
+            return b.activity.utility_score - a.activity.utility_score;
+        });
+
+        console.log(`\n[PLANNER] 10-Year Plan for Agent ${agent.id} (Year ${Globals.year})`);
+        console.log("StandID | Activity         | Type | Year | Vol    | Age    | Prio   | Phase      | LastPhase  | TSL | BA     | Param");
+        console.log("------- | ---------------- | ---- | ---- | ------ | ------ | ------ | ---------- | ---------- | --- | ------ | -----");
+
+        actionable.forEach(data => {
+            const sid = data.stand_id.toString().padEnd(7);
+            const act = data.activity.chosen_Activity.substring(0, 16).padEnd(16);
+            const type = (data.activity.is_Sequence ? "Seq" : "New").padEnd(4);
+            const year = data.activity.target_year.toString().padEnd(4);
+            const vol = data.iLand_stand_data.volume.toFixed(0).padEnd(6);
+            const age = data.iLand_stand_data.stand_age.toFixed(0).padEnd(6);
+            const prio = (data.activity.utility_score || 0).toFixed(1).padEnd(6);
+            
+            const phase = (data.classified.activity_class || "-").substring(0, 10).padEnd(10);
+            const last = (data.history.last_satisfied_phase || "none").substring(0, 10).padEnd(10);
+            const tsl = data.history.time_since_last_activity.toString().padEnd(3);
+            const ba = data.iLand_stand_data.basal_area.toFixed(1).padEnd(6);
+
+            let param = "-";
+            if (data.activity.parameters && data.activity.parameters.execution_schedule !== undefined) {
+                param = data.activity.parameters.execution_schedule.toString();
+            }
+            
+            console.log(`${sid} | ${act} | ${type} | ${year} | ${vol} | ${age} | ${prio} | ${phase} | ${last} | ${tsl} | ${ba} | ${param}`);
+        });
+        console.log("----------------------------------------------------------------------------------------------------------------------\n");
     }
 };
+
