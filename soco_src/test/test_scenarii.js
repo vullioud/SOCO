@@ -886,3 +886,690 @@ Test_Scenarios.inspect_age_classification_flow = function(agent, current_year) {
     
     return false; 
 };
+
+Test_Scenarios.debug_planting_mass_test = function(agent, current_year) {
+
+    // --- SHARED STATE MANAGEMENT ---
+    if (typeof this.mass_test_state === 'undefined') {
+        this.mass_test_state = {
+            tracked_stands: [] 
+        };
+    }
+
+    // --- GLOBAL EXECUTION GUARD ---
+    if (typeof this.mass_test_year_flag === 'undefined') this.mass_test_year_flag = -1;
+    if (this.mass_test_year_flag === current_year) {
+        return false; 
+    }
+    this.mass_test_year_flag = current_year;
+
+
+    // =========================================================================
+    // --- YEAR 2: SETUP PHASE ---
+    // =========================================================================
+    if (current_year === 2) {
+        console.log(`\n[MASS-TEST] === SETUP PHASE (Year ${current_year}) ===`);
+        console.log(`[MASS-TEST] Selecting and resetting stands...`);
+
+        let count = 0;
+        const TARGET_COUNT = 25;
+
+        if (typeof socoabe !== 'undefined' && socoabe.institution) {
+            socoabe.institution.all_agents.some(ag => {
+                ag.managed_stand_ids.some(sid => {
+                    if (count >= TARGET_COUNT) return true; 
+
+                    // 1. MANIPULATE iLand State
+                    fmengine.standId = sid;
+                    stand.setAbsoluteAge(0);
+                    stand.setFlag('abe_last_activity', 'MegaSTP_Clearcut');
+                    stand.setFlag('abe_last_activity_year', current_year - 1); 
+                    stand.setFlag('abe_need_reassessment', true); 
+                    stand.setFlag('abe_next_activity', null); 
+
+                    // 2. MANIPULATE Agent Memory
+                    if (ag.managed_stands_data[sid]) {
+                        ag.managed_stands_data[sid].iLand_stand_data.absolute_age_soco = 0;
+                        ag.managed_stands_data[sid].history.last_activity = 'MegaSTP_Clearcut';
+                        ag.managed_stands_data[sid].history.last_activity_Year = current_year - 1;
+                    }
+
+                    // 3. TRACK
+                    this.mass_test_state.tracked_stands.push({ agent_id: ag.id, stand_id: sid });
+                    count++;
+                    return false;
+                });
+                if (count >= TARGET_COUNT) return true; 
+                return false;
+            });
+        }
+
+        console.log(`[MASS-TEST] Forced Clearcut state on ${count} stands.`);
+        return false; 
+    }
+
+
+    // =========================================================================
+    // --- YEAR 3-10: REPORTING PHASE ---
+    // =========================================================================
+    if (current_year > 2 && current_year <= 10) {
+        console.log(`\n[MASS-TEST] === STATUS REPORT Year ${current_year} ===`);
+        // Added 'Param' column
+        console.log("StandID | SoCoAge | Class      | Activity         | TgtYear | Priority | Param (Sched)");
+        console.log("------- | ------- | ---------- | ---------------- | ------- | -------- | -------------");
+
+        this.mass_test_state.tracked_stands.forEach(item => {
+            const ag = socoabe.institution.all_agents.find(a => a.id === item.agent_id);
+            if (!ag) return;
+
+            const data = ag.managed_stands_data[item.stand_id];
+            if (!data) return;
+
+            const sid = item.stand_id.toString().padEnd(7);
+            const sage = data.iLand_stand_data.absolute_age_soco.toString().padEnd(7);
+            
+            const cls = (data.classified.age_class || "??").padEnd(10);
+            const act = (data.activity.chosen_Activity || "??").padEnd(16);
+            const tgt = data.activity.target_year.toString().padEnd(7);
+            const prio = (data.activity.scheduling_priority || "-").toString().padEnd(8);
+            
+            // New: Extract execution_schedule parameter
+            let param = "-";
+            if (data.activity.parameters && data.activity.parameters.execution_schedule !== undefined) {
+                param = data.activity.parameters.execution_schedule.toString();
+            }
+            param = param.padEnd(13);
+
+            console.log(`${sid} | ${sage} | ${cls} | ${act} | ${tgt} | ${prio} | ${param}`);
+        });
+        console.log("---------------------------------------------------------------------------------");
+    }
+
+    return false; 
+};
+
+// ----- Start of File: soco_src/test/scenarios/test_species_strategies.js -----
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Unit Test for Species Strategies
+ * =================================================================================
+ * Tests all 4 species selection strategies against mock agent/stand states
+ * to verify outputs without running the full simulation.
+ */
+
+// ----- Start of File: soco_src/test/scenarios/test_species_strategies.js -----
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Unit Test for Species Strategies (Comprehensive)
+ * =================================================================================
+ * Tests all 4 species selection strategies against mock agent/stand states.
+ * Iterates through all relevant activity types.
+ */
+Test_Scenarios.test_species_strategies = function(agent, current_year) {
+
+    if (current_year !== 1 || this.species_test_done) return false;
+    this.species_test_done = true;
+
+    console.log(`\n[TEST] === START: Species Strategy Unit Tests ===`);
+
+    // --- 0. DIAGNOSTIC CHECKS ---
+    if (typeof SpeciesData === 'undefined') {
+        console.error("[TEST] CRITICAL: 'SpeciesData' undefined.");
+        return false;
+    }
+
+    // --- 1. MOCK OBJECTS ---
+    var mock_stand = {
+        stand_id: 9999,
+        classified: {
+            dominant_species: [
+                { id: 'piab', share: 0.8 },
+                { id: 'fasy', share: 0.1 }
+            ]
+        }
+    };
+
+    var mock_agent_risky = { id: "test_risky", risk_tolerance: 0.9 };
+    var mock_agent_fearful = { id: "test_fearful", risk_tolerance: 0.1 };
+
+    // --- 2. EXECUTION MATRIX ---
+    
+    // List of activities the agent might encounter
+    var activities = ['planting', 'tending', 'thinning', 'shelterwood'];
+    var strategies = ['indiscriminate', 'diversifier', 'economic', 'climate'];
+
+    strategies.forEach(strategy => {
+        console.log(`\n--- Strategy: ${strategy.toUpperCase()} ---`);
+        
+        activities.forEach(act => {
+            var agent_to_use = mock_agent_risky;
+            var label = "";
+
+            // For economic, we show both risk profiles for planting/thinning
+            if (strategy === 'economic' && (act === 'planting' || act === 'thinning')) {
+                // Run Risky
+                try {
+                    var res = SpeciesStrategies.execute(strategy, mock_stand, mock_agent_risky, act);
+                    console.log(`    [${act}] (Risky)   -> ${JSON.stringify(res)}`);
+                } catch(e) { console.error(e.message); }
+                
+                // Run Fearful
+                try {
+                    var res2 = SpeciesStrategies.execute(strategy, mock_stand, mock_agent_fearful, act);
+                    console.log(`    [${act}] (Fearful) -> ${JSON.stringify(res2)}`);
+                } catch(e) { console.error(e.message); }
+                
+                return; // Skip default log
+            }
+
+            try {
+                var res = SpeciesStrategies.execute(strategy, mock_stand, agent_to_use, act);
+                console.log(`    [${act}]${label} -> ${JSON.stringify(res)}`);
+            } catch (e) {
+                console.error(`    [ERROR] ${strategy} - ${act}: ${e.message}`);
+            }
+        });
+    });
+
+    console.log(`\n[TEST] === END: Species Strategy Unit Tests ===\n`);
+    
+    return false; 
+};
+
+    
+// ----- Start of File: soco_src/test/scenarios/inspect_stand_strategies.js -----
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Inspect Stand Species Strategies
+ * =================================================================================
+ * Verifies that all stands have been assigned a valid strategy string
+ * (economic, climate, etc.) in Year 2.
+ */
+// ----- Start of File: soco_src/test/scenarios/verify_planting_stp.js -----
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Verify Planting STP
+ * =================================================================================
+ * 1. Year 2: Force Clearcut & Set Strategy 'climate'.
+ * 2. Year 3: Force Planting (Check logs for correct species passing).
+ * 3. Year 13: Check Stand composition.
+ */
+Test_Scenarios.verify_planting_stp = function(agent, current_year) {
+
+    // --- CONFIGURATION ---
+    const AGENT_ID = "small_agent_1"; 
+    const TEST_STAND_INDEX = 0; // First stand managed by this agent
+    
+    if (agent.id !== AGENT_ID) return false;
+
+    const stand_id = agent.managed_stand_ids[TEST_STAND_INDEX];
+    if (!stand_id) return false;
+
+    // --- YEAR 2: CLEAR & PREPARE ---
+    if (current_year === 2) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Forcing Clearcut on Stand ${stand_id}.`);
+        
+        // 1. Force Strategy to 'climate' (Expected species: quro, cabe, tico, pini...)
+        agent.managed_stands_data[stand_id].species_profile = "climate";
+        
+        // 2. Prepare Action: Clearcut
+        fmengine.standId = stand_id;
+        // We act manually to ensure it happens
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'clearcut';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        stand_plan.activity.parameters = { execution_schedule: 100 }; // dummy
+
+        console.log(`[TEST-PLANT] Strategy set to 'climate'. Triggering clearcut...`);
+        agent.act([stand_plan]);
+        return true; // Override normal loop
+    }
+
+    // --- YEAR 3: PLANTING ---
+    if (current_year === 3) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Forcing Planting on Stand ${stand_id}.`);
+        
+        // 1. Force Strategy (Ensure it persisted or re-set it)
+        agent.managed_stands_data[stand_id].species_profile = "climate";
+
+        // 2. Prepare Action: Planting
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'planting';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        stand_plan.activity.parameters = { execution_schedule: 1 };
+
+        console.log(`[TEST-PLANT] Triggering planting logic...`);
+        // This will call prepare.planting -> SpeciesStrategies.climate -> setFlags -> MegaSTP
+        agent.act([stand_plan]);
+        return true; // Override normal loop
+    }
+
+    // --- YEAR 13: VERIFICATION ---
+    if (current_year === 13) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Inspecting Stand ${stand_id} composition.`);
+        
+        fmengine.standId = stand_id;
+        stand.reload(); // Refresh iLand data
+        stand.trees.loadAll(); // Load trees > 4m
+
+        console.log(`  - Stand Age: ${stand.age}`);
+        console.log(`  - Tree Count (>4m): ${stand.trees.count}`);
+        
+        // Note: 10 years might be too short for saplings to reach 4m (dbh > 0).
+        // If count is 0, we rely on the logs from Year 3 to prove success.
+        // But we can check if *any* trees exist.
+        
+        if (stand.trees.count > 0) {
+            console.log("  - Species found:");
+            for (var i = 0; i < stand.nspecies; i++) {
+                console.log(`    * ${stand.speciesId(i)}: ${stand.speciesBasalArea(i).toFixed(2)} m2/ha`);
+            }
+        } else {
+            console.log("  - No trees > 4m yet (Expected for 10y old stand). Please check Year 3 logs for 'Running iLand Planting'.");
+        }
+        
+        return true;
+    }
+
+    return false;
+};
+
+// ----- End of File: soco_src/test/scenarios/verify_planting_stp.js -----
+
+Test_Scenarios.verify_planting_stp = function(agent, current_year) {
+
+    const AGENT_ID = "small_agent_1"; 
+    const TEST_STAND_INDEX = 0; 
+    
+    if (agent.id !== AGENT_ID) return false;
+
+    const stand_id = agent.managed_stand_ids[TEST_STAND_INDEX];
+    if (!stand_id) return false;
+
+    // --- YEAR 2: CLEAR ---
+    if (current_year === 2) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Forcing Clearcut & Strategy 'climate'.`);
+        agent.managed_stands_data[stand_id].species_profile = "climate";
+        agent.managed_stands_data[stand_id].history.target_species = []; 
+        
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'clearcut';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        stand_plan.activity.parameters = { execution_schedule: 100 }; 
+        agent.act([stand_plan]);
+        return true; 
+    }
+
+    // --- YEAR 3: PLANTING (Establishes Memory) ---
+    if (current_year === 3) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Forcing Planting.`);
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'planting';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        stand_plan.activity.parameters = { execution_schedule: 1 };
+        agent.act([stand_plan]);
+        return true; 
+    }
+
+    // --- YEAR 4: CHECK MEMORY ---
+    if (current_year === 4) {
+        console.log(`\n[TEST-PLANT] Year 4 Check: Did we memorize targets?`);
+        var targets = agent.managed_stands_data[stand_id].history.target_species;
+        console.log(`  -> Memorized Targets: ${JSON.stringify(targets)}`);
+        return false;
+    }
+
+    // --- YEAR 20: TRIGGER THINNING (End-to-End Check) ---
+    if (current_year === 20) {
+        console.log(`\n[TEST-PLANT] Year ${current_year}: Triggering Selective Thinning.`);
+        
+        // 1. Prepare Plan for Selective Thinning
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'selectiveThinning';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        stand_plan.activity.sequence_current_step = 0;
+        stand_plan.activity.sequence_total_steps = 1;
+        // Parameters
+        stand_plan.activity.parameters = { 
+            nTrees: 100, 
+            nCompetitors: 3 
+        };
+
+        // 2. Execute
+        // This triggers: act() -> Action.trigger -> prepare.selectiveThinning -> Strategy(Climate) -> Set Flag -> Signal -> MegaSTP
+        console.log(`[TEST-PLANT] Calling agent.act() to fire 'do_selectiveThinning_select'...`);
+        agent.act([stand_plan]);
+        
+        // Note: The success proof will be in the log output:
+        // "[Action] Prepared Selective Thinning... Selectivity: {...}"
+        // "[MEGA-STP] SelectiveThinning: Fetching species selectivity: {...}"
+        
+        return true; 
+    }
+
+    return false;
+};
+
+
+Test_Scenarios.verify_shelterwood_stp = function(agent, current_year) {
+
+    const AGENT_ID = "small_agent_1"; 
+    const TEST_STAND_INDEX = 0; 
+    
+    if (agent.id !== AGENT_ID) return false;
+
+    const stand_id = agent.managed_stand_ids[TEST_STAND_INDEX];
+    if (!stand_id) return false;
+
+    // --- YEAR 2: TRIGGER SHELTERWOOD ---
+    if (current_year === 2) {
+        console.log(`\n[TEST-SHELTER] Year ${current_year}: Triggering Shelterwood on Stand ${stand_id}.`);
+        
+        // 1. Force Strategy 'climate' (should favor resilient species)
+        agent.managed_stands_data[stand_id].species_profile = "climate";
+        
+        // 2. Prepare Plan
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'shelterwood';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        // Simulate start of sequence
+        stand_plan.activity.sequence_current_step = 0;
+        stand_plan.activity.sequence_total_steps = 3; 
+        
+        stand_plan.activity.parameters = { 
+            nTrees: 50, 
+            nCompetitors: 1000 
+        };
+
+        // 3. Execute
+        console.log(`[TEST-SHELTER] Calling agent.act()...`);
+        agent.act([stand_plan]);
+        
+        // Expected Logs:
+        // [Action] Prepared Shelterwood (climate)... Selectivity: { ... }
+        // [MEGA-STP] Shelterwood Select: Fetching species selectivity: { ... }
+        
+        return true; 
+    }
+
+    return false;
+};
+
+
+Test_Scenarios.verify_tending_stp = function(agent, current_year) {
+
+    const AGENT_ID = "small_agent_1"; 
+    const TEST_STAND_INDEX = 0; 
+    
+    if (agent.id !== AGENT_ID) return false;
+
+    const stand_id = agent.managed_stand_ids[TEST_STAND_INDEX];
+    if (!stand_id) return false;
+
+    // --- YEAR 2: TRIGGER TENDING ---
+    if (current_year === 2) {
+        console.log(`\n[TEST-TEND] Year ${current_year}: Triggering Tending on Stand ${stand_id}.`);
+        
+        // 1. Force Strategy 'economic' (Should produce specific weights)
+        agent.managed_stands_data[stand_id].species_profile = "economic";
+        
+        // 2. Prepare Plan
+        var stand_plan = agent.managed_stands_data[stand_id];
+        stand_plan.activity.chosen_Activity = 'tending';
+        stand_plan.activity.target_year = current_year;
+        stand_plan.activity.is_actionable = true;
+        
+        // 3. Execute
+        console.log(`[TEST-TEND] Calling agent.act()...`);
+        agent.act([stand_plan]);
+        
+        // Expected Logs:
+        // [Action] Prepared Tending (economic)... Selectivity: { ... }
+        // [MEGA-STP] Tending: Fetching species selectivity: { ... }
+        
+        return true; 
+    }
+
+    return false;
+};
+
+/* 
+* =================================================================================
+ * TEST SCENARIO: Verify Femel STP (Visual GUI Check)
+ * =================================================================================
+ * Forces the Femel sequence on ALL stands of the target agent.
+ * Year 2: Initialization (Hole creation)
+ * Year 3: Expansion (Hole growth)
+ * Year 4: Final (Matrix removal)
+ */
+Test_Scenarios.verify_femel_stp = function(agent, current_year) {
+
+    // --- CONFIGURATION ---
+    const AGENT_ID = "small_agent_1"; 
+    
+    if (agent.id !== AGENT_ID) return false;
+
+    // Helper to force plan on all stands
+    function force_femel_on_all(step_index) {
+        var actionable = [];
+        var first = true;
+        
+        agent.managed_stand_ids.forEach(sid => {
+            let stand_data = agent.managed_stands_data[sid];
+            
+            // 1. Force Activity Config
+            stand_data.activity.chosen_Activity = 'femel';
+            stand_data.activity.is_Sequence = true;
+            stand_data.activity.sequence_total_steps = 3; // Select, Step, Final
+            stand_data.activity.sequence_current_step = step_index;
+            
+            // 2. Force Parameters
+            stand_data.activity.parameters = { 
+                initial_size: 2, // Visible hole size
+                growth_width: 1  // Expansion
+            }; 
+            
+            // 3. Force Execution NOW
+            stand_data.activity.target_year = current_year;
+            stand_data.activity.is_actionable = true;
+            
+            actionable.push(stand_data);
+            
+            // Log only one for confirmation
+            if (first) {
+                console.log(`[TEST-FEMEL] Year ${current_year}: Forcing Step ${step_index} on Stand ${sid} (and all others).`);
+                first = false;
+            }
+        });
+        
+        // Execute manually to bypass cognitive scheduler
+        agent.act(actionable);
+    }
+
+    // --- YEAR 2: PHASE 1 - SELECT (Init) ---
+    if (current_year === 10) {
+        console.log(`\n[TEST-FEMEL] === STARTING FEMEL SEQUENCE ===`);
+        // Ensure flags are clean
+        agent.managed_stand_ids.forEach(sid => {
+            fmengine.standId = sid;
+            stand.setFlag('abe_femel_initialized', null);
+            stand.setFlag('abe_femel_current_ring', null);
+        });
+
+        force_femel_on_all(0); // Step 0: Select
+        return true; // Override normal cycle
+    }
+
+    // --- YEAR 3: PHASE 2 - STEP (Expand) ---
+    if (current_year === 11) {
+        force_femel_on_all(1); // Step 1: Expansion
+        return true;
+    }
+
+    // --- YEAR 4: PHASE 3 - FINAL (Clear) ---
+    if (current_year === 14) {
+        force_femel_on_all(2); // Step 2: Final
+        console.log(`[TEST-FEMEL] === SEQUENCE COMPLETE ===\n`);
+        return true;
+    }
+
+    return false;
+};
+
+// ----- End of File: soco_src/test/scenarios/verify_femel_stp.js -----
+
+Test_Scenarios.global_clearcut_all_stands = function(agent, current_year) {
+
+    const TRIGGER_YEAR = 5;
+    const VERIFY_YEAR  = 7;
+
+    // -------------------------------------------------------------------------
+    // TRIGGER PHASE — schedule clearcut for all stands of all agents
+    // -------------------------------------------------------------------------
+    if (current_year === TRIGGER_YEAR) {
+
+        console.log(`\n[GLOBAL CLEARCUT] === TRIGGER YEAR ${current_year} | Agent ${agent.id} ===`);
+        console.log(`[GLOBAL CLEARCUT] Scheduling clearcut on ${agent.managed_stand_ids.length} stands`);
+
+        let plans = [];
+
+        agent.managed_stand_ids.forEach(stand_id => {
+            let stand_plan = agent.managed_stands_data[stand_id];
+
+            stand_plan.activity.chosen_Activity = 'clearcut';
+            stand_plan.activity.target_year     = TRIGGER_YEAR;
+            stand_plan.activity.is_actionable   = true;
+
+            // Dummy but valid parameter (MegaSTP just needs something)
+            stand_plan.activity.parameters = {
+                execution_schedule: 100
+            };
+
+            plans.push(stand_plan);
+        });
+
+        if (plans.length > 0) {
+            agent.act(plans);
+            console.log(`[GLOBAL CLEARCUT] Fired ${plans.length} clearcut signals.`);
+        }
+
+        return true; // Override normal loop
+    }
+
+    // -------------------------------------------------------------------------
+    // VERIFICATION PHASE — check execution result
+    // -------------------------------------------------------------------------
+    if (current_year === VERIFY_YEAR) {
+
+        console.log(`\n[GLOBAL CLEARCUT] === VERIFICATION YEAR ${current_year} | Agent ${agent.id} ===`);
+
+        agent.observe(); // Refresh stand data
+
+        agent.managed_stand_ids.forEach(stand_id => {
+            const data = agent.managed_stands_data[stand_id];
+            const volume = data.iLand_stand_data.volume;
+
+            fmengine.standId = stand_id;
+            const last_act = stand.flag('abe_last_activity');
+            const last_year = stand.flag('abe_last_activity_year');
+
+            console.log(`Stand ${stand_id} | Volume: ${volume.toFixed(2)} | LastAct: ${last_act} | Year: ${last_year}`);
+
+            if (volume < 1.0 && last_act === 'MegaSTP_Clearcut') {
+                console.log("  ✔ Clearcut confirmed");
+            } else {
+                console.error("  ✘ Clearcut FAILED or not detected");
+            }
+        });
+
+        console.log(`[GLOBAL CLEARCUT] === VERIFICATION COMPLETE ===\n`);
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * =================================================================================
+ * TEST SCENARIO: Staggered Clearcut by OWNER (identity-safe)
+ * =================================================================================
+ *
+ * Year 5 → big
+ * Year 6 → small
+ * Year 7 → state
+ *
+ * Uses ONLY agent.owner identity.
+ * =================================================================================
+ */
+Test_Scenarios.staggered_clearcut_by_owner = function(agent, current_year) {
+
+    // ---------------------------------------------------------------------
+    // YEAR → OWNER KEY (STRING, NOT OBJECT)
+    // ---------------------------------------------------------------------
+    let owner_key = null;
+
+    if (current_year === 5) owner_key = 'big';
+    if (current_year === 6) owner_key = 'small';
+    if (current_year === 7) owner_key = 'state';
+
+    if (!owner_key) return false;
+
+    const target_owner = OWNERS[owner_key];
+
+    // ---------------------------------------------------------------------
+    // HARD GUARD — DEBUG THIS FIRST
+    // ---------------------------------------------------------------------
+    if (agent.owner !== target_owner) {
+        return false;
+    }
+
+    console.log(`\n[TEST CLEARCUT] ===============================`);
+    console.log(`[TEST CLEARCUT] Year ${current_year}`);
+    console.log(`[TEST CLEARCUT] Agent ${agent.id}`);
+    console.log(`[TEST CLEARCUT] Owner matched: ${owner_key}`);
+    console.log(`[TEST CLEARCUT] Stands: ${agent.managed_stand_ids.length}`);
+
+    let plans = [];
+
+    // ---------------------------------------------------------------------
+    // ALL STANDS OF THIS AGENT
+    // ---------------------------------------------------------------------
+    for (let i = 0; i < agent.managed_stand_ids.length; i++) {
+
+        const stand_id   = agent.managed_stand_ids[i];
+        const stand_plan = agent.managed_stands_data[stand_id];
+
+        if (!stand_plan) {
+            console.warn(`[TEST CLEARCUT] Missing stand ${stand_id}`);
+            continue;
+        }
+
+        stand_plan.activity.chosen_Activity = 'clearcut';
+        stand_plan.activity.target_year     = current_year;
+        stand_plan.activity.is_actionable   = true;
+        stand_plan.activity.parameters      = { execution_schedule: 100 };
+
+        plans.push(stand_plan);
+
+        console.log(`[TEST CLEARCUT] → Stand ${stand_id} scheduled`);
+    }
+
+    if (plans.length > 0) {
+        agent.act(plans);
+        console.log(`[TEST CLEARCUT] Fired ${plans.length} actions`);
+    }
+
+    console.log(`[TEST CLEARCUT] ===============================\n`);
+
+    return true;
+};
