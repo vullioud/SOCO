@@ -1,7 +1,7 @@
 {
   "all": [
     {
-      "age": 1,
+      "age": 0,
       "Planting": 1,
       "Tending": 0,
       "Thinning": 0,
@@ -51,7 +51,7 @@
     },
     {
       "age": 7,
-      "Planting": 0.493,
+      "Planting": 0.4929,
       "Tending": 0.507,
       "Thinning": 0,
       "Harvesting": 0
@@ -59,268 +59,268 @@
     {
       "age": 8,
       "Planting": 0.202,
-      "Tending": 0.798,
-      "Thinning": 0,
+      "Tending": 0.7979,
+      "Thinning": 0.0001,
       "Harvesting": 0
     },
     {
       "age": 9,
       "Planting": 0.0779,
-      "Tending": 0.9221,
-      "Thinning": 0,
+      "Tending": 0.922,
+      "Thinning": 0.0001,
       "Harvesting": 0
     },
     {
       "age": 10,
       "Planting": 0.0332,
-      "Tending": 0.9668,
-      "Thinning": 0,
+      "Tending": 0.9666,
+      "Thinning": 0.0002,
       "Harvesting": 0
     },
     {
       "age": 11,
       "Planting": 0.0161,
-      "Tending": 0.9839,
-      "Thinning": 0,
+      "Tending": 0.9836,
+      "Thinning": 0.0003,
       "Harvesting": 0
     },
     {
       "age": 12,
       "Planting": 0.0088,
-      "Tending": 0.9912,
-      "Thinning": 0,
+      "Tending": 0.9907,
+      "Thinning": 0.0005,
       "Harvesting": 0
     },
     {
       "age": 13,
-      "Planting": 0.0054,
-      "Tending": 0.9946,
-      "Thinning": 0,
+      "Planting": 0.0053,
+      "Tending": 0.9938,
+      "Thinning": 0.0009,
       "Harvesting": 0
     },
     {
       "age": 14,
       "Planting": 0.0036,
-      "Tending": 0.9964,
-      "Thinning": 0,
+      "Tending": 0.9948,
+      "Thinning": 0.0016,
       "Harvesting": 0
     },
     {
       "age": 15,
       "Planting": 0.0026,
-      "Tending": 0.9974,
-      "Thinning": 0,
+      "Tending": 0.9943,
+      "Thinning": 0.0032,
       "Harvesting": 0
     },
     {
       "age": 16,
       "Planting": 0.002,
-      "Tending": 0.998,
-      "Thinning": 0,
+      "Tending": 0.9917,
+      "Thinning": 0.0063,
       "Harvesting": 0
     },
     {
       "age": 17,
       "Planting": 0.0016,
-      "Tending": 0.9983,
-      "Thinning": 0,
+      "Tending": 0.9853,
+      "Thinning": 0.0131,
       "Harvesting": 0
     },
     {
       "age": 18,
       "Planting": 0.0014,
-      "Tending": 0.9985,
-      "Thinning": 0,
+      "Tending": 0.971,
+      "Thinning": 0.0276,
       "Harvesting": 0
     },
     {
       "age": 19,
-      "Planting": 0.0013,
-      "Tending": 0.9986,
-      "Thinning": 0.0001,
+      "Planting": 0.0012,
+      "Tending": 0.9401,
+      "Thinning": 0.0587,
       "Harvesting": 0
     },
     {
       "age": 20,
-      "Planting": 0.0012,
-      "Tending": 0.9985,
-      "Thinning": 0.0002,
-      "Harvesting": 0.0001
+      "Planting": 0.0011,
+      "Tending": 0.8759,
+      "Thinning": 0.1229,
+      "Harvesting": 0
     },
     {
       "age": 21,
-      "Planting": 0.0012,
-      "Tending": 0.9977,
-      "Thinning": 0.0009,
-      "Harvesting": 0.0002
+      "Planting": 0.0009,
+      "Tending": 0.7555,
+      "Thinning": 0.2434,
+      "Harvesting": 0.0001
     },
     {
       "age": 22,
-      "Planting": 0.0013,
-      "Tending": 0.9949,
-      "Thinning": 0.0034,
-      "Harvesting": 0.0005
+      "Planting": 0.0007,
+      "Tending": 0.5696,
+      "Thinning": 0.4294,
+      "Harvesting": 0.0003
     },
     {
       "age": 23,
-      "Planting": 0.0013,
-      "Tending": 0.9848,
-      "Thinning": 0.0124,
-      "Harvesting": 0.0014
+      "Planting": 0.0005,
+      "Tending": 0.3575,
+      "Thinning": 0.6415,
+      "Harvesting": 0.0005
     },
     {
       "age": 24,
-      "Planting": 0.0014,
-      "Tending": 0.9506,
-      "Thinning": 0.0438,
-      "Harvesting": 0.0041
+      "Planting": 0.0003,
+      "Tending": 0.1871,
+      "Thinning": 0.8118,
+      "Harvesting": 0.0008
     },
     {
       "age": 25,
-      "Planting": 0.0014,
-      "Tending": 0.8465,
-      "Thinning": 0.141,
-      "Harvesting": 0.0111
+      "Planting": 0.0001,
+      "Tending": 0.0858,
+      "Thinning": 0.913,
+      "Harvesting": 0.0011
     },
     {
       "age": 26,
-      "Planting": 0.0012,
-      "Tending": 0.6112,
-      "Thinning": 0.3632,
-      "Harvesting": 0.0244
+      "Planting": 0.0001,
+      "Tending": 0.0363,
+      "Thinning": 0.9621,
+      "Harvesting": 0.0015
     },
     {
       "age": 27,
-      "Planting": 0.0007,
-      "Tending": 0.3105,
-      "Thinning": 0.6508,
-      "Harvesting": 0.038
+      "Planting": 0,
+      "Tending": 0.0148,
+      "Thinning": 0.9834,
+      "Harvesting": 0.0018
     },
     {
       "age": 28,
-      "Planting": 0.0003,
-      "Tending": 0.115,
-      "Thinning": 0.8414,
-      "Harvesting": 0.0433
+      "Planting": 0,
+      "Tending": 0.0058,
+      "Thinning": 0.9919,
+      "Harvesting": 0.0022
     },
     {
       "age": 29,
-      "Planting": 0.0001,
-      "Tending": 0.0364,
-      "Thinning": 0.921,
-      "Harvesting": 0.0424
+      "Planting": 0,
+      "Tending": 0.0023,
+      "Thinning": 0.9951,
+      "Harvesting": 0.0027
     },
     {
       "age": 30,
       "Planting": 0,
-      "Tending": 0.011,
-      "Thinning": 0.9493,
-      "Harvesting": 0.0397
+      "Tending": 0.0009,
+      "Thinning": 0.9959,
+      "Harvesting": 0.0032
     },
     {
       "age": 31,
       "Planting": 0,
-      "Tending": 0.0033,
-      "Thinning": 0.9598,
-      "Harvesting": 0.0369
+      "Tending": 0.0003,
+      "Thinning": 0.9959,
+      "Harvesting": 0.0038
     },
     {
       "age": 32,
       "Planting": 0,
-      "Tending": 0.001,
-      "Thinning": 0.9646,
-      "Harvesting": 0.0345
+      "Tending": 0.0001,
+      "Thinning": 0.9954,
+      "Harvesting": 0.0045
     },
     {
       "age": 33,
       "Planting": 0,
-      "Tending": 0.0003,
-      "Thinning": 0.9672,
-      "Harvesting": 0.0325
+      "Tending": 0,
+      "Thinning": 0.9947,
+      "Harvesting": 0.0053
     },
     {
       "age": 34,
       "Planting": 0,
-      "Tending": 0.0001,
-      "Thinning": 0.9689,
-      "Harvesting": 0.031
+      "Tending": 0,
+      "Thinning": 0.9938,
+      "Harvesting": 0.0062
     },
     {
       "age": 35,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9702,
-      "Harvesting": 0.0298
+      "Thinning": 0.9928,
+      "Harvesting": 0.0072
     },
     {
       "age": 36,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9711,
-      "Harvesting": 0.0289
+      "Thinning": 0.9916,
+      "Harvesting": 0.0084
     },
     {
       "age": 37,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9717,
-      "Harvesting": 0.0283
+      "Thinning": 0.9903,
+      "Harvesting": 0.0097
     },
     {
       "age": 38,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9721,
-      "Harvesting": 0.0279
+      "Thinning": 0.9887,
+      "Harvesting": 0.0113
     },
     {
       "age": 39,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9723,
-      "Harvesting": 0.0277
+      "Thinning": 0.987,
+      "Harvesting": 0.013
     },
     {
       "age": 40,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9722,
-      "Harvesting": 0.0278
+      "Thinning": 0.9851,
+      "Harvesting": 0.0149
     },
     {
       "age": 41,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.972,
-      "Harvesting": 0.028
+      "Thinning": 0.983,
+      "Harvesting": 0.017
     },
     {
       "age": 42,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9715,
-      "Harvesting": 0.0285
+      "Thinning": 0.9805,
+      "Harvesting": 0.0195
     },
     {
       "age": 43,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9709,
-      "Harvesting": 0.0291
+      "Thinning": 0.9778,
+      "Harvesting": 0.0222
     },
     {
       "age": 44,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9701,
-      "Harvesting": 0.0299
+      "Thinning": 0.9748,
+      "Harvesting": 0.0252
     },
     {
       "age": 45,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.969,
-      "Harvesting": 0.031
+      "Thinning": 0.9715,
+      "Harvesting": 0.0285
     },
     {
       "age": 46,
@@ -333,1429 +333,1429 @@
       "age": 47,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9663,
-      "Harvesting": 0.0337
+      "Thinning": 0.9638,
+      "Harvesting": 0.0362
     },
     {
       "age": 48,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9646,
-      "Harvesting": 0.0354
+      "Thinning": 0.9593,
+      "Harvesting": 0.0407
     },
     {
       "age": 49,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9627,
-      "Harvesting": 0.0373
+      "Thinning": 0.9543,
+      "Harvesting": 0.0457
     },
     {
       "age": 50,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9604,
-      "Harvesting": 0.0396
+      "Thinning": 0.9489,
+      "Harvesting": 0.0511
     },
     {
       "age": 51,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9578,
-      "Harvesting": 0.0422
+      "Thinning": 0.943,
+      "Harvesting": 0.057
     },
     {
       "age": 52,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9549,
-      "Harvesting": 0.0451
+      "Thinning": 0.9366,
+      "Harvesting": 0.0634
     },
     {
       "age": 53,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9516,
-      "Harvesting": 0.0484
+      "Thinning": 0.9296,
+      "Harvesting": 0.0704
     },
     {
       "age": 54,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9479,
-      "Harvesting": 0.0521
+      "Thinning": 0.922,
+      "Harvesting": 0.078
     },
     {
       "age": 55,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9436,
-      "Harvesting": 0.0564
+      "Thinning": 0.9137,
+      "Harvesting": 0.0863
     },
     {
       "age": 56,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9389,
-      "Harvesting": 0.0611
+      "Thinning": 0.9048,
+      "Harvesting": 0.0952
     },
     {
       "age": 57,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9335,
-      "Harvesting": 0.0665
+      "Thinning": 0.8953,
+      "Harvesting": 0.1047
     },
     {
       "age": 58,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9275,
-      "Harvesting": 0.0725
+      "Thinning": 0.885,
+      "Harvesting": 0.115
     },
     {
       "age": 59,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9207,
-      "Harvesting": 0.0793
+      "Thinning": 0.874,
+      "Harvesting": 0.126
     },
     {
       "age": 60,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.913,
-      "Harvesting": 0.087
+      "Thinning": 0.8623,
+      "Harvesting": 0.1377
     },
     {
       "age": 61,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.9044,
-      "Harvesting": 0.0956
+      "Thinning": 0.8498,
+      "Harvesting": 0.1502
     },
     {
       "age": 62,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8948,
-      "Harvesting": 0.1052
+      "Thinning": 0.8366,
+      "Harvesting": 0.1634
     },
     {
       "age": 63,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8841,
-      "Harvesting": 0.1159
+      "Thinning": 0.8226,
+      "Harvesting": 0.1774
     },
     {
       "age": 64,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.872,
-      "Harvesting": 0.128
+      "Thinning": 0.8079,
+      "Harvesting": 0.1921
     },
     {
       "age": 65,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8586,
-      "Harvesting": 0.1414
+      "Thinning": 0.7924,
+      "Harvesting": 0.2076
     },
     {
       "age": 66,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8437,
-      "Harvesting": 0.1563
+      "Thinning": 0.7763,
+      "Harvesting": 0.2237
     },
     {
       "age": 67,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8271,
-      "Harvesting": 0.1729
+      "Thinning": 0.7594,
+      "Harvesting": 0.2406
     },
     {
       "age": 68,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.8087,
-      "Harvesting": 0.1913
+      "Thinning": 0.7419,
+      "Harvesting": 0.2581
     },
     {
       "age": 69,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.7885,
-      "Harvesting": 0.2115
+      "Thinning": 0.7238,
+      "Harvesting": 0.2762
     },
     {
       "age": 70,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.7664,
-      "Harvesting": 0.2336
+      "Thinning": 0.705,
+      "Harvesting": 0.295
     },
     {
       "age": 71,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.7422,
-      "Harvesting": 0.2578
+      "Thinning": 0.6858,
+      "Harvesting": 0.3142
     },
     {
       "age": 72,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.716,
-      "Harvesting": 0.284
+      "Thinning": 0.6661,
+      "Harvesting": 0.3339
     },
     {
       "age": 73,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.6877,
-      "Harvesting": 0.3123
+      "Thinning": 0.646,
+      "Harvesting": 0.354
     },
     {
       "age": 74,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.6575,
-      "Harvesting": 0.3425
+      "Thinning": 0.6256,
+      "Harvesting": 0.3744
     },
     {
       "age": 75,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.6255,
-      "Harvesting": 0.3745
+      "Thinning": 0.6049,
+      "Harvesting": 0.3951
     },
     {
       "age": 76,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.5918,
-      "Harvesting": 0.4082
+      "Thinning": 0.584,
+      "Harvesting": 0.416
     },
     {
       "age": 77,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.5568,
-      "Harvesting": 0.4432
+      "Thinning": 0.563,
+      "Harvesting": 0.437
     },
     {
       "age": 78,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.5207,
-      "Harvesting": 0.4793
+      "Thinning": 0.542,
+      "Harvesting": 0.458
     },
     {
       "age": 79,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.4839,
-      "Harvesting": 0.5161
+      "Thinning": 0.521,
+      "Harvesting": 0.479
     },
     {
       "age": 80,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.4468,
-      "Harvesting": 0.5532
+      "Thinning": 0.5,
+      "Harvesting": 0.5
     },
     {
       "age": 81,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.4099,
-      "Harvesting": 0.5901
+      "Thinning": 0.4793,
+      "Harvesting": 0.5207
     },
     {
       "age": 82,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.3735,
-      "Harvesting": 0.6265
+      "Thinning": 0.4588,
+      "Harvesting": 0.5412
     },
     {
       "age": 83,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.3382,
-      "Harvesting": 0.6618
+      "Thinning": 0.4386,
+      "Harvesting": 0.5614
     },
     {
       "age": 84,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.3042,
-      "Harvesting": 0.6958
+      "Thinning": 0.4188,
+      "Harvesting": 0.5812
     },
     {
       "age": 85,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.2719,
-      "Harvesting": 0.7281
+      "Thinning": 0.3994,
+      "Harvesting": 0.6006
     },
     {
       "age": 86,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.2415,
-      "Harvesting": 0.7585
+      "Thinning": 0.3804,
+      "Harvesting": 0.6196
     },
     {
       "age": 87,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.2133,
-      "Harvesting": 0.7867
+      "Thinning": 0.3619,
+      "Harvesting": 0.6381
     },
     {
       "age": 88,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.1873,
-      "Harvesting": 0.8127
+      "Thinning": 0.344,
+      "Harvesting": 0.656
     },
     {
       "age": 89,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.1636,
-      "Harvesting": 0.8364
+      "Thinning": 0.3266,
+      "Harvesting": 0.6734
     },
     {
       "age": 90,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.1422,
-      "Harvesting": 0.8578
+      "Thinning": 0.3098,
+      "Harvesting": 0.6902
     },
     {
       "age": 91,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.1231,
-      "Harvesting": 0.8769
+      "Thinning": 0.2936,
+      "Harvesting": 0.7064
     },
     {
       "age": 92,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.106,
-      "Harvesting": 0.894
+      "Thinning": 0.278,
+      "Harvesting": 0.722
     },
     {
       "age": 93,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.091,
-      "Harvesting": 0.909
+      "Thinning": 0.2631,
+      "Harvesting": 0.7369
     },
     {
       "age": 94,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0778,
-      "Harvesting": 0.9222
+      "Thinning": 0.2487,
+      "Harvesting": 0.7513
     },
     {
       "age": 95,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0663,
-      "Harvesting": 0.9337
+      "Thinning": 0.235,
+      "Harvesting": 0.765
     },
     {
       "age": 96,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0564,
-      "Harvesting": 0.9436
+      "Thinning": 0.2219,
+      "Harvesting": 0.7781
     },
     {
       "age": 97,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0478,
-      "Harvesting": 0.9522
+      "Thinning": 0.2094,
+      "Harvesting": 0.7906
     },
     {
       "age": 98,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0404,
-      "Harvesting": 0.9596
+      "Thinning": 0.1975,
+      "Harvesting": 0.8025
     },
     {
       "age": 99,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.034,
-      "Harvesting": 0.966
+      "Thinning": 0.1862,
+      "Harvesting": 0.8138
     },
     {
       "age": 100,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0286,
-      "Harvesting": 0.9714
+      "Thinning": 0.1755,
+      "Harvesting": 0.8245
     },
     {
       "age": 101,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.024,
-      "Harvesting": 0.976
+      "Thinning": 0.1653,
+      "Harvesting": 0.8347
     },
     {
       "age": 102,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0202,
-      "Harvesting": 0.9798
+      "Thinning": 0.1557,
+      "Harvesting": 0.8443
     },
     {
       "age": 103,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0169,
-      "Harvesting": 0.9831
+      "Thinning": 0.1466,
+      "Harvesting": 0.8534
     },
     {
       "age": 104,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0141,
-      "Harvesting": 0.9859
+      "Thinning": 0.1379,
+      "Harvesting": 0.8621
     },
     {
       "age": 105,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0117,
-      "Harvesting": 0.9883
+      "Thinning": 0.1298,
+      "Harvesting": 0.8702
     },
     {
       "age": 106,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0098,
-      "Harvesting": 0.9902
+      "Thinning": 0.1221,
+      "Harvesting": 0.8779
     },
     {
       "age": 107,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0081,
-      "Harvesting": 0.9919
+      "Thinning": 0.1148,
+      "Harvesting": 0.8852
     },
     {
       "age": 108,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0068,
-      "Harvesting": 0.9932
+      "Thinning": 0.108,
+      "Harvesting": 0.892
     },
     {
       "age": 109,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0056,
-      "Harvesting": 0.9944
+      "Thinning": 0.1015,
+      "Harvesting": 0.8985
     },
     {
       "age": 110,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0.0046,
-      "Harvesting": 0.9954
+      "Thinning": 0.0955,
+      "Harvesting": 0.9045
     },
     {
       "age": 111,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0898,
+      "Harvesting": 0.9102
+    },
+    {
+      "age": 112,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0844,
+      "Harvesting": 0.9156
+    },
+    {
+      "age": 113,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0793,
+      "Harvesting": 0.9207
+    },
+    {
+      "age": 114,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0746,
+      "Harvesting": 0.9254
+    },
+    {
+      "age": 115,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0701,
+      "Harvesting": 0.9299
+    },
+    {
+      "age": 116,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0659,
+      "Harvesting": 0.9341
+    },
+    {
+      "age": 117,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.062,
+      "Harvesting": 0.938
+    },
+    {
+      "age": 118,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0583,
+      "Harvesting": 0.9417
+    },
+    {
+      "age": 119,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0548,
+      "Harvesting": 0.9452
+    },
+    {
+      "age": 120,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0515,
+      "Harvesting": 0.9485
+    },
+    {
+      "age": 121,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0484,
+      "Harvesting": 0.9516
+    },
+    {
+      "age": 122,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0456,
+      "Harvesting": 0.9544
+    },
+    {
+      "age": 123,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0429,
+      "Harvesting": 0.9571
+    },
+    {
+      "age": 124,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0403,
+      "Harvesting": 0.9597
+    },
+    {
+      "age": 125,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0379,
+      "Harvesting": 0.9621
+    },
+    {
+      "age": 126,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0357,
+      "Harvesting": 0.9643
+    },
+    {
+      "age": 127,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0336,
+      "Harvesting": 0.9664
+    },
+    {
+      "age": 128,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0316,
+      "Harvesting": 0.9684
+    },
+    {
+      "age": 129,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0298,
+      "Harvesting": 0.9702
+    },
+    {
+      "age": 130,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.028,
+      "Harvesting": 0.972
+    },
+    {
+      "age": 131,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0264,
+      "Harvesting": 0.9736
+    },
+    {
+      "age": 132,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0248,
+      "Harvesting": 0.9752
+    },
+    {
+      "age": 133,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0234,
+      "Harvesting": 0.9766
+    },
+    {
+      "age": 134,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.022,
+      "Harvesting": 0.978
+    },
+    {
+      "age": 135,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0208,
+      "Harvesting": 0.9792
+    },
+    {
+      "age": 136,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0196,
+      "Harvesting": 0.9804
+    },
+    {
+      "age": 137,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0185,
+      "Harvesting": 0.9815
+    },
+    {
+      "age": 138,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0174,
+      "Harvesting": 0.9826
+    },
+    {
+      "age": 139,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0164,
+      "Harvesting": 0.9836
+    },
+    {
+      "age": 140,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0155,
+      "Harvesting": 0.9845
+    },
+    {
+      "age": 141,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0146,
+      "Harvesting": 0.9854
+    },
+    {
+      "age": 142,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0138,
+      "Harvesting": 0.9862
+    },
+    {
+      "age": 143,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.013,
+      "Harvesting": 0.987
+    },
+    {
+      "age": 144,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0122,
+      "Harvesting": 0.9878
+    },
+    {
+      "age": 145,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0116,
+      "Harvesting": 0.9884
+    },
+    {
+      "age": 146,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0109,
+      "Harvesting": 0.9891
+    },
+    {
+      "age": 147,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0103,
+      "Harvesting": 0.9897
+    },
+    {
+      "age": 148,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0097,
+      "Harvesting": 0.9903
+    },
+    {
+      "age": 149,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0092,
+      "Harvesting": 0.9908
+    },
+    {
+      "age": 150,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0087,
+      "Harvesting": 0.9913
+    },
+    {
+      "age": 151,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0082,
+      "Harvesting": 0.9918
+    },
+    {
+      "age": 152,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0077,
+      "Harvesting": 0.9923
+    },
+    {
+      "age": 153,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0073,
+      "Harvesting": 0.9927
+    },
+    {
+      "age": 154,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0069,
+      "Harvesting": 0.9931
+    },
+    {
+      "age": 155,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0065,
+      "Harvesting": 0.9935
+    },
+    {
+      "age": 156,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0062,
+      "Harvesting": 0.9938
+    },
+    {
+      "age": 157,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0059,
+      "Harvesting": 0.9941
+    },
+    {
+      "age": 158,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0055,
+      "Harvesting": 0.9945
+    },
+    {
+      "age": 159,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0052,
+      "Harvesting": 0.9948
+    },
+    {
+      "age": 160,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.005,
+      "Harvesting": 0.995
+    },
+    {
+      "age": 161,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0047,
+      "Harvesting": 0.9953
+    },
+    {
+      "age": 162,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0044,
+      "Harvesting": 0.9956
+    },
+    {
+      "age": 163,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0042,
+      "Harvesting": 0.9958
+    },
+    {
+      "age": 164,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.004,
+      "Harvesting": 0.996
+    },
+    {
+      "age": 165,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0038,
       "Harvesting": 0.9962
     },
     {
-      "age": 112,
+      "age": 166,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0036,
+      "Harvesting": 0.9964
+    },
+    {
+      "age": 167,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0034,
+      "Harvesting": 0.9966
+    },
+    {
+      "age": 168,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0032,
       "Harvesting": 0.9968
     },
     {
-      "age": 113,
+      "age": 169,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.003,
+      "Harvesting": 0.997
+    },
+    {
+      "age": 170,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0029,
+      "Harvesting": 0.9971
+    },
+    {
+      "age": 171,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0027,
+      "Harvesting": 0.9973
+    },
+    {
+      "age": 172,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0026,
       "Harvesting": 0.9974
     },
     {
-      "age": 114,
+      "age": 173,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0024,
+      "Harvesting": 0.9976
+    },
+    {
+      "age": 174,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0023,
+      "Harvesting": 0.9977
+    },
+    {
+      "age": 175,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0022,
       "Harvesting": 0.9978
     },
     {
-      "age": 115,
+      "age": 176,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0021,
+      "Harvesting": 0.9979
+    },
+    {
+      "age": 177,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.002,
+      "Harvesting": 0.998
+    },
+    {
+      "age": 178,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0019,
+      "Harvesting": 0.9981
+    },
+    {
+      "age": 179,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0018,
       "Harvesting": 0.9982
     },
     {
-      "age": 116,
+      "age": 180,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0017,
+      "Harvesting": 0.9983
+    },
+    {
+      "age": 181,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0016,
+      "Harvesting": 0.9984
+    },
+    {
+      "age": 182,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0015,
       "Harvesting": 0.9985
     },
     {
-      "age": 117,
+      "age": 183,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0014,
+      "Harvesting": 0.9986
+    },
+    {
+      "age": 184,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0014,
+      "Harvesting": 0.9986
+    },
+    {
+      "age": 185,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0013,
+      "Harvesting": 0.9987
+    },
+    {
+      "age": 186,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0012,
       "Harvesting": 0.9988
     },
     {
-      "age": 118,
+      "age": 187,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0012,
+      "Harvesting": 0.9988
+    },
+    {
+      "age": 188,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0011,
+      "Harvesting": 0.9989
+    },
+    {
+      "age": 189,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0011,
+      "Harvesting": 0.9989
+    },
+    {
+      "age": 190,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.001,
       "Harvesting": 0.999
     },
     {
-      "age": 119,
+      "age": 191,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.001,
+      "Harvesting": 0.999
+    },
+    {
+      "age": 192,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0009,
+      "Harvesting": 0.9991
+    },
+    {
+      "age": 193,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0009,
+      "Harvesting": 0.9991
+    },
+    {
+      "age": 194,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0008,
       "Harvesting": 0.9992
     },
     {
-      "age": 120,
+      "age": 195,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0008,
+      "Harvesting": 0.9992
+    },
+    {
+      "age": 196,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0007,
       "Harvesting": 0.9993
     },
     {
-      "age": 121,
+      "age": 197,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0007,
+      "Harvesting": 0.9993
+    },
+    {
+      "age": 198,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0007,
+      "Harvesting": 0.9993
+    },
+    {
+      "age": 199,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0006,
       "Harvesting": 0.9994
     },
     {
-      "age": 122,
+      "age": 200,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0006,
+      "Harvesting": 0.9994
+    },
+    {
+      "age": 201,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0006,
+      "Harvesting": 0.9994
+    },
+    {
+      "age": 202,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0005,
       "Harvesting": 0.9995
     },
     {
-      "age": 123,
+      "age": 203,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0005,
+      "Harvesting": 0.9995
+    },
+    {
+      "age": 204,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0005,
+      "Harvesting": 0.9995
+    },
+    {
+      "age": 205,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0005,
+      "Harvesting": 0.9995
+    },
+    {
+      "age": 206,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0005,
+      "Harvesting": 0.9995
+    },
+    {
+      "age": 207,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0004,
       "Harvesting": 0.9996
     },
     {
-      "age": 124,
+      "age": 208,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0004,
+      "Harvesting": 0.9996
+    },
+    {
+      "age": 209,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0004,
+      "Harvesting": 0.9996
+    },
+    {
+      "age": 210,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0004,
+      "Harvesting": 0.9996
+    },
+    {
+      "age": 211,
+      "Planting": 0,
+      "Tending": 0,
+      "Thinning": 0.0004,
+      "Harvesting": 0.9996
+    },
+    {
+      "age": 212,
       "Planting": 0,
       "Tending": 0,
       "Thinning": 0.0003,
       "Harvesting": 0.9997
     },
     {
-      "age": 125,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0002,
-      "Harvesting": 0.9998
-    },
-    {
-      "age": 126,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0002,
-      "Harvesting": 0.9998
-    },
-    {
-      "age": 127,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0002,
-      "Harvesting": 0.9998
-    },
-    {
-      "age": 128,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0001,
-      "Harvesting": 0.9999
-    },
-    {
-      "age": 129,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0001,
-      "Harvesting": 0.9999
-    },
-    {
-      "age": 130,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0001,
-      "Harvesting": 0.9999
-    },
-    {
-      "age": 131,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0001,
-      "Harvesting": 0.9999
-    },
-    {
-      "age": 132,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0.0001,
-      "Harvesting": 0.9999
-    },
-    {
-      "age": 133,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 134,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 135,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 136,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 137,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 138,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 139,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 140,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 141,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 142,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 143,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 144,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 145,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 146,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 147,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 148,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 149,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 150,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 151,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 152,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 153,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 154,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 155,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 156,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 157,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 158,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 159,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 160,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 161,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 162,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 163,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 164,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 165,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 166,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 167,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 168,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 169,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 170,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 171,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 172,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 173,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 174,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 175,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 176,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 177,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 178,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 179,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 180,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 181,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 182,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 183,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 184,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 185,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 186,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 187,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 188,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 189,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 190,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 191,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 192,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 193,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 194,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 195,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 196,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 197,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 198,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 199,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 200,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 201,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 202,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 203,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 204,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 205,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 206,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 207,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 208,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 209,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 210,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 211,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
-      "age": 212,
-      "Planting": 0,
-      "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
-    },
-    {
       "age": 213,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 214,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 215,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 216,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 217,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 218,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0003,
+      "Harvesting": 0.9997
     },
     {
       "age": 219,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 220,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 221,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 222,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 223,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 224,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 225,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 226,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 227,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 228,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0002,
+      "Harvesting": 0.9998
     },
     {
       "age": 229,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 230,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 231,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 232,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 233,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 234,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 235,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 236,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 237,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 238,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 239,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 240,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 241,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 242,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 243,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 244,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 245,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 246,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 247,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 248,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 249,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     },
     {
       "age": 250,
       "Planting": 0,
       "Tending": 0,
-      "Thinning": 0,
-      "Harvesting": 1
+      "Thinning": 0.0001,
+      "Harvesting": 0.9999
     }
   ]
 }

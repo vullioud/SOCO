@@ -14,14 +14,9 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
 
          MONITORING: {
             ENABLED: true,
-            
-            // Options: 
-            // "all"        -> Logs every single stand (Heavy!)
-            // "random"     -> Logs 'sample_size' stands randomly selected across the whole landscape
-            // "stratified" -> Logs 'sample_size' stands PER OWNER TYPE (e.g., 10 for big, 10 for small...)
             mode: "stratified", 
-            
-            sample_size: 10 // Interpretation depends on mode (Total count OR Count per Owner)
+            sample_size: 50, 
+            agg_interval: 5 // Interpretation depends on mode (Total count OR Count per Owner)
         },
 
         TESTING: {
@@ -41,7 +36,7 @@ if (typeof SoCoABE_CONFIG === 'undefined') {
      // active_scenario: "verify_mark_and_remove"
        // active_scenario: 'verify_phased_removal'
     //   active_scenario: 'verify_thinningFromBelow_sequence'
-     active_scenario: 'test_memory_logic'
+    active_scenario: 'staggered_clearcut_by_owner'
     }
     };
 }

@@ -101,7 +101,6 @@ MEGA_STP_ACTIVITIES['targetDBH'] = {
                 console.log(`  - Species: ${species_id}, Count: ${species_count}, DBH Range: [${min_dbh.toFixed(1)} - ${max_dbh.toFixed(1)}] cm`);
             }
         }
-        // --- END DIAGNOSTIC LOGGING ---
 
         // Manually implement the harvest logic
         for (var species in dbhList) {
@@ -202,37 +201,55 @@ onExecute: function() {
 
 
 // 5. Selective Thinning - Phase 1: SELECTION (CORRECT LIBRARY PATTERN)
-MEGA_STP_ACTIVITIES['selectiveThinning_select'] = {
-    id: 'MegaSTP_SelectiveThinning_Select',
+
+MEGA_STP_ACTIVITIES['shelterwood_select'] = {
+    // id: 'MegaSTP_Shelterwood_Select',
     type: 'thinning',
     thinning: 'selection',
-    schedule: { signal: 'do_selectiveThinning_select' },
-    
+    schedule: { signal: 'do_shelterwood_select' },
+
+    // Dynamic parameters from flags
     N: function() { return stand.flag('abe_param_nTrees'); },
     NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
-  //  speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity') || {}; },
-    ranking: 'height',
     
-    // This forces the signal-triggered execution path: evaluate() -> removeMarkedTrees()
-    // Since only 'markcompetitor' is set, no trees are actually removed.
-    onCreate: function(act) { 
-        act.scheduled = false;
+    // --- ENABLED: Species Selectivity ---
+    speciesSelectivity: function() { 
+        var val = stand.flag('abe_param_speciesSelectivity');
+        console.log(`[MEGA-STP] Shelterwood Select: Fetching species selectivity: ${JSON.stringify(val)}`);
+        return val; 
     },
-    
-    onExecuted: function() {
-        // This runs AFTER the C++ has marked the trees.
-        console.log(`[MEGA-STP - onExecuted] SELECT phase for stand ${stand.id}.`);
-        
-        var marked_crop = stand.trees.load('markcrop=true');
-        var marked_competitors = stand.trees.load('markcompetitor=true');
-        
-        console.log(`  -> RESULT: Found ${marked_crop} marked crop trees.`);
-        console.log(`  -> RESULT: Found ${marked_competitors} marked competitors.`);
 
-        // Set the initialization flag so the next agent call triggers the 'remove' phase.
-        stand.setFlag('abe_selective_thinning_initialized', true);
-        stand.setFlag('abe_last_activity', 'MegaSTP_SelectiveThinning_Select');
+    ranking: 'height', // Keep dominant trees
+
+    onCreate: function(act) { 
+        act.scheduled = false; 
+    },
+
+    onExecuted: function() {
+        console.log(`[MEGA-STP] Shelterwood Select: Marking complete.`);
+        
+        // Snapshot total competitors marked
+        var total_competitors = stand.trees.load('markcompetitor=true');
+        stand.setFlag('abe_param_totalCompetitors', total_competitors);
+        
+        // Perform First Removal Pass immediately
+        var fraction = stand.flag('abe_param_fraction_to_remove') || 0;
+        var to_remove = Math.ceil(total_competitors * fraction);
+
+        console.log(`  -> Marked ${total_competitors} competitors. Removing ${to_remove} (${(fraction*100).toFixed(1)}%).`);
+        
+        if (to_remove > 0) {
+            stand.trees.filterRandom(to_remove); // Keep 'to_remove' random trees in list
+            var harvested = stand.trees.harvest(); // Harvest them
+            // DO NOT reset marks here, they persist for next steps
+            console.log(`  -> Harvested ${harvested} trees.`);
+        }
+
+        // Set Initialization Flag
+        stand.setFlag('abe_shelterwood_initialized', true);
+        stand.setFlag('abe_last_activity', 'MegaSTP_Shelterwood_Select');
         stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
     }
 };
 
@@ -268,7 +285,7 @@ MEGA_STP_ACTIVITIES['selectiveThinning_remove'] = {
 
 // 7. Thinning From Below
 MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
-    // id: 'MegaSTP_ThinningFromBelow', // Removed to fix validation error
+    // id: 'MegaSTP_ThinningFromBelow', 
     type: 'thinning',
     thinning: 'custom',
     schedule: { signal: 'do_thinningFromBelow' },
@@ -284,51 +301,147 @@ MEGA_STP_ACTIVITIES['thinningFromBelow'] = {
         return share * 100; 
     },
 
-    onEvaluate: function() { return true; },
+    // --- FIX: Return species object to enable selectivity ---
+    onEvaluate: function() { 
+        var selectivity = stand.flag('abe_param_speciesSelectivity');
+        if (selectivity) {
+             console.log(`[MEGA-STP] ThinningFromBelow: Applying species selectivity: ${JSON.stringify(selectivity)}`);
+             return selectivity;
+        }
+        return true; // Fallback: indiscriminant thinning
+    },
 
     onExecute: function() {
+        // ... (existing logging/logic) ...
         console.log(`[MEGA-STP] Executing 'thinningFromBelow' for stand ${stand.id}.`);
+        // ...
+    },
 
-        var share = stand.flag('abe_param_thinningShare') || 0.0;
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_ThinningFromBelow');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+MEGA_STP_ACTIVITIES['femel_select'] = {
+    id: 'MegaSTP_Femel_Select',
+    type: 'general',
+    schedule: { signal: 'do_femel_select' },
+
+    action: function() {
+        console.log(`[MEGA-STP] Femel Select: Initializing gap for stand ${stand.id}.`);
         
-        // 1. Load all trees
-        var total_count = stand.trees.loadAll();
-        var total_volume = stand.trees.sum('volume');
-        var target_removal_volume = total_volume * share;
+        // 1. Initialize Patches
+        // Uses parameter for number/size. Default 1 gap.
+        var init_size = stand.flag('abe_param_femel_initial_size') || 1;
+        stand.patches.clear();
+        stand.patches.createRandomPatches(init_size); 
+        stand.patches.updateGrid();
 
-        console.log(`  -> Stand Stats: Count=${total_count}, Vol=${total_volume.toFixed(1)}m3. Target Removal: ${target_removal_volume.toFixed(1)}m3 (${(share*100).toFixed(0)}%)`);
+        // 2. Determine Patch ID (createRandomPatches starts at 1)
+        var initial_patch_id = 1;
+        
+        // 3. Harvest the Patch
+        stand.trees.load('patch=' + initial_patch_id);
+        var harvested = stand.trees.harvest();
+        console.log(`  -> Created initial gap(s) (ID ${initial_patch_id}). Harvested ${harvested} trees.`);
 
-        if (target_removal_volume <= 0) {
-            console.log("  -> Target volume is 0. Skipping.");
+        // 4. Update Flags
+        stand.setFlag('abe_femel_initialized', true);
+        stand.setFlag('abe_femel_current_ring', initial_patch_id);
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Femel_Select');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+// 13. Femel - Phase 2: Expansion (Step)
+MEGA_STP_ACTIVITIES['femel_step'] = {
+    id: 'MegaSTP_Femel_Step',
+    type: 'general',
+    schedule: { signal: 'do_femel_step' },
+
+    action: function() {
+        console.log(`[MEGA-STP] Femel Step: Expanding gap for stand ${stand.id}.`);
+
+        // 1. Read State
+        var current_ring = stand.flag('abe_femel_current_ring');
+        var grow_width = stand.flag('abe_param_femel_growth_width') || 1;
+        
+        if (!current_ring) {
+            console.warn("  -> Error: Femel step called but current ring is undefined. Aborting expansion.");
             return;
         }
 
-        // 2. Sort by DBH ascending (smallest trees first)
-        stand.trees.sort('dbh');
+        var next_ring = current_ring + 1;
 
-        // 3. Filter: Keep trees in the list where cumulative volume <= target
-        var count_in_list = stand.trees.filter(`incsum(volume) <= ${target_removal_volume}`);
+        // 2. Expand Patch
+        // createExtendedPatch returns number of cells added
+        var cells_added = stand.patches.createExtendedPatch(current_ring, next_ring, grow_width);
         
-        // Calculate what is actually in the list now
-        var vol_in_list = stand.trees.sum('volume');
+        // Update iLand grid
+        stand.patches.updateGrid();
 
-        console.log(`  -> Selection: ${count_in_list} trees selected for removal (Vol: ${vol_in_list.toFixed(1)}m3).`);
+        console.log(`  -> Expanded Ring ${current_ring} to ${next_ring}. Added ${cells_added} cells.`);
 
-        // 4. Harvest
-        if (count_in_list > 0) {
-            var harvested_count = stand.trees.harvest();
-            stand.trees.removeMarkedTrees();
-            console.log(`  -> HARVEST EXECUTION: Removed ${harvested_count} trees.`);
+        if (cells_added > 0) {
+            // 3. Harvest the New Ring
+            stand.trees.load('patch=' + next_ring);
+            var harvested = stand.trees.harvest();
+            console.log(`  -> Harvested ${harvested} trees from Ring ${next_ring}.`);
+            
+            // 4. Update State
+            stand.setFlag('abe_femel_current_ring', next_ring);
         } else {
-            console.log(`  -> No trees selected (smallest tree might be larger than target volume).`);
+            console.log(`  -> No expansion possible (stand boundary reached?).`);
         }
     },
 
     onExecuted: function() {
-        console.log(`[MEGA-STP] onExecuted for thinningFromBelow on stand ${stand.id}.`);
-        stand.setFlag('abe_last_activity', 'MegaSTP_ThinningFromBelow');
+        stand.setFlag('abe_last_activity', 'MegaSTP_Femel_Step');
         stand.setFlag('abe_last_activity_year', Globals.year);
         stand.setFlag('abe_need_reassessment', false);
+    }
+};
+
+// 14. Femel - Phase 3: Final Harvest (Matrix)
+MEGA_STP_ACTIVITIES['femel_final'] = {
+    id: 'MegaSTP_Femel_Final',
+    type: 'scheduled', // Final harvest is scheduled
+    schedule: { signal: 'do_femel_final' },
+    finalHarvest: true,
+
+    onCreate: function(act) { act.scheduled = false; },
+    onEvaluate: function() { return true; },
+
+    onExecute: function() {
+        console.log(`[MEGA-STP] Femel Final: Clearing matrix for stand ${stand.id}.`);
+        
+        // Harvest everything remaining (The Matrix)
+        stand.trees.loadAll();
+        var harvested = stand.trees.harvest();
+        stand.trees.removeMarkedTrees();
+        
+        console.log(`  -> Harvested ${harvested} remaining trees.`);
+
+        // Cleanup
+        stand.setAbsoluteAge(0);
+        stand.patches.clear();
+        stand.patches.updateGrid();
+        
+        // Clear flags
+        stand.setFlag('abe_femel_initialized', null);
+        stand.setFlag('abe_femel_current_ring', null);
+    },
+
+    onExecuted: function() {
+        stand.setFlag('abe_last_activity', 'MegaSTP_Femel_Final');
+        stand.setFlag('abe_last_activity_year', Globals.year);
+        stand.setFlag('abe_need_reassessment', true);
     }
 };
 
@@ -339,31 +452,28 @@ MEGA_STP_ACTIVITIES['tending'] = {
     thinning: 'tending',
     schedule: { signal: 'do_tending' },
 
-    intensity: 10, // NEED TO BE STATIC
+    intensity: 10, 
 
-    // DYNAMIC PARAMETER
+    // --- ENABLED & INSTRUMENTED ---
     speciesSelectivity: function() {
-        return stand.flag('abe_param_speciesSelectivity');
+        var val = stand.flag('abe_param_speciesSelectivity');
+        console.log(`[MEGA-STP] Tending: Fetching species selectivity: ${JSON.stringify(val)}`);
+        return val;
     },
 
-    // --- CRITICAL FIX: Force Signal Path ---
-    // This ensures ActThinning::execute enters the (!isScheduled) block and runs evaluate().
+    // Force signal execution path
     onCreate: function(act) { 
         act.scheduled = false; 
     },
 
-    // --- REMOVED onExecute ---
-    // By removing onExecute, we let ActThinning::execute fall through to the 'else' block
-    // which calls removeMarkedTrees().
-
     onExecuted: function() {
-        // Just logging. Trees should be gone by now.
-        console.log(`[MEGA-STP] onExecuted for Tending on stand ${stand.id}.`);
+        console.log(`[MEGA-STP] Tending executed on stand ${stand.id}.`);
         stand.setFlag('abe_last_activity', 'MegaSTP_Tending');
         stand.setFlag('abe_last_activity_year', Globals.year);
         stand.setFlag('abe_need_reassessment', false);
     }
 };
+
 
 MEGA_STP_ACTIVITIES['shelterwood_select'] = {
     // id: 'MegaSTP_Shelterwood_Select',
@@ -374,7 +484,7 @@ MEGA_STP_ACTIVITIES['shelterwood_select'] = {
     // Dynamic parameters from flags
     N: function() { return stand.flag('abe_param_nTrees'); },
     NCompetitors: function() { return stand.flag('abe_param_nCompetitors'); },
-   // speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity'); },  // commented out in waiting for a good way to select species.
+    speciesSelectivity: function() { return stand.flag('abe_param_speciesSelectivity'); },  // commented out in waiting for a good way to select species.
     ranking: 'height', // Standard for shelterwood: keep dominant trees
 
     // Force signal execution path
@@ -496,11 +606,14 @@ MEGA_STP_ACTIVITIES['planting'] = {
     onExecute: function() {
         console.log(`[MEGA-STP] Executing Planting on stand ${stand.id}.`);
         
+        // 1. Read Flags
         var species_val = stand.flag('abe_param_planting_species');
         var fraction_val = stand.flag('abe_param_planting_fraction');
 
+        // Log what we got (The Critical Check)
+        console.log(`[MEGA-STP] Flags Received -> Species: ${JSON.stringify(species_val)}, Fractions: ${JSON.stringify(fraction_val)}`);
+
         // --- Helper to force Arrays ---
-        // Handles: ["a","b"], "a,b", "a"
         function toArray(val, isNumeric) {
             if (val === undefined || val === null) return [];
             if (Array.isArray(val)) return val;
@@ -521,7 +634,6 @@ MEGA_STP_ACTIVITIES['planting'] = {
 
         for (var i = 0; i < species_arr.length; i++) {
             var sp = species_arr[i];
-            // Trim whitespace if it was a split string
             if (typeof sp === 'string') sp = sp.trim();
             
             var fr = (i < fraction_arr.length) ? fraction_arr[i] : 1.0;
@@ -529,12 +641,12 @@ MEGA_STP_ACTIVITIES['planting'] = {
             var item = {
                 species: sp,
                 fraction: fr,
-                height: 0.2,
+                height: 0.2, // sapling height
                 age: 2,
                 clear: false 
             };
             
-            console.log(`  -> Planting ${sp} on ${(fr*100).toFixed(0)}% of area.`);
+            console.log(`  -> Running iLand Planting: ${sp} on ${(fr*100).toFixed(0)}% of area.`);
             fmengine.runPlanting(stand.id, item);
         }
     },

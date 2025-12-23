@@ -35,13 +35,13 @@
         }
       }
     },
-    "shelterwood": {
+    "femel": {
       "Biodiversity": {
         "execution_schedule": {
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 120,
+              "mean": 100,
               "sd": 15
             }
           ]
@@ -62,19 +62,19 @@
             }
           ]
         },
-        "nTrees": {
+        "initial_size": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 60
+              "lambda": 1
             }
           ]
         },
-        "species_profile": {
-          "distribution_function": "lookup",
+        "growth_width": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "lambda": 1
             }
           ]
         }
@@ -105,19 +105,19 @@
             }
           ]
         },
-        "nTrees": {
+        "initial_size": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 45
+              "lambda": 1
             }
           ]
         },
-        "species_profile": {
-          "distribution_function": "lookup",
+        "growth_width": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "lambda": 1
             }
           ]
         }
@@ -127,7 +127,7 @@
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 80,
+              "mean": 90,
               "sd": 10
             }
           ]
@@ -148,77 +148,40 @@
             }
           ]
         },
-        "nTrees": {
+        "initial_size": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 30
+              "lambda": 1
             }
           ]
         },
-        "species_profile": {
-          "distribution_function": "lookup",
+        "growth_width": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "lambda": 1
             }
           ]
         }
       }
     },
-    "targetDBH": {
+    "fromBelow": {
       "Biodiversity": {
         "execution_schedule": {
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 90,
-              "sd": 15
+              "mean": 40,
+              "sd": 8
             }
           ]
         },
-        "targetDBH": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 65,
-              "sd": 10
-            }
-          ]
-        },
-        "interval": {
+        "times": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 10
-            }
-          ]
-        },
-        "dbhListProfile": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_name": "broadleaf_conservation"
-            }
-          ]
-        }
-      },
-      "CO2": {
-        "execution_schedule": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 80,
-              "sd": 12
-            }
-          ]
-        },
-        "targetDBH": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 60,
-              "sd": 8
+              "lambda": 4
             }
           ]
         },
@@ -230,11 +193,64 @@
             }
           ]
         },
-        "dbhListProfile": {
+        "thinningShare": {
+          "distribution_function": "beta",
+          "distribution_params": [
+            {
+              "alpha": 2,
+              "beta": 5
+            }
+          ]
+        },
+        "species_profile": {
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_name": "default_central_europe"
+              "profile_name": "species_profiles"
+            }
+          ]
+        }
+      },
+      "CO2": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 35,
+              "sd": 6
+            }
+          ]
+        },
+        "times": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 4
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 8
+            }
+          ]
+        },
+        "thinningShare": {
+          "distribution_function": "beta",
+          "distribution_params": [
+            {
+              "alpha": 3,
+              "beta": 4
+            }
+          ]
+        },
+        "species_profile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -244,17 +260,16 @@
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 70,
-              "sd": 10
+              "mean": 30,
+              "sd": 5
             }
           ]
         },
-        "targetDBH": {
-          "distribution_function": "normal",
+        "times": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "mean": 45,
-              "sd": 5
+              "lambda": 4
             }
           ]
         },
@@ -262,15 +277,80 @@
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 5
+              "lambda": 8
             }
           ]
         },
-        "dbhListProfile": {
+        "thinningShare": {
+          "distribution_function": "beta",
+          "distribution_params": [
+            {
+              "alpha": 5,
+              "beta": 2
+            }
+          ]
+        },
+        "species_profile": {
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_name": "conifer_production"
+              "profile_name": "species_profiles"
+            }
+          ]
+        }
+      }
+    },
+    "planting": {
+      "Biodiversity": {
+        "execution_schedule": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "species_profile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "species_profiles"
+            }
+          ]
+        }
+      },
+      "CO2": {
+        "execution_schedule": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "species_profile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "species_profiles"
+            }
+          ]
+        }
+      },
+      "Production": {
+        "execution_schedule": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 1
+            }
+          ]
+        },
+        "species_profile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -299,7 +379,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_name": "biodiversity_uneven_aged"
+              "profile_name": "plenter_bio"
             }
           ]
         }
@@ -326,7 +406,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_name": "classic_beech_plenter"
+              "profile_name": "plenter_co2"
             }
           ]
         }
@@ -353,7 +433,90 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_name": "production_spruce_plenter"
+              "profile_name": "plenter_prod"
+            }
+          ]
+        }
+      }
+    },
+    "plenter_thinning": {
+      "Biodiversity": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 40,
+              "sd": 8
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 10
+            }
+          ]
+        },
+        "plenterCurve": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "plenter_bio"
+            }
+          ]
+        }
+      },
+      "CO2": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 40,
+              "sd": 8
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 10
+            }
+          ]
+        },
+        "plenterCurve": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "plenter_co2"
+            }
+          ]
+        }
+      },
+      "Production": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 40,
+              "sd": 8
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 10
+            }
+          ]
+        },
+        "plenterCurve": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "plenter_prod"
             }
           ]
         }
@@ -406,7 +569,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -457,7 +620,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -508,20 +671,20 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
       }
     },
-    "fromBelow": {
+    "shelterwood": {
       "Biodiversity": {
         "execution_schedule": {
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 40,
-              "sd": 8
+              "mean": 120,
+              "sd": 15
             }
           ]
         },
@@ -537,16 +700,15 @@
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 8
+              "lambda": 10
             }
           ]
         },
-        "thinningShare": {
-          "distribution_function": "beta",
+        "nTrees": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "alpha": 2,
-              "beta": 5
+              "lambda": 60
             }
           ]
         },
@@ -554,7 +716,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -564,8 +726,8 @@
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 35,
-              "sd": 6
+              "mean": 100,
+              "sd": 12
             }
           ]
         },
@@ -573,7 +735,7 @@
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 4
+              "lambda": 3
             }
           ]
         },
@@ -585,12 +747,11 @@
             }
           ]
         },
-        "thinningShare": {
-          "distribution_function": "beta",
+        "nTrees": {
+          "distribution_function": "poisson",
           "distribution_params": [
             {
-              "alpha": 3,
-              "beta": 4
+              "lambda": 45
             }
           ]
         },
@@ -598,7 +759,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -608,124 +769,150 @@
           "distribution_function": "normal",
           "distribution_params": [
             {
-              "mean": 30,
+              "mean": 80,
+              "sd": 10
+            }
+          ]
+        },
+        "times": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 2
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 5
+            }
+          ]
+        },
+        "nTrees": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 30
+            }
+          ]
+        },
+        "species_profile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "species_profiles"
+            }
+          ]
+        }
+      }
+    },
+    "targetDBH": {
+      "Biodiversity": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 90,
+              "sd": 15
+            }
+          ]
+        },
+        "targetDBH": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 65,
+              "sd": 10
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 10
+            }
+          ]
+        },
+        "dbhListProfile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "biodiversity_mix"
+            }
+          ]
+        }
+      },
+      "CO2": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 80,
+              "sd": 12
+            }
+          ]
+        },
+        "targetDBH": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 60,
+              "sd": 8
+            }
+          ]
+        },
+        "interval": {
+          "distribution_function": "poisson",
+          "distribution_params": [
+            {
+              "lambda": 8
+            }
+          ]
+        },
+        "dbhListProfile": {
+          "distribution_function": "lookup",
+          "distribution_params": [
+            {
+              "profile_name": "co2_storage"
+            }
+          ]
+        }
+      },
+      "Production": {
+        "execution_schedule": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 70,
+              "sd": 10
+            }
+          ]
+        },
+        "targetDBH": {
+          "distribution_function": "normal",
+          "distribution_params": [
+            {
+              "mean": 45,
               "sd": 5
             }
           ]
         },
-        "times": {
-          "distribution_function": "poisson",
-          "distribution_params": [
-            {
-              "lambda": 4
-            }
-          ]
-        },
         "interval": {
           "distribution_function": "poisson",
           "distribution_params": [
             {
-              "lambda": 8
+              "lambda": 5
             }
           ]
         },
-        "thinningShare": {
-          "distribution_function": "beta",
-          "distribution_params": [
-            {
-              "alpha": 5,
-              "beta": 2
-            }
-          ]
-        },
-        "species_profile": {
+        "dbhListProfile": {
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
-            }
-          ]
-        }
-      }
-    },
-    "plenter_thinning": {
-      "Biodiversity": {
-        "execution_schedule": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 40,
-              "sd": 8
-            }
-          ]
-        },
-        "interval": {
-          "distribution_function": "poisson",
-          "distribution_params": [
-            {
-              "lambda": 10
-            }
-          ]
-        },
-        "plenterCurve": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_name": "biodiversity_uneven_aged"
-            }
-          ]
-        }
-      },
-      "CO2": {
-        "execution_schedule": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 40,
-              "sd": 8
-            }
-          ]
-        },
-        "interval": {
-          "distribution_function": "poisson",
-          "distribution_params": [
-            {
-              "lambda": 10
-            }
-          ]
-        },
-        "plenterCurve": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_name": "classic_beech_plenter"
-            }
-          ]
-        }
-      },
-      "Production": {
-        "execution_schedule": {
-          "distribution_function": "normal",
-          "distribution_params": [
-            {
-              "mean": 40,
-              "sd": 8
-            }
-          ]
-        },
-        "interval": {
-          "distribution_function": "poisson",
-          "distribution_params": [
-            {
-              "lambda": 10
-            }
-          ]
-        },
-        "plenterCurve": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_name": "production_spruce_plenter"
+              "profile_name": "production_standard"
             }
           ]
         }
@@ -770,7 +957,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -813,7 +1000,7 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
@@ -856,44 +1043,11 @@
           "distribution_function": "lookup",
           "distribution_params": [
             {
-              "profile_group": "species_profiles"
+              "profile_name": "species_profiles"
             }
           ]
         }
       }
-    },
-    "planting": {
-      "Biodiversity": {
-        "species_profile": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_group": "species_profiles"
-            }
-          ]
-        }
-      },
-      "CO2": {
-        "species_profile": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_group": "species_profiles"
-            }
-          ]
-        }
-      },
-      "Production": {
-        "species_profile": {
-          "distribution_function": "lookup",
-          "distribution_params": [
-            {
-              "profile_group": "species_profiles"
-            }
-          ]
-        }
-      }
-    },
-    "noManagement": []
+    }
   }
 }
