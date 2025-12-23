@@ -20,7 +20,7 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
 
     if (random_draw < probability_to_abandon) {
         // --- PATH 1: Abandon the sequence ---
-        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Abandoning sequence. (Random Draw: ${random_draw.toFixed(3)} < Probability: ${probability_to_abandon.toFixed(3)})`);
+     //   console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Abandoning sequence. (Random Draw: ${random_draw.toFixed(3)} < Probability: ${probability_to_abandon.toFixed(3)})`);
         
         if (activity.chosen_Activity === 'selectiveThinning') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
@@ -28,7 +28,11 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         } else if (activity.chosen_Activity === 'shelterwood') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
             Action.prepare.clear_shelterwood_flags();
+        }  else if (activity.chosen_Activity === 'femel') { // <--- ADDED
+            fmengine.standId = stand_data_obj.stand_id; 
+            Action.prepare.clear_femel_flags();
         }
+
 
         activity.chosen_Activity = 'noManagement';
         activity.parameters = {};
@@ -40,7 +44,7 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         return stand_data_obj;
     } else {
         // --- PATH 2: Continue the sequence ---
-        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Continuing sequence. (Random Draw: ${random_draw.toFixed(3)} >= Probability: ${probability_to_abandon.toFixed(3)})`);
+     //   console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: Continuing sequence. (Random Draw: ${random_draw.toFixed(3)} >= Probability: ${probability_to_abandon.toFixed(3)})`);
     }
 
     // --- 2. SYNCHRONIZE WITH THE TIMELINE ---
@@ -60,7 +64,7 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         activity.target_year = next_target_year;
         activity.sequence_current_step = next_step_index;
     } else {
-        console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: All events for sequence '${activity.chosen_Activity}' are in the past. Completing sequence.`);
+    //    console.log(`[COGNITION - decide_on_going] Stand ${stand_data_obj.stand_id}: All events for sequence '${activity.chosen_Activity}' are in the past. Completing sequence.`);
         
         if (activity.chosen_Activity === 'selectiveThinning') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
@@ -68,7 +72,11 @@ Cognition.update_ongoing_sequence = function(stand_data_obj) {
         } else if (activity.chosen_Activity === 'shelterwood') {
             fmengine.standId = stand_data_obj.stand_id; // Set context before clearing
             Action.prepare.clear_shelterwood_flags();
+        }  else if (activity.chosen_Activity === 'femel') { // <--- ADDED
+            fmengine.standId = stand_data_obj.stand_id; 
+            Action.prepare.clear_femel_flags();
         }
+
         
         activity.chosen_Activity = 'noManagement';
         activity.parameters = {};

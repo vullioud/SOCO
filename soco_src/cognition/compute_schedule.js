@@ -2,7 +2,7 @@
 
 /**
  * =================================================================================
- * FILE: compute_schedule.js (FINAL VERSION with Syntax Fix)
+ * FILE: compute_schedule.js (Femel Fix)
  * =================================================================================
  */
 
@@ -10,10 +10,11 @@
 
 function get_relevant_age(stand_data_obj) {
     var activity_name = stand_data_obj.activity.chosen_Activity;
-    var rotation_based_activities = ['clearcut', 'shelterwood', 'selectiveThinning', 'fromBelow'];
+    // Added 'femel' to rotation based activities
+    var rotation_based_activities = ['clearcut', 'shelterwood', 'selectiveThinning', 'fromBelow', "planting", "femel"];
 
     if (rotation_based_activities.indexOf(activity_name) > -1) {
-        return stand_data_obj.iLand_stand_data.absolute_age_soco;
+        return stand_data_obj.iLand_stand_data.absolute_age_soco; 
     } else {
         return stand_data_obj.iLand_stand_data.stand_age;
     }
@@ -40,14 +41,15 @@ function generate_timeline(activity_name, params) {
         case 'selectiveThinning':
         case 'fromBelow':
         case 'tending':
+        case 'femel': // <--- ADDED: Femel uses times/interval logic
             if (times > 1 && interval > 0) {
                 is_Sequence = true;
                 sequence_total_steps = times;
                 for (var i = 0; i < times; i++) {
                     timeline.push(start_age + (i * interval));
                 }
-            } else if (times === 1) {
-                // Handle it as a single, non-sequence event.
+            } else {
+                // Fallback if times=1
                 timeline.push(start_age);
                 sequence_total_steps = 1;
                 is_Sequence = false;
@@ -74,7 +76,8 @@ function handle_overdue_harvest(stand_data_obj, original_start_age) {
     var preference = stand_data_obj.preference_focus;
     var current_age = stand_data_obj.iLand_stand_data.absolute_age_soco;
 
-    var is_harvest = ['clearcut', 'shelterwood', 'plenter_harvest'].indexOf(activity_name) > -1;
+    // Added 'femel' to harvest list for overdue check
+    var is_harvest = ['clearcut', 'shelterwood', 'plenter_harvest', 'femel'].indexOf(activity_name) > -1;
     if (!is_harvest) {
         return original_start_age;
     }
@@ -83,12 +86,10 @@ function handle_overdue_harvest(stand_data_obj, original_start_age) {
     var age_limit = age_thresholds[preference] || 999;
 
     if (current_age > age_limit) {
-        var random_offset = 1 + Math.floor(Math.random() * 10); // Schedule it for 1-10 years in the future.
+        var random_offset = 1 + Math.floor(Math.random() * 10); 
         var forced_age = Math.round(current_age + random_offset);
-        console.log(`[SCHEDULE] Stand ${stand_data_obj.stand_id}: Overdue harvest detected (Age: ${current_age}, Limit: ${age_limit}). Forcing execution from ideal age ${original_start_age} to new age ${forced_age}.`);
         return forced_age;
     }
-    // ----------------------
 
     return original_start_age;
 }
@@ -126,14 +127,12 @@ Cognition.compute_schedule = function(stand_data_obj) {
     var ideal_start_age = Math.round(Number(params.execution_schedule));
     var effective_start_age = handle_overdue_harvest(stand_data_obj, ideal_start_age);
     
-    // Create a copy of the params object using a compatible for...in loop.
     var temp_params = {};
     for (var key in params) {
         if (params.hasOwnProperty(key)) {
             temp_params[key] = params[key];
         }
     }
-    // ----------------------
     temp_params.execution_schedule = effective_start_age;
 
     // 2. Generate the AGE-BASED timeline.
@@ -146,26 +145,42 @@ Cognition.compute_schedule = function(stand_data_obj) {
     if (timeline_data.timeline.length > 0) {
         activity.timeline = Cognition.convert_age_timeline_to_calendar_years(stand_data_obj, timeline_data.timeline);
 
-        // 4. Synchronize the plan with the present to find the first actionable step.
+        // 4. Synchronize the plan with the present
         let next_target_year = -1;
         let next_step_index = -1;
         const current_year = Globals.year;
+        
+        const grace_period = 3; 
 
+        // A. Standard Loop
         for (let i = 0; i < activity.timeline.length; i++) {
-            if (activity.timeline[i] >= current_year) {
+            if (activity.timeline[i] >= current_year - grace_period) {
                 next_target_year = activity.timeline[i];
+                if (next_target_year < current_year) {
+                    next_target_year = current_year;
+                }
                 next_step_index = i;
                 break;
             }
         }
 
+        // B. Catch-All for Drift
+        if (next_target_year === -1 && activity.timeline.length > 0) {
+            var last_scheduled = activity.timeline[activity.timeline.length - 1];
+            var is_harvest_thin = activity.chosen_Activity !== 'planting';
+            
+            if (is_harvest_thin && last_scheduled < current_year) {
+                next_target_year = current_year;
+                next_step_index = 0; 
+            }
+        }
+
         if (next_target_year !== -1) {
             
+            // Late Entry Filter
             if (activity.is_Sequence) {
                 var steps_remaining = activity.sequence_total_steps - next_step_index;
                 if (steps_remaining < 2) {
-                    
-                    // Reset to noManagement state
                     activity.chosen_Activity = 'noManagement';
                     activity.parameters = {};
                     activity.timeline = [];
@@ -176,7 +191,6 @@ Cognition.compute_schedule = function(stand_data_obj) {
                     return stand_data_obj;
                 }
             }
-            // ------------------------------------------------
 
             activity.sequence_current_step = next_step_index;
             activity.target_year = next_target_year;
@@ -194,3 +208,4 @@ Cognition.compute_schedule = function(stand_data_obj) {
     return stand_data_obj;
 };
 
+// ----- End of File: soco_src/cognition/compute_schedule.js -----
